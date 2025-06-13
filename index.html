@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Web Radio Player</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Changed font to Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <style>
+        /* --- Material 3 Expressive Design Tokens --- */
+        :root {
+            --md-sys-color-primary: #373e5a;
+            --md-sys-color-on-primary: #FFFFFF;
+            --md-sys-color-primary-container: #EADDFF;
+            --md-sys-color-on-primary-container: #21005D;
+            --md-sys-color-surface: #FFFBFE;
+            --md-sys-color-on-surface: #1C1B1F;
+            --md-sys-color-surface-container: #e5e8f5;
+            --md-sys-color-on-surface-variant: #49454F;
+            --md-sys-color-outline: #79747E;
+            --md-sys-color-shadow: #000000;
+
+            --md-sys-shape-corner-medium: 12px;
+            --md-sys-shape-corner-large: 24px;
+            --md-sys-shape-corner-extra-large: 48px;
+            --md-sys-shape-corner-full: 9999px;
+
+            /* Changed font family to Inter */
+            --md-sys-typescale-headline-small-font: 'Inter', sans-serif;
+            --md-sys-typescale-headline-small-size: 24px;
+            --md-sys-typescale-headline-small-weight: 500;
+            --md-sys-typescale-title-large-font: 'Inter', sans-serif;
+            --md-sys-typescale-title-large-size: 22px;
+            --md-sys-typescale-title-large-weight: 500;
+            --md-sys-typescale-label-large-font: 'Inter', sans-serif;
+            --md-sys-typescale-label-large-size: 14px;
+            --md-sys-typescale-label-large-weight: 500;
+        }
+
+        /* --- Base & Layout --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            /* Changed font to Inter */
+            font-family: 'Inter', sans-serif;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .main-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            padding: 24px;
+            height: calc(100vh - 80px); /* Full height minus header */
+        }
+
+        /* --- Header --- */
+        .app-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            height: 80px;
+            border-bottom: 1px solid var(--md-sys-color-outline-variant, #E7E0EC);
+        }
+
+        .app-header .logo {
+            width: 48px;
+            height: 48px;
+        }
+
+        .app-header .app-name {
+            font-size: var(--md-sys-typescale-headline-small-size);
+            font-weight: var(--md-sys-typescale-headline-small-weight);
+            color: var(--md-sys-color-on-surface);
+        }
+
+        /* --- Left Column: Channel Lists --- */
+        .channels-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            overflow-y: auto;
+            padding-right: 12px; /* Space for scrollbar */
+        }
+
+        .category-container {
+            width: 100%;
+        }
+
+        .category-title {
+            font-family: var(--md-sys-typescale-title-large-font);
+            font-size: var(--md-sys-typescale-title-large-size);
+            font-weight: var(--md-sys-typescale-title-large-weight);
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 16px;
+            text-transform: capitalize;
+        }
+
+        .channel-row {
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            /* CHANGE: Added top padding to prevent clipping on hover */
+            padding: 8px 4px 16px 4px;
+            margin: 0 -4px; /* Compensate for padding to keep alignment */
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        .channel-row::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .channel-row::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .channel-row::-webkit-scrollbar-thumb {
+            background-color: var(--md-sys-color-outline);
+            border-radius: var(--md-sys-shape-corner-full);
+            border: 2px solid var(--md-sys-color-surface);
+        }
+
+
+        .channel-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            text-align: center;
+            min-width: 90px;
+            transition: transform 0.2s ease;
+        }
+        
+        .channel-item:hover {
+            transform: scale(1.05);
+        }
+
+        .channel-item .logo-wrapper {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 2px solid transparent;
+            transition: border-color 0.3s ease;
+        }
+        
+        .channel-item.active .logo-wrapper {
+            border-color: var(--md-sys-color-primary);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        
+        .channel-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .channel-item .name {
+            font-size: var(--md-sys-typescale-label-large-size);
+            font-weight: var(--md-sys-typescale-label-large-weight);
+            color: var(--md-sys-color-on-surface-variant);
+            width: 90px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+
+        /* --- Right Column: Player --- */
+        .player-section {
+            background-color: var(--md-sys-color-surface-container);
+            border-radius: var(--md-sys-shape-corner-extra-large);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .player-logo-container {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            max-width: 300px;
+            background-color: white;
+            border-radius: var(--md-sys-shape-corner-large);
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .player-logo-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .player-info {
+            text-align: center;
+            margin-top: 24px;
+        }
+
+        .player-channel-name {
+            font-family: var(--md-sys-typescale-headline-small-font);
+            font-size: var(--md-sys-typescale-headline-small-size);
+            font-weight: var(--md-sys-typescale-headline-small-weight);
+            color: var(--md-sys-color-on-primary-container);
+        }
+
+        .player-controls {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: auto; /* Pushes to the bottom */
+            padding-top: 24px;
+        }
+
+        #play-pause-btn {
+            background-color: var(--md-sys-color-primary);
+            color: var(--md-sys-color-on-primary);
+            border: none;
+            width: 100%;
+            height: 64px;
+            border-radius: var(--md-sys-shape-corner-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background-color 0.2s, box-shadow 0.2s;
+        }
+
+        #play-pause-btn:hover {
+             box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        }
+        
+        #play-pause-btn svg {
+            /* CHANGE: Increased icon size */
+            width: 40px;
+            height: 40px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+
+        /* --- Media Queries for smaller screens --- */
+        @media (max-width: 768px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                height: calc(100vh - 70px);
+                padding: 16px;
+            }
+            .app-header {
+                height: 70px;
+            }
+            .player-section {
+                height: 350px; /* Fixed height on mobile */
+                justify-content: space-around;
+            }
+        }
+
+        :root {
+            --md-sys-color-shadow: #000000;
+            
+            --wave-color: var(--md-sys-color-primary);
+            
+            --md-sys-shape-corner-medium: 12px;
+        }
+
+        .player-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .wave-container {
+            width: 80%;
+            max-width: 250px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            margin: 16px 0;
+            transition: opacity 0.4s ease-in-out;
+            opacity: 0; 
+            pointer-events: none;
+        }
+
+        #player-container.playing .wave-container {
+            opacity: 1; 
+        }
+
+        .wave-bar {
+            width: 5px;
+            height: 100%;
+            background-color: var(--wave-color);
+            border-radius: var(--md-sys-shape-corner-full);
+            animation-name: wave-animation;
+            animation-timing-function: ease-in-out;
+            animation-iteration-count: infinite;
+        }
+
+        @keyframes wave-animation {
+            0% { transform: scaleY(0.1); }
+            50% { transform: scaleY(1); }
+            100% { transform: scaleY(0.1); }
+        }
+
+    </style>
+</head>
+<body>
+
+    <header class="app-header">
+        <img src="app-logo.svg" alt="App Logo" class="logo">
+        <h1 class="app-name">Radio Player</h1>
+    </header>
+
+    <main class="main-container">
+        <div id="channel-list-container" class="channels-section">
+            <!-- Channel categories will be injected here by JavaScript -->
+        </div>
+
+        <div id="player-container" class="player-section">
+            <div class="player-logo-container">
+                <img id="player-logo" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Selected Radio Logo">
+            </div>
+            
+            <div class="player-info">
+                <h2 id="player-channel-name">Select a Channel</h2>
+            </div>
+            <div id="wave-container" class="wave-container">
+                <!-- Bars will be generated by JS -->
+            </div>
+            <div class="player-controls">
+                <button id="play-pause-btn" aria-label="Play/Pause">
+                    <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                    <svg id="pause-icon" class="hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <audio id="audio-player"></audio>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const CATEGORIES = ["popular", "müzik", "haber", "spor", "dini", "diğer"];
+
+            // DOM Elements
+            const channelListContainer = document.getElementById('channel-list-container');
+            const playerLogo = document.getElementById('player-logo');
+            const playerChannelName = document.getElementById('player-channel-name');
+            const audioPlayer = document.getElementById('audio-player');
+            const playPauseBtn = document.getElementById('play-pause-btn');
+            const playIcon = document.getElementById('play-icon');
+            const pauseIcon = document.getElementById('pause-icon');
+            const playerContainer = document.getElementById('player-container'); 
+            const waveContainer = document.getElementById('wave-container')
+
+            let hls = new Hls();
+            let currentChannelItem = null;
+
+            // --- UI Functions ---
+            const createCategorySections = () => {
+                CATEGORIES.forEach(cat => {
+                    const categoryDiv = document.createElement('div');
+                    categoryDiv.className = 'category-container';
+                    categoryDiv.innerHTML = `
+                        <h3 class="category-title">${cat}</h3>
+                        <div class="channel-row" id="category-${cat}"></div>
+                    `;
+                    channelListContainer.appendChild(categoryDiv);
+                });
+            };
+
+            const updatePlayerUI = (isPlaying) => {
+                if (isPlaying) {
+                    playIcon.classList.add('hidden');
+                    pauseIcon.classList.remove('hidden');
+                    playPauseBtn.setAttribute('aria-label', 'Pause');
+                    playerContainer.classList.add('playing'); // Show wave
+                } else {
+                    playIcon.classList.remove('hidden');
+                    pauseIcon.classList.add('hidden');
+                    playPauseBtn.setAttribute('aria-label', 'Play');
+                    playerContainer.classList.remove('playing'); // Hide wave
+                }
+            };
+            
+            // --- Player Logic ---
+            const playAudio = () => {
+                audioPlayer.play().catch(e => {
+                    console.error("Audio play failed:", e);
+                    updatePlayerUI(false);
+                });
+            };
+
+            const togglePlayPause = () => {
+                if (!audioPlayer.src && !hls.url) return; // Do nothing if no source is set
+                
+                if (audioPlayer.paused) {
+                    playAudio();
+                } else {
+                    audioPlayer.pause();
+                }
+            };
+
+            const selectChannel = (channel, element) => {
+                // Hide wave from previous channel immediately
+                playerContainer.classList.remove('playing');
+
+                // Update player info
+                playerLogo.src = channel.logoUrl;
+                playerChannelName.textContent = channel.name;
+                
+                // Update visual active state
+                if (currentChannelItem) {
+                    currentChannelItem.classList.remove('active');
+                }
+                currentChannelItem = element;
+                currentChannelItem.classList.add('active');
+
+                // Load and play audio stream
+                if (Hls.isSupported()) {
+                    hls.loadSource(channel.streamUrl);
+                    hls.attachMedia(audioPlayer);
+                    // The wave now appears only when the manifest is parsed (loaded)
+                    hls.once(Hls.Events.MANIFEST_PARSED, () => {
+                       playerContainer.classList.add('playing');
+                       playAudio();
+                    });
+                } else if (audioPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                    audioPlayer.src = channel.streamUrl;
+                    audioPlayer.addEventListener('loadedmetadata', () => {
+                        playerContainer.classList.add('playing');
+                        playAudio();
+                    }, { once: true });
+                }
+            };
+
+            // --- Data Fetching and Initialization ---
+            const fetchAndDisplayChannels = async () => {
+                try {
+                    const response = await fetch('./channels.txt');
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    const data = await response.text();
+                    const channels = data.trim().split('\n').map(line => {
+                        const [name, streamUrl, logoUrl, categoryId] = line.split(',').map(item => item.trim());
+                        return { name, streamUrl, logoUrl, categoryId: parseInt(categoryId) };
+                    }).filter(ch => ch.name && ch.streamUrl && ch.logoUrl && !isNaN(ch.categoryId));
+
+                    let firstChannelToLoad = null; // To store the first channel
+
+                    channels.forEach(channel => {
+                        const categoryName = CATEGORIES[channel.categoryId];
+                        if (categoryName) {
+                            const categoryRow = document.getElementById(`category-${categoryName}`);
+                            const channelItem = document.createElement('div');
+                            channelItem.className = 'channel-item';
+                            channelItem.innerHTML = `
+                                <div class="logo-wrapper">
+                                    <img src="${channel.logoUrl}" alt="${channel.name} logo" loading="lazy" onerror="this.parentElement.style.display='none'">
+                                </div>
+                                <p class="name" title="${channel.name}">${channel.name}</p>
+                            `;
+                            channelItem.addEventListener('click', () => selectChannel(channel, channelItem));
+                            categoryRow.appendChild(channelItem);
+
+                            // Capture the very first valid channel and its element
+                            if (!firstChannelToLoad) {
+                                firstChannelToLoad = { channel, element: channelItem };
+                            }
+                        }
+                    });
+
+                    // Auto-select and play the first channel after all channels are rendered
+                    if (firstChannelToLoad) {
+                        selectChannel(firstChannelToLoad.channel, firstChannelToLoad.element);
+                    }
+
+                } catch (error) {
+                    console.error("Could not fetch or process channels.txt:", error);
+                    channelListContainer.innerHTML = `<p>Error loading radio channels. Please check if <strong>channels.txt</strong> exists and is accessible.</p>`;
+                }
+            };
+
+            const createWaveBars = (numBars = 25) => {
+                for (let i = 0; i < numBars; i++) {
+                    const bar = document.createElement('div');
+                    bar.classList.add('wave-bar');
+                    // Randomize animation duration and delay for a more natural look
+                    bar.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`; // between 0.3s and 0.9s
+                    bar.style.animationDelay = `${Math.random() * -2}s`; // start at a random point in the animation cycle
+                    waveContainer.appendChild(bar);
+                }
+            };
+            
+            // --- Event Listeners ---
+            playPauseBtn.addEventListener('click', togglePlayPause);
+            audioPlayer.addEventListener('play', () => updatePlayerUI(true));
+            audioPlayer.addEventListener('pause', () => updatePlayerUI(false));
+            audioPlayer.addEventListener('ended', () => updatePlayerUI(false));
+
+
+            // --- Start the App ---
+            createCategorySections();
+            fetchAndDisplayChannels();
+            createWaveBars();
+        });
+    </script>
+</body>
+</html>
