@@ -77,6 +77,12 @@
             height: 80px;
             border-bottom: 1px solid var(--md-sys-color-outline-variant, #E7E0EC);
         }
+        /* Flex container for the title and link */
+        .header-text-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
 
         .app-header .logo {
             width: 48px;
@@ -88,6 +94,17 @@
             font-weight: var(--md-sys-typescale-headline-small-weight);
             color: var(--md-sys-color-on-surface);
         }
+        /* Style for the Telegram link */
+        .telegram-link {
+            font-size: 12px; /* Smaller font size for the link */
+            color: var(--md-sys-color-on-surface-variant); /* Inherit color or set a specific one */
+            text-decoration: none;
+            margin-top: 4px; /* Small space below the title */
+        }
+        .telegram-link:hover {
+            text-decoration: underline;
+        }
+
 
         /* --- Left Column: Channel Lists --- */
         .channels-section {
@@ -335,7 +352,10 @@
 
     <header class="app-header">
         <img src="logo.png" alt="App Logo" class="logo">
-        <h1 class="app-name">Car Video Pro Radio</h1>
+        <div class="header-text-container">
+            <h1 class="app-name">Car Video Pro Radio</h1>
+            <a href="https://t.me/car_video_pro" target="_blank" rel="noopener noreferrer" class="telegram-link">Telegram: t.me/car_video_pro</a>
+        </div>
     </header>
 
     <main class="main-container">
