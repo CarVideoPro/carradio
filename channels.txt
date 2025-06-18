@@ -40,8 +40,8 @@ Number One Damar,https://n10101m.mediatriple.net/videoonlylive/mtkgeuihrlfwlive/
 
 
 
-Diyanet Kuran Radyo,http://eustr73.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c14192aa92.smil/playlist.m3u8,http://4.bp.blogspot.com/-rgc_WXzsNPg/WZvqhGvPQjI/AAAAAAAATts/k47sk1kviyICjNfmAOxw-csvvnZ_niqfgCLcBGAs/s1600/01.jpg,5
-Diyanet Radyo,http://eustr73.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c1171d7d2a.smil/playlist.m3u8,http://4.bp.blogspot.com/-0qyRySZWuWc/WZvqAylXH0I/AAAAAAAATtk/l6u9o5Ybu_4Yh7zxUadPjbC3CDVzp3nFACLcBGAs/s1600/02.jpg,5
+Diyanet Kuran Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c14192aa92.smil/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/kuran-radyo.jpg,5
+Diyanet Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c1171d7d2a.smil/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/Diyanet-Radyo-100x100.jpg,5
 Kuran Meal Radyo,http://37.247.98.8/stream/33/,http://4.bp.blogspot.com/-_3i5902YQWQ/WabGVnv3VTI/AAAAAAAAUcc/ctQ8jFErVMAPneVm7GDfUNpAlrm0f5KOgCLcBGAs/s1600/k.jpg,5
 Enderun FM,https://yayin2.canliyayin.org:10996/;,https://www.canliradyodinle.fm/wp-content/uploads/enderun-fm.jpg,5
 Lalegül FM,https://icecast.netmedya.net/lalegulfm,https://www.canliradyodinle.fm/wp-content/uploads/lalegul-fm.jpg,5
@@ -76,7 +76,6 @@ HaberTürk Radyo,https://haberturkradyo.radyotvonline.net/haberturkradyo?/;strea
 Ülke Radyo,https://ssl4.radyotvonline.com/radyohome/ulkeradyo.stream_aac/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/ulke-radyo.jpg,3
 
 TRT SPOR,https://tv-trtspor1.medya.trt.com.tr/master_720.m3u8,https://i.ibb.co/WxD4PLG/trt-spor.png,4
-BeIN Sports Haber,https://live-cdn-65984.varplaycdn.cfd/beinsportshaber/index.m3u8,https://feo.kablowebtv.com/resize/168A635D265A4328C2883FB4CD8FF/0/0/Vod/HLS/bc458b63-fe9e-40c2-b8a3-d56dc7189e0a.png,4
 S SPORTS,https://live.sportstv.com.tr/hls/low/sportstv_hd/index.m3u8,https://i.ibb.co/Q7qK4qQj/Ads-z-tasar-m-16.png,4
 A SPOR,https://live-cdn-65984.varplaycdn.cfd/aspor/index.m3u8,https://i.ibb.co/rwnrgFV/a-spor.png,4
 Lig Radyo,https://ligradyo.radyotvonline.net/ligradyo,https://www.canliradyodinle.fm/wp-content/uploads/lig-radyo.jpg,4
