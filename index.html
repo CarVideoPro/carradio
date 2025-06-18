@@ -378,7 +378,7 @@
             const playerContainer = document.getElementById('player-container'); 
             const waveContainer = document.getElementById('wave-container');
 
-            // Initialize Hls.js instance globally, but manage its lifecycle
+            // Initialize Hls.js instance globally.
             // We re-initialize hls in selectChannel if it's destroyed due to a fatal error.
             let hls = new Hls(); 
             let currentChannelItem = null;
@@ -415,7 +415,7 @@
                 audioPlayer.play().catch(e => {
                     console.error("Audio play failed:", e);
                     // This error usually happens if the user hasn't interacted with the document yet
-                    // Or if there's an issue with the stream itself
+                    // Or if there's an issue with the stream itself (e.g., auto-play blocked)
                     updatePlayerUI(false);
                     playerChannelName.textContent = "Play failed (Click play button)";
                 });
@@ -448,13 +448,13 @@
 
                     for (const line of lines) {
                         const trimmedLine = line.trim();
-                        if (trimmedLine.startsWith('File1=') || trimmedLine.startsWith('File2=') || trimmedLine.startsWith('File=') || trimmedLine.startsWith('file=')) {
-                            // Extract URL after '='
+                        // Look for lines starting with 'File' followed by a number and '='
+                        // or just 'File=' (case-insensitive for 'file=')
+                        if (/^File\d*=/i.test(trimmedLine)) { 
                             const streamUrl = trimmedLine.substring(trimmedLine.indexOf('=') + 1).trim();
                             if (streamUrl) {
                                 console.log("PLS found stream URL:", streamUrl);
                                 audioPlayer.src = streamUrl;
-                                // Use 'loadeddata' or 'canplay' for direct streams
                                 audioPlayer.addEventListener('loadeddata', () => { 
                                     playerContainer.classList.add('playing');
                                     playAudio();
@@ -493,22 +493,23 @@
                 currentChannelItem.classList.add('active');
 
                 // Stop any previous HLS stream and detach media, or clear direct source
-                if (hls) {
+                if (hls && hls.media === audioPlayer) { // Only stop/detach if hls was actively using this audioPlayer
                     hls.stopLoad(); // Stops loading of segments
                     hls.detachMedia(); // Detaches the media element
-                    // hls.destroy() is more aggressive, useful for fatal errors, but stopLoad/detachMedia is good for switching.
                 }
                 audioPlayer.src = ''; // Clear previous audio source immediately
 
                 // Determine stream type
-                const isHLS = channel.streamUrl.endsWith('.m3u8') || channel.streamUrl.includes('.m3u8?') || channel.streamUrl.includes('/playlist.m3u8');
-                const isPLS = channel.streamUrl.endsWith('.pls') || channel.streamUrl.includes('.pls?'); // Added for PLS files
+                // More robust check for HLS (covers .m3u8, query params, common path patterns)
+                const isHLS = /((\.m3u8($|\?))|(\/playlist\.m3u8($|\?)))/i.test(channel.streamUrl);
+                // Check for PLS files
+                const isPLS = /(\.pls($|\?))/i.test(channel.streamUrl);
 
                 if (isHLS) {
                     if (Hls.isSupported()) {
-                        // Ensure hls instance is clean if we switch from non-HLS to HLS
-                        if (hls.media !== audioPlayer) { // Re-attach if needed or re-create if destroyed
-                            hls.attachMedia(audioPlayer);
+                        // Ensure hls instance is correctly attached
+                        if (!hls.media || hls.media !== audioPlayer) {
+                             hls.attachMedia(audioPlayer);
                         }
                         hls.loadSource(channel.streamUrl);
                         hls.once(Hls.Events.MANIFEST_PARSED, () => {
@@ -520,12 +521,12 @@
                             if (data.fatal) {
                                 switch(data.type) {
                                     case Hls.ErrorTypes.NETWORK_ERROR:
-                                        console.error("Fatal network error, trying to recover...");
-                                        // A simple reload of the source might work, but sometimes more robust recovery needed
+                                        console.error("Fatal HLS network error, trying to recover...");
+                                        // Attempt to recover by loading source again or destroying and re-creating HLS
                                         hls.startLoad();
                                         break;
                                     case Hls.ErrorTypes.MEDIA_ERROR:
-                                        console.error("Fatal media error, trying to recover...");
+                                        console.error("Fatal HLS media error, trying to recover...");
                                         hls.recoverMediaError();
                                         break;
                                     default:
@@ -554,40 +555,22 @@
                     // Handle PLS playlist files
                     loadPLSStream(channel.streamUrl);
                 } else {
-                    // For direct audio streams (like MP3, AAC)
+                    // For direct audio streams (like MP3, AAC, etc.)
+                    // Check if the browser claims to be able to play this type (optional, can be unreliable)
+                    // If streamUrl has a known extension, you could hint it, e.g., 'audio/mpeg' for .mp3
+                    // let mimeType = '';
+                    // if (channel.streamUrl.endsWith('.mp3')) mimeType = 'audio/mpeg';
+                    // else if (channel.streamUrl.endsWith('.aac')) mimeType = 'audio/aac';
+                    // if (mimeType && !audioPlayer.canPlayType(mimeType)) {
+                    //    console.warn(`Browser might not support ${mimeType} for direct playback.`);
+                    // }
+
                     audioPlayer.src = channel.streamUrl;
-                    audioPlayer.addEventListener('loadeddata', () => { // Use 'loadeddata' or 'canplay' for direct streams
+                    audioPlayer.addEventListener('loadeddata', () => { 
                         playerContainer.classList.add('playing');
                         playAudio();
                     }, { once: true });
-                    audioPlayer.addEventListener('error', (e) => {
-                        console.error("Error playing direct stream:", e);
-                        let errorMsg = "Unknown audio error.";
-                        if (audioPlayer.error) {
-                            switch (audioPlayer.error.code) {
-                                case MediaError.MEDIA_ERR_ABORTED:
-                                    errorMsg = "Audio playback aborted.";
-                                    break;
-                                case MediaError.MEDIA_ERR_NETWORK:
-                                    errorMsg = "Network error: Audio download failed. (CORS or connectivity issue?)";
-                                    break;
-                                case MediaError.MEDIA_ERR_DECODE:
-                                    errorMsg = "Audio decoding error. (Unsupported format?)";
-                                    break;
-                                case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                                    errorMsg = "Audio source not supported by browser. (Invalid URL or MIME type?)";
-                                    break;
-                                default:
-                                    errorMsg = `Error code: ${audioPlayer.error.code}`;
-                                    break;
-                            }
-                            if (audioPlayer.error.message) {
-                                errorMsg += ` Detail: ${audioPlayer.error.message}`;
-                            }
-                        }
-                        playerChannelName.textContent = `Error: ${errorMsg}`;
-                        updatePlayerUI(false);
-                    });
+                    // Error listener for direct streams is handled globally below
                 }
             };
 
@@ -656,26 +639,26 @@
             audioPlayer.addEventListener('pause', () => updatePlayerUI(false));
             audioPlayer.addEventListener('ended', () => updatePlayerUI(false));
             
-            // More detailed error handling for direct audio streams
+            // Global error listener for audioPlayer
             audioPlayer.addEventListener('error', (e) => {
-                console.error("Audio player error event on direct stream:", e);
-                let errorMsg = "Unknown audio error.";
+                console.error("Audio player error event:", e);
+                let errorMsg = "An unknown error occurred.";
                 if (audioPlayer.error) {
                     switch (audioPlayer.error.code) {
                         case MediaError.MEDIA_ERR_ABORTED:
-                            errorMsg = "Audio playback aborted.";
+                            errorMsg = "Playback aborted by user.";
                             break;
                         case MediaError.MEDIA_ERR_NETWORK:
-                            errorMsg = "Network error: Audio download failed. (CORS or connectivity issue?)";
+                            errorMsg = "Network error: Stream download failed. (Possible CORS or connectivity issue)";
                             break;
                         case MediaError.MEDIA_ERR_DECODE:
-                            errorMsg = "Audio decoding error. (Unsupported format?)";
+                            errorMsg = "Decoding error: Stream format not supported. (Incorrect codec or damaged stream)";
                             break;
                         case MediaError.MEDIA_ERR_SRC_NOT_SUPPORTED:
-                            errorMsg = "Audio source not supported by browser. (Invalid URL or MIME type?)";
+                            errorMsg = "Source not supported: Invalid URL or unrecognized format/MIME type. (Browser cannot play this stream)";
                             break;
                         default:
-                            errorMsg = `Error code: ${audioPlayer.error.code}`;
+                            errorMsg = `Unknown error code: ${audioPlayer.error.code}`;
                             break;
                     }
                     if (audioPlayer.error.message) {
