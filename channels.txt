@@ -57,10 +57,10 @@ Radyo Gül,https://yayin2.canliyayin.org:10989/;stream.mp3,https://www.canlirady
 
 Banaz DOST FM,https://sssx.radyosfer.com/banazdostfm/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/banaz-dost-fm.jpg,6
 Ege Havaları,https://moondigitaledge.radyotvonline.net/egehavalari/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ege-havalari.jpg,6
-Radyo Ekin,https://yayin.turkhosted.com:6006/stream?/;stream.mp3/,http://3.bp.blogspot.com/-mM75U7S2s0w/WaO2foN2qTI/AAAAAAAAUIA/SXrgKMQpDBwahViHrkgF_Edop_TqweSSACLcBGAs/s1600/e.jpg,6
-Elazığ Radyo 2000,https://radyodinle1.turkhosted.com/yayin?uri=yayin.turkiletisim.com.tr:1092/&tkn=w279SoqGbVI_7R5sI3tWOA&tms=1750298498,http://4.bp.blogspot.com/-Yovc1dbCO64/WaO3DwdPeqI/AAAAAAAAUII/LGLw5izmSy49C8k7puiOndZ3DXZZTYphwCLcBGAs/s1600/2000.jpg,6
-FM23,https://radyodinle1.turkhosted.com/yayin?uri=radyofm23.canliyayinda.com:8280/&tkn=tQWsN2Ooo5bXRT_s5wIq5Q&tms=1750296434,http://4.bp.blogspot.com/-wfj5IekgVvk/WaQeCJXPHWI/AAAAAAAAUOY/gI8Vkr6LixAW2AKWK8TCNh83wrkKDTvTQCLcBGAs/s1600/23.jpg,6
-Genç Radyo Konya,http://dijimedya.radyotvonline.net/gncradyo,http://2.bp.blogspot.com/-s_BSJ1TyNYE/WaQoFu6VXPI/AAAAAAAAUPM/sl5xj8Ng9AYz4k7NvrPYg3eXwjFCa_5rQCLcBGAs/s1600/g.jpg,6
+Radyo Ekin,https://yayin.turkhosted.com:6006/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ekin-fm.jpg,6
+Elazığ Radyo 2000,https://radyodinle1.turkhosted.com/yayin?uri=yayin.turkiletisim.com.tr:1092/&tkn=w279SoqGbVI_7R5sI3tWOA&tms=1750298498,https://www.canliradyodinle.fm/wp-content/uploads/elazig-radyo-2000.jpg,6
+FM23,https://radyodinle1.turkhosted.com/yayin?uri=radyofm23.canliyayinda.com:8280/&tkn=tQWsN2Ooo5bXRT_s5wIq5Q&tms=1750296434,https://www.canliradyodinle.fm/wp-content/uploads/radyofm23.jpg,6
+Pazar Genç Radyo,https://dl.gen.tr/gencradyo/canli?,https://www.canliradyodinle.fm/wp-content/uploads/pazar-genc-radyo.jpg,6
 Ankara Havaları,http://37.247.98.8/stream/30/,https://ik.fskit.net/radyohome/media/station/19/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=6b727a&tr=w-1000%3A%2Cbg-6b727a&v=060520030000,6
 Radyo Ankara,https://radyoankara.ozelip.net:8152/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ankara.jpg,6
 
