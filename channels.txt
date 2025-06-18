@@ -1,8 +1,8 @@
 TRT FM,https://trt.radyotvonline.net/trtfm,https://upload.wikimedia.org/wikipedia/commons/thumb/a/a3/TRT_FM_logo.svg/1200px-TRT_FM_logo.svg.png,1
 Power Türk Love,https://livetv.powerapp.com.tr/plove/love.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_36.png?v=10,1
-Best FM,http://46.20.7.125/bestfmaac,https://www.canliradyodinle.fm/wp-content/uploads/best-fm-dinle-100x100.png,1
+Best FM,https://officialbestfm.radyotvonline.net/bestfmofficial?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/best-fm-dinle-100x100.png,1
 Power Türk Akustik,https://livetv.powerapp.com.tr/pturkakustik/akustik.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_42.png?v=4,1
-Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,http://2.bp.blogspot.com/-krUs-limNs8/WaO5cbUlhSI/AAAAAAAAUIo/9UD94Dj4ghwFSpB2xou_Gv1viFsd02MhwCLcBGAs/s1600/05.jpg,1
+Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/joy-turk-dinle.jpg,1
 Power Türk Slow,https://listen.powerapp.com.tr/powerturkslow/abr/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_2450.png?v=4,1
 Alem FM,http://turkmedya.radyotvonline.com/turkmedya/alemfm.stream/playlist.m3u8,https://upload.wikimedia.org/wikipedia/tr/b/bf/Alem_fm.jpg,1
 Power Türk Taptaze,https://livetv.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_43.png?v=4,1
