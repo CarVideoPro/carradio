@@ -36,7 +36,7 @@ Radyo 7 Arabesk,https://moondigitaledge2.radyotvonline.net/radyo7arabesk/playlis
 Arabeskland FM,https://moondigitalmaster.radyotvonline.net/arabeskland/playlist.m3u8,https://i.ibb.co/7tcZy8ky/Ba-l-ks-z.jpg,2
 BABA Radyo,https://officialbabaradyo.radyotvonline.net/babaofficial?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/babaradyo-100x100.jpg,2
 Efsane 4lü,https://moondigitaledge.radyotvonline.net/efsane4lu/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/efsane4lu.jpg,2
-Number One Damar,http://n10101m.mediatriple.net/trdamar,https://www.numberone.com.tr/wp-content/uploads/2017/07/N1_TR_Damar.png,2
+Number One Damar,https://n10101m.mediatriple.net/videoonlylive/mtkgeuihrlfwlive/u_stream_5c9e3ce2c120f_1/playlist.m3u8,https://www.numberone.com.tr/wp-content/uploads/2017/07/N1_TR_Damar.png,2
 
 
 
