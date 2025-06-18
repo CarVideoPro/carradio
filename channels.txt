@@ -42,7 +42,7 @@ Number One Damar,https://n10101m.mediatriple.net/videoonlylive/mtkgeuihrlfwlive/
 
 Diyanet Kuran Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c14192aa92.smil/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/kuran-radyo.jpg,5
 Diyanet Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c1171d7d2a.smil/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/Diyanet-Radyo-100x100.jpg,5
-Kuran Meal Radyo,http://37.247.98.8/stream/33/,http://4.bp.blogspot.com/-_3i5902YQWQ/WabGVnv3VTI/AAAAAAAAUcc/ctQ8jFErVMAPneVm7GDfUNpAlrm0f5KOgCLcBGAs/s1600/k.jpg,5
+Radyo 7 Kuran Meali,https://ssl4.radyotvonline.com/radyohome/kuranmeal.stream_aac/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-7-kuran-meali.jpg,5
 Enderun FM,https://yayin2.canliyayin.org:10996/;,https://www.canliradyodinle.fm/wp-content/uploads/enderun-fm.jpg,5
 Lalegül FM,https://icecast.netmedya.net/lalegulfm,https://www.canliradyodinle.fm/wp-content/uploads/lalegul-fm.jpg,5
 Erkam Radyo,https://api-tv5.yayin.com.tr:8002/mp3?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/erkam-radyo.jpg,5
@@ -50,13 +50,13 @@ Bayram FM,https://sslyayin.netyayin.net/3442/stream/;stream.mp3,https://www.canl
 TGRT FM,https://canli1.ihlasdigitalassets.com/tgrtfm.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/tgrtfm.jpg,5
 Umut FM,https://radyodinle1.turkhosted.com/yayin?uri=yayin1.canliyayin.org:8888/&tkn=O7NAp2ZQLndu1RbUzqxKWA&tms=1750305592,https://www.canliradyodinle.fm/wp-content/uploads/umut-fm.jpg,5
 Radyo Feza,https://yayin.radyofeza.com/8002/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-feza-dinle-100x100.jpg,5
-Davet Radyo,https://stream.radiojar.com/ggu0fd6qu2wtv?,https://www.canliradyodinle.fm/wp-content/uploads/davet-radyo.jpg,5
+Radyo Nida,https://anadolu.liderhost.com.tr/8106/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-nida.jpg,5
 Radyo EN,https://yayin2.canliyayin.org:7222/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-en.jpg,5
 Radyo Gül,https://yayin2.canliyayin.org:10989/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-gul.jpg,5
 
 
-DOST FM,http://yayin.netyayin.net:1515/streype=.mp3,http://3.bp.blogspot.com/-gBQyWWVPTKs/Wj0KXES0ZxI/AAAAAAAAVo4/hDn5Vo0Si0cjUAmEUaIFUW9lXgNdityxwCLcBGAs/s1600/09.jpg,6
-Ege Havaları,http://37.247.98.8/stream/29/,http://2.bp.blogspot.com/-YRswiKMyLUM/WaOvzMCvuJI/AAAAAAAAUHk/gu89ed7glGssGkDCRPBUtpWEaegSFdJAgCLcBGAs/s1600/ege.jpg,6
+Banaz DOST FM,https://sssx.radyosfer.com/banazdostfm/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/banaz-dost-fm.jpg,6
+Ege Havaları,https://moondigitaledge.radyotvonline.net/egehavalari/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ege-havalari.jpg,6
 Radyo Ekin,https://yayin.turkhosted.com:6006/stream?/;stream.mp3/,http://3.bp.blogspot.com/-mM75U7S2s0w/WaO2foN2qTI/AAAAAAAAUIA/SXrgKMQpDBwahViHrkgF_Edop_TqweSSACLcBGAs/s1600/e.jpg,6
 Elazığ Radyo 2000,https://radyodinle1.turkhosted.com/yayin?uri=yayin.turkiletisim.com.tr:1092/&tkn=w279SoqGbVI_7R5sI3tWOA&tms=1750298498,http://4.bp.blogspot.com/-Yovc1dbCO64/WaO3DwdPeqI/AAAAAAAAUII/LGLw5izmSy49C8k7puiOndZ3DXZZTYphwCLcBGAs/s1600/2000.jpg,6
 FM23,https://radyodinle1.turkhosted.com/yayin?uri=radyofm23.canliyayinda.com:8280/&tkn=tQWsN2Ooo5bXRT_s5wIq5Q&tms=1750296434,http://4.bp.blogspot.com/-wfj5IekgVvk/WaQeCJXPHWI/AAAAAAAAUOY/gI8Vkr6LixAW2AKWK8TCNh83wrkKDTvTQCLcBGAs/s1600/23.jpg,6
