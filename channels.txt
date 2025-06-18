@@ -30,7 +30,7 @@ Radyo 7,https://moondigitaledge.radyotvonline.net/radyo7/playlist.m3u8,https://w
 Radyo Alaturka,https://yayin.jumboserver.net:9100/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-alaturka-dinle.jpg,0
 
 Arabesk Radyo,https://yayin.santraltr.com/hls/arabeskyeni.m3u8,https://is2-ssl.mzstatic.com/image/thumb/Purple19/v4/ac/38/1a/ac381a7b-8b9d-e1ea-d07e-ca783d8d990b/source/512x512bb.jpg,2
-Damar Radyo,https://moondigitaledge2.radyotvonline.net/radyo7arabesk/playlist.m3u8,https://www.sahmatajans.com/wp-content/uploads/2022/04/damarfmturkiye-logo.jpg,2
+Damar Radyo,https://live.radyositesihazir.com/7000/stream/;stream.mp3,https://www.sahmatajans.com/wp-content/uploads/2022/04/damarfmturkiye-logo.jpg,2
 Dost Radyo,https://yayin.santraltr.com/hls/dost.m3u8,https://i.ibb.co/HDWb9kdg/dost.jpg,2
 Radyo 7 Arabesk,https://moondigitaledge2.radyotvonline.net/radyo7arabesk/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-7-arabesk.jpg,2
 Arabeskland FM,https://moondigitalmaster.radyotvonline.net/arabeskland/playlist.m3u8,http://3.bp.blogspot.com/-ZeJ9KJPMnk4/WZwcrBtjwjI/AAAAAAAATyM/9Rj4XbCFagcnAZ52S4axkgYT7X0qOloBgCLcBGAs/s1600/13.jpg,2
