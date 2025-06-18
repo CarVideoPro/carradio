@@ -383,6 +383,15 @@
             let hls = new Hls(); 
             let currentChannelItem = null;
 
+            // Flag to track if user has interacted with the page
+            let hasUserInteracted = false;
+
+            // Add an event listener to capture first user interaction
+            document.body.addEventListener('click', () => {
+                hasUserInteracted = true;
+            }, { once: true }); // Only need to detect it once
+
+
             // --- UI Functions ---
             const createCategorySections = () => {
                 CATEGORIES.forEach(cat => {
@@ -412,16 +421,28 @@
             
             // --- Player Logic ---
             const playAudio = () => {
-                audioPlayer.play().catch(e => {
-                    console.error("Audio play failed:", e);
-                    // This error usually happens if the user hasn't interacted with the document yet
-                    // Or if there's an issue with the stream itself (e.g., auto-play blocked)
+                // Only attempt to play if user has interacted, or if auto-play is allowed (less common)
+                if (!audioPlayer.paused) { // Already playing
+                    return;
+                }
+                
+                audioPlayer.play().then(() => {
+                    console.log("Audio playback started successfully.");
+                }).catch(e => {
+                    console.warn("Audio play failed, likely due to browser autoplay policy or stream issue:", e);
                     updatePlayerUI(false);
-                    playerChannelName.textContent = "Play failed (Click play button)";
+                    if (e.name === "NotAllowedError" || e.name === "AbortError") {
+                        playerChannelName.textContent = "Click play button to start.";
+                    } else {
+                        playerChannelName.textContent = "Play failed (Check console)";
+                    }
                 });
             };
 
             const togglePlayPause = () => {
+                // Set interaction flag if user clicks play/pause button
+                hasUserInteracted = true; 
+
                 // Check if an audio source is set (either directly or via HLS)
                 if (!audioPlayer.src && (!hls || !hls.url)) {
                     console.warn("No audio source set to play.");
@@ -440,7 +461,7 @@
                 try {
                     const response = await fetch(plsUrl);
                     if (!response.ok) {
-                        throw new new Error(`HTTP error! status: ${response.status} for PLS file: ${plsUrl}`);
+                        throw new Error(`HTTP error! status: ${response.status} for PLS file: ${plsUrl}`);
                     }
                     const text = await response.text();
                     const lines = text.split('\n');
@@ -455,9 +476,15 @@
                             if (streamUrl) {
                                 console.log("PLS found stream URL:", streamUrl);
                                 audioPlayer.src = streamUrl;
+                                // Only attempt to play if user has interacted
                                 audioPlayer.addEventListener('loadeddata', () => { 
                                     playerContainer.classList.add('playing');
-                                    playAudio();
+                                    if (hasUserInteracted) { // Only autoplay if user has interacted
+                                        playAudio();
+                                    } else {
+                                        playerChannelName.textContent = "Click play to start " + channel.name;
+                                        updatePlayerUI(false); // Show play icon
+                                    }
                                 }, { once: true });
                                 streamFound = true;
                                 break; // Stop after finding the first stream URL
@@ -514,7 +541,12 @@
                         hls.loadSource(channel.streamUrl);
                         hls.once(Hls.Events.MANIFEST_PARSED, () => {
                            playerContainer.classList.add('playing');
-                           playAudio();
+                           if (hasUserInteracted) { // Only autoplay if user has interacted
+                               playAudio();
+                           } else {
+                               playerChannelName.textContent = "Click play to start " + channel.name;
+                               updatePlayerUI(false); // Show play icon
+                           }
                         });
                         hls.on(Hls.Events.ERROR, function (event, data) {
                             console.error('HLS.js error:', data);
@@ -544,7 +576,12 @@
                         audioPlayer.src = channel.streamUrl;
                         audioPlayer.addEventListener('loadedmetadata', () => {
                             playerContainer.classList.add('playing');
-                            playAudio();
+                            if (hasUserInteracted) { // Only autoplay if user has interacted
+                                playAudio();
+                            } else {
+                                playerChannelName.textContent = "Click play to start " + channel.name;
+                                updatePlayerUI(false); // Show play icon
+                            }
                         }, { once: true });
                     } else {
                         console.error("HLS is not supported in this browser, and no native HLS playback available.");
@@ -559,7 +596,12 @@
                     audioPlayer.src = channel.streamUrl;
                     audioPlayer.addEventListener('loadeddata', () => { 
                         playerContainer.classList.add('playing');
-                        playAudio();
+                        if (hasUserInteracted) { // Only autoplay if user has interacted
+                            playAudio();
+                        } else {
+                            playerChannelName.textContent = "Click play to start " + channel.name;
+                            updatePlayerUI(false); // Show play icon
+                        }
                     }, { once: true });
                     // Error listener for direct streams is handled globally below
                 }
@@ -602,7 +644,7 @@
                         }
                     });
 
-                    // Auto-select and play the first channel after all channels are rendered
+                    // Auto-select the first channel. Play will be handled based on user interaction.
                     if (firstChannelToLoad) {
                         selectChannel(firstChannelToLoad.channel, firstChannelToLoad.element);
                     }
@@ -652,8 +694,13 @@
                             errorMsg = `Unknown error code: ${audioPlayer.error.code}`;
                             break;
                     }
+                    // Add more detailed message if available from the browser
                     if (audioPlayer.error.message) {
                         errorMsg += ` Detail: ${audioPlayer.error.message}`;
+                    }
+                    // For Chrome, sometimes the specific reason is in `e.message` directly or in inner errors
+                    if (e && e.message && !audioPlayer.error.message.includes(e.message)) { // Avoid duplication
+                        errorMsg += ` Browser Detail: ${e.message}`;
                     }
                 }
                 playerChannelName.textContent = `Error: ${errorMsg}`;
