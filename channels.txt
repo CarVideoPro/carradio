@@ -20,9 +20,9 @@ Radyo 45lik,https:\/\/stream.radyo45lik.com:4545\/,https://radyo45lik.com/wp-con
 90lar,https://moondigitaledge.radyotvonline.net/90lar/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/doksanlar-fm-dinle.jpg,0
 Aşk FM,https://stream.netradyom.com/radio/8000/radio.mp3?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/ask-fm.jpg,0
 Best FM,https://officialbestfm.radyotvonline.net/bestfmofficial?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/best-fm-dinle-100x100.png,0
-Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,http://2.bp.blogspot.com/-krUs-limNs8/WaO5cbUlhSI/AAAAAAAAUIo/9UD94Dj4ghwFSpB2xou_Gv1viFsd02MhwCLcBGAs/s1600/05.jpg,0
-Alem FM,http://turkmedya.radyotvonline.com/turkmedya/alemfm.stream/playlist.m3u8,https://upload.wikimedia.org/wikipedia/tr/b/bf/Alem_fm.jpg,0
-Kral FM,http://46.20.3.204:80/,https://www.canliradyodinle.fm/wp-content/uploads/kral-fm.jpg,0
+Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/joy-turk-dinle.jpg,0
+Alem FM,https://alemfm.radyotvonline.net/alemfmaac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/alem-fm.jpg,0
+Kral FM,https://dygedge2.radyotvonline.net/kralfm/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/kral-fm.jpg,0
 Metro FM,https://playerservices.streamtheworld.com/api/livestream-redirect/METRO_FM128AAC.aac?/;stream.mp3,https://mediacdns.karnaval.com/media/station_media/2/logos/meta_image.png?v=110924010401,0
 Pal Nostalji,http://shoutcast.radyogrup.com:1010/;,https://static.mytuner.mobi/media/tvos_radios/zrrq9dl36dww.jpg,0
 Pop 90lar,https://playerservices.streamtheworld.com/api/livestream-redirect/POP90128AAC.aac?/;stream.mp3,https://ik.fskit.net/radyohome/media/station/31/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=ff9833&tr=w-1000%3A%2Cbg-ff9833&v=060520030000,0
