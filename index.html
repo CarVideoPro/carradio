@@ -179,14 +179,32 @@
             box-shadow: 0 -4px 12px rgba(0,0,0,0.25);
             display: flex;
             align-items: center;
+            justify-content: center; /* Center the two main groups */
+            gap: 40px; /* Space between player group and header group */
             padding: 8px 24px;
             z-index: 1000;
         }
 
+        /* New group containers for player and header sections */
+        .player-group,
+        .header-group {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0; /* Prevent these groups from shrinking excessively */
+        }
+
+        .player-group {
+            gap: 16px; /* Space between player logo, info, and controls */
+        }
+
+        .header-group {
+            gap: 12px; /* Space between header logo and text container */
+        }
+
         /* Styles for header elements within the bottom bar */
         .app-header-logo-in-bar { /* The app logo from the original header */
-            width: 40px;
-            height: 40px;
+            width: 40px; /* Smaller size */
+            height: 40px; /* Smaller size */
             flex-shrink: 0;
         }
 
@@ -194,13 +212,18 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
-            margin-left: 10px;
+            margin-left: 0; /* Removed margin as gap handles it now */
             flex-shrink: 0;
-        
+            white-space: nowrap; /* Ensure text doesn't wrap */
+            overflow: hidden; /* Hide overflow if text is too long */
+            text-overflow: ellipsis; /* Add ellipsis for overflow */
+            max-width: 200px; /* Limit width to prevent pushing too much, adjust as needed */
         }
 
-        .app-header-logo-in-bar + .header-text-container-in-bar + div[style="flex-grow: 1;"] {
-            flex-grow: 1; /* Spacer to push player elements to the right */
+        .header-text-container-in-bar .app-name { /* Specific style for the app name within the bar */
+            font-size: 20px; /* Smaller font size */
+            font-weight: 500;
+            color: var(--md-sys-color-on-surface); /* Assuming this color is desired */
         }
         
         /* Styles for player elements within the bottom bar */
@@ -223,7 +246,7 @@
         .bottom-fixed-bar .player-info {
             flex-grow: 0; /* Player info should not take too much space, give it a max-width */
             text-align: left; /* Align text to left */
-            margin: 0 16px; /* Space between logo and text/controls */
+            margin: 0; /* Removed margin as gap handles it now */
             white-space: nowrap; /* Prevent wrapping for long names */
             overflow: hidden; /* Hide overflow */
             text-overflow: ellipsis; /* Add ellipsis for overflow */
@@ -244,7 +267,7 @@
         .bottom-fixed-bar .player-controls {
             width: auto; /* Let button size itself */
             padding: 0; /* Remove previous padding */
-            margin-left: 16px; /* Space from player info */
+            margin-left: 0; /* Removed margin as gap handles it now */
             flex-shrink: 0; /* Don't shrink controls */
         }
 
@@ -327,11 +350,11 @@
             .bottom-fixed-bar {
                 height: 80px; /* Shorter bar on mobile */
                 padding: 8px 12px; /* Reduced padding */
+                gap: 0; /* No gap needed as header group is hidden */
             }
-            /* Hide header elements on small screens */
-            .app-header-logo-in-bar,
-            .header-text-container-in-bar {
-                display: none; /* Hide header elements */
+            /* Hide header group on mobile */
+            .header-group {
+                display: none;
             }
             /* Player elements adjustments for mobile when header is hidden */
             .bottom-fixed-bar .player-logo-container {
@@ -339,7 +362,7 @@
                 height: 50px;
             }
             .bottom-fixed-bar .player-info {
-                margin: 0 10px; /* Reduced margin for player info */
+                margin: 0; /* Ensure no extra margins */
                 /* Max-width adjusted as header is gone, leaving more space for player info */
                 max-width: calc(100% - 50px - 50px - (12px * 2) - (10px * 2)); /* Logo, button, padding, margin */
             }
@@ -363,29 +386,31 @@
     </main>
 
     <div class="bottom-fixed-bar" id="player-container">
-        <img src="logo.png" alt="App Logo" class="logo app-header-logo-in-bar">
-        <div class="header-text-container-in-bar">
-            <h4 class="app-name">Car Video Pro Radio</h4>
-            <a href="https://t.me/car_video_pro" target="_blank" rel="noopener noreferrer" class="telegram-link">Telegram: t.me/car_video_pro</a>
+        <div class="player-group">
+            <div class="player-logo-container">
+                <img id="player-logo" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Selected Radio Logo">
+            </div>
+            
+            <div class="player-info">
+                <h2 id="player-channel-name">Select a Channel</h2>
+                <div id="wave-container" class="wave-container">
+                    </div>
+            </div>
+            
+            <div class="player-controls">
+                <button id="play-pause-btn" aria-label="Play/Pause">
+                    <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
+                    <svg id="pause-icon" class="hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
+                </button>
+            </div>
         </div>
-        
-        <div style="flex-grow: 1;"></div>
 
-        <div class="player-logo-container">
-            <img id="player-logo" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Selected Radio Logo">
-        </div>
-        
-        <div class="player-info">
-            <h2 id="player-channel-name">Select a Channel</h2>
-            <div id="wave-container" class="wave-container">
-                </div>
-        </div>
-        
-        <div class="player-controls">
-            <button id="play-pause-btn" aria-label="Play/Pause">
-                <svg id="play-icon" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"></path></svg>
-                <svg id="pause-icon" class="hidden" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"></path></svg>
-            </button>
+        <div class="header-group">
+            <img src="logo.png" alt="App Logo" class="logo app-header-logo-in-bar">
+            <div class="header-text-container-in-bar">
+                <h1 class="app-name">Car Video Pro Radio</h1>
+                <a href="https://t.me/car_video_pro" target="_blank" rel="noopener noreferrer" style="font-size: 12px;" class="telegram-link">Telegram: t.me/car_video_pro</a>
+            </div>
         </div>
     </div>
 
@@ -511,7 +536,7 @@
                                     if (hasUserInteracted) { // Only autoplay if user has interacted
                                         playAudio();
                                     } else {
-                                        playerChannelName.textContent = " " + channel.name;
+                                        playerChannelName.textContent = "" + channel.name;
                                         updatePlayerUI(false); // Show play icon
                                     }
                                 }, { once: true });
