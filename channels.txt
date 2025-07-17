@@ -6,7 +6,7 @@ Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_
 Power Türk Slow,https://listen.powerapp.com.tr/powerturkslow/abr/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_2450.png?v=4,1
 Alem FM,https://alemfm.radyotvonline.net/alemfmaac?/;stream.mp3,https://upload.wikimedia.org/wikipedia/tr/b/bf/Alem_fm.jpg,1
 Power Türk Taptaze,https://livetv.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_43.png?v=4,1
-Radyo Pause,https://radyopause.ozelip.com.tr:8040/stream?/;stream.mp3,https://www.radyopause.com.tr/assets/images/logo/logo.png,1
+Radyo Pause,https://radyopause.ozelip.com.tr:8040/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-pause.png,1
 Radyo Trio,https://radyotrio.radyotvonline.net/radyotrio?/;stream.mp3,https://play-lh.googleusercontent.com/hgg2k7Rj0wQt5vlBdhYdl_A539_mnz8nxvfpOzB4lSwg8iZxjkwacyPX40XiadyA3Ys,1
 Radyo Turkuvaz,https://trkvz-radyolar.ercdn.net/radyoturkuvaz/playlist.m3u8,https://yt3.googleusercontent.com/I1TUPTdixUHEx_Lt0LOqZIGJcVLsmzVMQJ_KE_fHbXoX-4LO9Dte4uJwGV02KUGZ9Ft4sMt6_w=s900-c-k-c0x00ffffff-no-rj,1
 Radyo Viva,https://listen.radyotvonline.net/hls/play/adsonline_radyoviva.m3u8,https://play-lh.googleusercontent.com/BYbWUPuUdFpWoh8AQBMxjLV4psmBUo7J6azOOPzbHYNJSgeIv9gG84taDx4QzsaUxiI,1
