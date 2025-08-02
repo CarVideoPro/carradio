@@ -58,8 +58,8 @@ Radyo Gül,https://yayin2.canliyayin.org:10989/;stream.mp3,https://www.canlirady
 Banaz DOST FM,https://sssx.radyosfer.com/banazdostfm/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/banaz-dost-fm.jpg,6
 Ege Havaları,https://moondigitaledge.radyotvonline.net/egehavalari/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ege-havalari.jpg,6
 Radyo Ekin,https://yayin.turkhosted.com:6006/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ekin-fm.jpg,6
-Elazığ Radyo 2000,https://radyodinle1.turkhosted.com/yayin?uri=yayin.turkiletisim.com.tr:1092/&tkn=w279SoqGbVI_7R5sI3tWOA&tms=1750298498,https://www.canliradyodinle.fm/wp-content/uploads/elazig-radyo-2000.jpg,6
-FM23,https://radyodinle1.turkhosted.com/yayin?uri=radyofm23.canliyayinda.com:8280/&tkn=tQWsN2Ooo5bXRT_s5wIq5Q&tms=1750296434,https://www.canliradyodinle.fm/wp-content/uploads/radyofm23.jpg,6
+Elazığ Ezgi Radyo,https://sslyayin.netyayin.net/elazigezgiradyo/stream/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/ezgi-radyo.jpg,6
+Radyo Hazar,https://radyodinle1.turkhosted.com/yayin?uri=radyohazar.canliyayinda.com:8286/&tkn=JrNLyqqPmGQncRArZZiDyg&tms=1754268126,https://www.canliradyodinle.fm/wp-content/uploads/radyo-hazar-100x100.jpg,6
 Pazar Genç Radyo,https://dl.gen.tr/gencradyo/canli?,https://www.canliradyodinle.fm/wp-content/uploads/pazar-genc-radyo.jpg,6
 Ankara Havaları,https://moondigitaledge2.radyotvonline.net/radyo7ankara/playlist.m3u8,https://ik.fskit.net/radyohome/media/station/19/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=6b727a&tr=w-1000%3A%2Cbg-6b727a&v=060520030000,6
 Radyo Ankara,https://radyoankara.ozelip.net:8152/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ankara.jpg,6
@@ -80,3 +80,4 @@ S SPORTS,https://live.sportstv.com.tr/hls/low/sportstv_hd/index.m3u8,https://i.i
 A SPOR,https://live-cdn-65984.varplaycdn.cfd/aspor/index.m3u8,https://i.ibb.co/rwnrgFV/a-spor.png,4
 Lig Radyo,https://ligradyo.radyotvonline.net/ligradyo,https://www.canliradyodinle.fm/wp-content/uploads/lig-radyo.jpg,4
 Radyo Spor,https://moondigitaledge.radyotvonline.net/radyospor/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-spor.jpg,4
+
