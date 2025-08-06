@@ -338,6 +338,24 @@
             50% { transform: scaleY(1); }
             100% { transform: scaleY(0.1); }
         }
+        
+        /* Drag-and-Drop styles */
+        .channel-item.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+            /* Resim boyutunun değişmemesi için */
+            transform: none !important; 
+        }
+        
+        .drag-placeholder {
+            width: 90px;
+            height: 90px; /* Kanal öğesinin boyutuna eşit yükseklik */
+            min-width: 90px; /* Kanal öğesinin boyutuna eşit genişlik */
+            border: 2px dashed var(--md-sys-color-primary);
+            border-radius: 12px;
+            margin-right: 20px; /* Kanal öğeleri arasındaki boşluk */
+            box-sizing: border-box;
+        }
 
         /* --- Media Queries (Adjusted for new layout) --- */
         @media (max-width: 768px) {
@@ -436,25 +454,20 @@
             const playPauseBtn = document.getElementById('play-pause-btn');
             const playIcon = document.getElementById('play-icon');
             const pauseIcon = document.getElementById('pause-icon');
-            // Renamed from player-container to bottom-fixed-bar with id player-container for JS compatibility
             const playerContainer = document.getElementById('player-container'); 
             const waveContainer = document.getElementById('wave-container');
 
             // Initialize Hls.js instance globally.
-            // We re-initialize hls in selectChannel if it's destroyed due to a fatal error.
             let hls = new Hls(); 
             let currentChannelItem = null;
-
-            // Flag to track if user has interacted with the page
             let hasUserInteracted = false;
+            let draggedItem = null;
+            let placeholder = null;
 
-            // Add an event listener to capture first user interaction
             document.body.addEventListener('click', () => {
                 hasUserInteracted = true;
-            }, { once: true }); // Only need to detect it once
+            }, { once: true });
 
-
-            // --- UI Functions ---
             const createCategorySections = () => {
                 CATEGORIES.forEach(cat => {
                     const categoryDiv = document.createElement('div');
@@ -472,19 +485,17 @@
                     playIcon.classList.add('hidden');
                     pauseIcon.classList.remove('hidden');
                     playPauseBtn.setAttribute('aria-label', 'Pause');
-                    playerContainer.classList.add('playing'); // Show wave
+                    playerContainer.classList.add('playing');
                 } else {
                     playIcon.classList.remove('hidden');
                     pauseIcon.classList.add('hidden');
                     playPauseBtn.setAttribute('aria-label', 'Play');
-                    playerContainer.classList.remove('playing'); // Hide wave
+                    playerContainer.classList.remove('playing');
                 }
             };
             
-            // --- Player Logic ---
             const playAudio = () => {
-                // Only attempt to play if user has interacted, or if auto-play is allowed (less common)
-                if (!audioPlayer.paused) { // Already playing
+                if (!audioPlayer.paused) {
                     return;
                 }
                 
@@ -502,10 +513,8 @@
             };
 
             const togglePlayPause = () => {
-                // Set interaction flag if user clicks play/pause button
                 hasUserInteracted = true; 
 
-                // Check if an audio source is set (either directly or via HLS)
                 if (!audioPlayer.src && (!hls || !hls.url)) {
                     console.warn("No audio source set to play.");
                     return; 
@@ -518,7 +527,6 @@
                 }
             };
 
-            // Function to load and play a stream from a PLS file
             const loadPLSStream = async (plsUrl) => {
                 try {
                     const response = await fetch(plsUrl);
@@ -531,25 +539,22 @@
 
                     for (const line of lines) {
                         const trimmedLine = line.trim();
-                        // Look for lines starting with 'File' followed by a number and '='
-                        // or just 'File=' (case-insensitive for 'file=')
                         if (/^File\d*=/i.test(trimmedLine)) { 
                             const streamUrl = trimmedLine.substring(trimmedLine.indexOf('=') + 1).trim();
                             if (streamUrl) {
                                 console.log("PLS found stream URL:", streamUrl);
                                 audioPlayer.src = streamUrl;
-                                // Only attempt to play if user has interacted
                                 audioPlayer.addEventListener('loadeddata', () => { 
                                     playerContainer.classList.add('playing');
-                                    if (hasUserInteracted) { // Only autoplay if user has interacted
+                                    if (hasUserInteracted) {
                                         playAudio();
                                     } else {
-                                        playerChannelName.textContent = "" + channel.name;
-                                        updatePlayerUI(false); // Show play icon
+                                        playerChannelName.textContent = "" + currentChannelItem.dataset.name;
+                                        updatePlayerUI(false);
                                     }
                                 }, { once: true });
                                 streamFound = true;
-                                break; // Stop after finding the first stream URL
+                                break;
                             }
                         }
                     }
@@ -565,49 +570,39 @@
                 }
             };
 
-
             const selectChannel = (channel, element) => {
-                // Hide wave from previous channel immediately
                 playerContainer.classList.remove('playing');
-
-                // Update player info
                 playerLogo.src = channel.logoUrl;
                 playerChannelName.textContent = channel.name;
                 
-                // Update visual active state
                 if (currentChannelItem) {
                     currentChannelItem.classList.remove('active');
                 }
                 currentChannelItem = element;
                 currentChannelItem.classList.add('active');
 
-                // Stop any previous HLS stream and detach media, or clear direct source
-                if (hls && hls.media === audioPlayer) { // Only stop/detach if hls was actively using this audioPlayer
-                    hls.stopLoad(); // Stops loading of segments
-                    hls.detachMedia(); // Detaches the media element
+                if (hls && hls.media === audioPlayer) {
+                    hls.stopLoad();
+                    hls.detachMedia();
                 }
-                audioPlayer.src = ''; // Clear previous audio source immediately
+                audioPlayer.src = '';
 
-                // Determine stream type
-                // More robust check for HLS (covers .m3u8, query params, common path patterns)
                 const isHLS = /((\.m3u8($|\?))|(\/playlist\.m3u8($|\?)))/i.test(channel.streamUrl);
-                // Check for PLS files
                 const isPLS = /(\.pls($|\?))/i.test(channel.streamUrl);
 
                 if (isHLS) {
                     if (Hls.isSupported()) {
-                        // Ensure hls instance is correctly attached
                         if (!hls.media || hls.media !== audioPlayer) {
                              hls.attachMedia(audioPlayer);
                         }
                         hls.loadSource(channel.streamUrl);
                         hls.once(Hls.Events.MANIFEST_PARSED, () => {
                            playerContainer.classList.add('playing');
-                           if (hasUserInteracted) { // Only autoplay if user has interacted
+                           if (hasUserInteracted) {
                                playAudio();
                            } else {
                                playerChannelName.textContent = "" + channel.name;
-                               updatePlayerUI(false); // Show play icon
+                               updatePlayerUI(false);
                            }
                         });
                         hls.on(Hls.Events.ERROR, function (event, data) {
@@ -616,7 +611,6 @@
                                 switch(data.type) {
                                     case Hls.ErrorTypes.NETWORK_ERROR:
                                         console.error("Fatal HLS network error, trying to recover...");
-                                        // Attempt to recover by loading source again or destroying and re-creating HLS
                                         hls.startLoad();
                                         break;
                                     case Hls.ErrorTypes.MEDIA_ERROR:
@@ -624,9 +618,8 @@
                                         hls.recoverMediaError();
                                         break;
                                     default:
-                                        // Cannot recover, destroy and re-create hls instance
                                         hls.destroy();
-                                        hls = new Hls(); // Reinitialize Hls instance for future use
+                                        hls = new Hls();
                                         updatePlayerUI(false);
                                         playerChannelName.textContent = "Error: HLS Stream Failed";
                                         break;
@@ -634,15 +627,14 @@
                             }
                         });
                     } else if (audioPlayer.canPlayType('application/vnd.apple.mpegurl')) {
-                        // Fallback for browsers that natively support HLS (e.g., Safari on iOS)
                         audioPlayer.src = channel.streamUrl;
                         audioPlayer.addEventListener('loadedmetadata', () => {
                             playerContainer.classList.add('playing');
-                            if (hasUserInteracted) { // Only autoplay if user has interacted
+                            if (hasUserInteracted) {
                                 playAudio();
                             } else {
                                 playerChannelName.textContent = "" + channel.name;
-                                updatePlayerUI(false); // Show play icon
+                                updatePlayerUI(false);
                             }
                         }, { once: true });
                     } else {
@@ -651,25 +643,113 @@
                         updatePlayerUI(false);
                     }
                 } else if (isPLS) {
-                    // Handle PLS playlist files
                     loadPLSStream(channel.streamUrl);
                 } else {
-                    // For direct audio streams (like MP3, AAC, etc.)
                     audioPlayer.src = channel.streamUrl;
                     audioPlayer.addEventListener('loadeddata', () => { 
                         playerContainer.classList.add('playing');
-                        if (hasUserInteracted) { // Only autoplay if user has interacted
+                        if (hasUserInteracted) {
                             playAudio();
                         } else {
                             playerChannelName.textContent = "" + channel.name;
-                            updatePlayerUI(false); // Show play icon
+                            updatePlayerUI(false);
                         }
                     }, { once: true });
-                    // Error listener for direct streams is handled globally below
                 }
             };
 
-            // --- Data Fetching and Initialization ---
+            // --- LocalStorage functions ---
+            const saveChannelOrder = () => {
+                CATEGORIES.forEach(cat => {
+                    const categoryRow = document.getElementById(`category-${cat}`);
+                    if (categoryRow) {
+                        const channelUrls = [...categoryRow.querySelectorAll('.channel-item')].map(item => item.dataset.streamUrl);
+                        localStorage.setItem(`channelOrder_${cat}`, JSON.stringify(channelUrls));
+                    }
+                });
+            };
+
+            // --- Drag and Drop Logic ---
+            const handleDragStart = (e) => {
+                draggedItem = e.target.closest('.channel-item');
+                draggedItem.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+
+                placeholder = document.createElement('div');
+                placeholder.classList.add('drag-placeholder');
+                draggedItem.parentNode.insertBefore(placeholder, draggedItem);
+                
+                setTimeout(() => {
+                    draggedItem.style.display = 'none';
+                }, 0);
+            };
+
+            const getDragAfterElement = (container, x) => {
+                const draggableElements = [...container.querySelectorAll('.channel-item:not(.dragging)')];
+
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = x - box.left - box.width / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: -Infinity }).element;
+            };
+
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                const container = e.target.closest('.channel-row');
+                if (!container || !draggedItem) return;
+
+                const afterElement = getDragAfterElement(container, e.clientX);
+                
+                // Eğer farklı bir category-row'a sürükleniyorsa, placeholder'ı oraya taşı
+                if (placeholder.parentNode !== container) {
+                    // Eğer yeni hedef boşsa, doğrudan sonuna ekle
+                    if (container.children.length === 0) {
+                         container.appendChild(placeholder);
+                    } else {
+                        // Aksi halde en yakın öğeyi bulup ekle
+                        const newAfterElement = getDragAfterElement(container, e.clientX);
+                        if (newAfterElement == null) {
+                            container.appendChild(placeholder);
+                        } else {
+                            container.insertBefore(placeholder, newAfterElement);
+                        }
+                    }
+                } else {
+                    // Aynı container içindeyseniz
+                    if (afterElement == null) {
+                        container.appendChild(placeholder);
+                    } else {
+                        container.insertBefore(placeholder, afterElement);
+                    }
+                }
+            };
+
+
+            const handleDrop = (e) => {
+                e.preventDefault();
+                if (draggedItem && placeholder) {
+                    placeholder.parentNode.insertBefore(draggedItem, placeholder);
+                    saveChannelOrder(); // Save the new order
+                }
+            };
+
+            const handleDragEnd = () => {
+                if (draggedItem) {
+                    draggedItem.classList.remove('dragging');
+                    draggedItem.style.display = '';
+                }
+                if (placeholder && placeholder.parentNode) {
+                    placeholder.parentNode.removeChild(placeholder);
+                }
+                draggedItem = null;
+                placeholder = null;
+            };
+
             const fetchAndDisplayChannels = async () => {
                 try {
                     const response = await fetch('./channels.txt');
@@ -677,19 +757,59 @@
                         throw new Error(`HTTP error! status: ${response.status}`);
                     }
                     const data = await response.text();
-                    const channels = data.trim().split('\n').map(line => {
+                    const allChannels = data.trim().split('\n').map(line => {
                         const [name, streamUrl, logoUrl, categoryId] = line.split(',').map(item => item.trim());
                         return { name, streamUrl, logoUrl, categoryId: parseInt(categoryId) };
                     }).filter(ch => ch.name && ch.streamUrl && ch.logoUrl && !isNaN(ch.categoryId));
+                    
+                    const channelMap = new Map(allChannels.map(channel => [channel.streamUrl, channel]));
 
-                    let firstChannelToLoad = null; // To store the first channel
+                    let firstChannelToLoad = null;
+                    const allStoredUrls = new Set();
+                    const storedOrders = new Map();
 
-                    channels.forEach(channel => {
-                        const categoryName = CATEGORIES[channel.categoryId];
-                        if (categoryName) {
-                            const categoryRow = document.getElementById(`category-${categoryName}`);
+                    // Read all stored orders first
+                    CATEGORIES.forEach(cat => {
+                        const storedOrder = localStorage.getItem(`channelOrder_${cat}`);
+                        if (storedOrder) {
+                            try {
+                                const orderedUrls = JSON.parse(storedOrder);
+                                storedOrders.set(cat, orderedUrls);
+                                orderedUrls.forEach(url => allStoredUrls.add(url));
+                            } catch (e) {
+                                console.error(`Error parsing stored order for category ${cat}:`, e);
+                            }
+                        }
+                    });
+
+                    // Display channels based on stored order or default
+                    CATEGORIES.forEach(cat => {
+                        const categoryRow = document.getElementById(`category-${cat}`);
+                        const channelsToDisplay = [];
+                        
+                        // Use stored order if it exists
+                        if (storedOrders.has(cat)) {
+                            storedOrders.get(cat).forEach(url => {
+                                const channel = channelMap.get(url);
+                                if (channel) {
+                                    channelsToDisplay.push(channel);
+                                }
+                            });
+                        }
+
+                        // Get default channels for this category that are not already in a stored list
+                        const defaultChannels = allChannels.filter(ch => 
+                            CATEGORIES[ch.categoryId] === cat && !allStoredUrls.has(ch.streamUrl)
+                        );
+
+                        // Combine and display
+                        [...channelsToDisplay, ...defaultChannels].forEach(channel => {
                             const channelItem = document.createElement('div');
                             channelItem.className = 'channel-item';
+                            channelItem.setAttribute('draggable', 'true');
+                            channelItem.dataset.streamUrl = channel.streamUrl;
+                            channelItem.dataset.logoUrl = channel.logoUrl;
+                            channelItem.dataset.name = channel.name;
                             channelItem.innerHTML = `
                                 <div class="logo-wrapper">
                                     <img src="${channel.logoUrl}" alt="${channel.name} logo" loading="lazy" onerror="this.parentElement.style.display='none'">
@@ -697,16 +817,22 @@
                                 <p class="name" title="${channel.name}">${channel.name}</p>
                             `;
                             channelItem.addEventListener('click', () => selectChannel(channel, channelItem));
+                            
+                            // Drag and drop event listeners
+                            channelItem.addEventListener('dragstart', handleDragStart);
+                            channelItem.addEventListener('dragend', handleDragEnd);
+                            
+                            categoryRow.addEventListener('dragover', handleDragOver);
+                            categoryRow.addEventListener('drop', handleDrop);
+
                             categoryRow.appendChild(channelItem);
 
-                            // Capture the very first valid channel and its element
                             if (!firstChannelToLoad) {
                                 firstChannelToLoad = { channel, element: channelItem };
                             }
-                        }
+                        });
                     });
 
-                    // Auto-select the first channel. Play will be handled based on user interaction.
                     if (firstChannelToLoad) {
                         selectChannel(firstChannelToLoad.channel, firstChannelToLoad.element);
                     }
@@ -721,20 +847,17 @@
                 for (let i = 0; i < numBars; i++) {
                     const bar = document.createElement('div');
                     bar.classList.add('wave-bar');
-                    // Randomize animation duration and delay for a more natural look
-                    bar.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`; // between 0.3s and 0.9s
-                    bar.style.animationDelay = `${Math.random() * -2}s`; // start at a random point in the animation cycle
+                    bar.style.animationDuration = `${Math.random() * 0.5 + 0.5}s`;
+                    bar.style.animationDelay = `${Math.random() * -2}s`;
                     waveContainer.appendChild(bar);
                 }
             };
             
-            // --- Event Listeners ---
             playPauseBtn.addEventListener('click', togglePlayPause);
             audioPlayer.addEventListener('play', () => updatePlayerUI(true));
             audioPlayer.addEventListener('pause', () => updatePlayerUI(false));
             audioPlayer.addEventListener('ended', () => updatePlayerUI(false));
             
-            // Global error listener for audioPlayer
             audioPlayer.addEventListener('error', (e) => {
                 console.error("Audio player error event:", e);
                 let errorMsg = "An unknown error occurred.";
@@ -756,12 +879,10 @@
                             errorMsg = `Unknown error code: ${audioPlayer.error.code}`;
                             break;
                     }
-                    // Add more detailed message if available from the browser
                     if (audioPlayer.error.message) {
                         errorMsg += ` Detail: ${audioPlayer.error.message}`;
                     }
-                    // For Chrome, sometimes the specific reason is in `e.message` directly or in inner errors
-                    if (e && e.message && !audioPlayer.error.message.includes(e.message)) { // Avoid duplication
+                    if (e && e.message && !audioPlayer.error.message.includes(e.message)) {
                         errorMsg += ` Browser Detail: ${e.message}`;
                     }
                 }
@@ -769,8 +890,6 @@
                 updatePlayerUI(false);
             });
 
-
-            // --- Start the App ---
             createCategorySections();
             fetchAndDisplayChannels();
             createWaveBars();
