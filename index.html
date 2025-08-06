@@ -740,6 +740,9 @@
 
             const onDragMove = (e) => {
                 if (!draggedItem) return;
+                
+                // Kaydırmayı engellemek için sadece sürükleme aktifken preventDefault çağır
+                e.preventDefault(); 
 
                 const clientX = e.clientX || (e.touches && e.touches[0].clientX);
                 const clientY = e.clientY || (e.touches && e.touches[0].clientY);
@@ -793,7 +796,7 @@
             const handleTouchStart = (e) => {
                 const item = e.target.closest('.channel-item');
                 if (!item) return;
-                
+
                 touchStartPoint = { 
                     x: e.touches[0].clientX, 
                     y: e.touches[0].clientY,
@@ -809,45 +812,49 @@
 
             const handleTouchMove = (e) => {
                 if (!touchStartPoint) return;
-                
+
                 const moveX = e.touches[0].clientX;
                 const moveY = e.touches[0].clientY;
                 const dist = Math.sqrt(Math.pow(moveX - touchStartPoint.x, 2) + Math.pow(moveY - touchStartPoint.y, 2));
 
-                // Zaman eşiği dolmamışsa ve hareket eşiği aşıldıysa sürüklemeyi başlat
-                if (dist > DRAG_MOVE_THRESHOLD_PX && !draggedItem) {
-                    clearTimeout(dragTimer);
-                    dragTimer = null;
-                    startDrag(e, touchStartPoint.item);
-                }
-
-                if (draggedItem) {
+                if (!draggedItem) {
+                    // Eğer hareket eşiği aşıldıysa, zamanlayıcıyı iptal et ve sürüklemeyi başlat
+                    if (dist > DRAG_MOVE_THRESHOLD_PX) {
+                        clearTimeout(dragTimer);
+                        dragTimer = null;
+                        startDrag(e, touchStartPoint.item);
+                    }
+                } else {
+                    // Sürükleme başladığında kaydırmayı engelle ve sürükleme hareketini işle
                     e.preventDefault();
                     onDragMove(e);
                 }
             };
 
             const handleTouchEnd = (e) => {
+                if (dragTimer) {
+                    clearTimeout(dragTimer);
+                }
+                
                 if (draggedItem) {
                     // Sürükleme işlemi devam ediyorsa bitir
                     onDragEnd();
                 } else {
-                    // Sürükleme başlamadıysa, bu bir tıklamadır
-                    const duration = Date.now() - touchStartPoint.time;
+                    // Sürükleme başlamadıysa, bu bir tıklamadır.
                     const item = touchStartPoint.item;
-                    if (duration < DRAG_THRESHOLD_MS + 50 && item) {
-                         const channel = {
-                             name: item.dataset.name,
-                             streamUrl: item.dataset.streamUrl,
-                             logoUrl: item.dataset.logoUrl
-                         };
-                         selectChannel(channel, item);
+                    if (item) {
+                       const channel = {
+                           name: item.dataset.name,
+                           streamUrl: item.dataset.streamUrl,
+                           logoUrl: item.dataset.logoUrl
+                       };
+                       selectChannel(channel, item);
                     }
-                    clearTimeout(dragTimer);
                 }
-
+                
+                // Durumu sıfırla
                 touchStartPoint = null;
-                draggedItem = null; // Sürükleme durumunu sıfırla
+                draggedItem = null;
             };
 
             const fetchAndDisplayChannels = async () => {
