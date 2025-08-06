@@ -57,6 +57,11 @@
             flex-direction: column;
             min-height: 100vh; /* Allow content to push height */
             overflow-y: auto; /* Allow body to scroll */
+            user-select: none; /* Metin seçimini engelle */
+            -webkit-user-select: none; /* iOS için */
+            -moz-user-select: none; /* Firefox için */
+            -ms-user-select: none; /* IE/Edge için */
+            -webkit-tap-highlight-color: transparent; /* Mobil tıklama vurgusunu kaldır */
         }
 
         /* Main container now holds only the channel sections and is scrollable */
@@ -342,10 +347,8 @@
         
         /* Drag-and-Drop styles */
         .channel-item.dragging {
-            opacity: 0.5;
+            opacity: 0;
             cursor: grabbing;
-            /* Resim boyutunun değişmemesi için */
-            transform: none !important; 
         }
 
         .drag-placeholder {
@@ -366,12 +369,17 @@
             pointer-events: none;
             opacity: 0.7;
             z-index: 10000;
-            width: 90px;
-            height: 90px;
+            width: 80px; /* Yeni: Görsel boyutunu küçülttük */
+            height: 80px; /* Yeni: Görsel boyutunu küçülttük */
+            border-radius: 50%;
             transform: translate(-50%, -50%);
-            transition: opacity 0.2s ease;
         }
 
+        .ghost-item img {
+             width: 100%;
+             height: 100%;
+             object-fit: contain;
+        }
 
         /* --- Media Queries (Adjusted for new layout) --- */
         @media (max-width: 768px) {
@@ -461,6 +469,8 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const CATEGORIES = ["Favoriler", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
+            const DRAG_THRESHOLD_MS = 300; // Sürükleme başlatmak için gereken basılı tutma süresi (ms)
+            const DRAG_MOVE_THRESHOLD_PX = 10; // Sürüklemeyi başlatmak için gereken mesafe (pixel)
 
             // DOM Elements
             const channelListContainer = document.getElementById('channel-list-container');
@@ -479,9 +489,9 @@
             let hasUserInteracted = false;
             let draggedItem = null;
             let placeholder = null;
-            let ghostItem = null; // Mobil için yeni
-            let touchStartX = null;
-            let touchStartY = null;
+            let ghostItem = null;
+            let dragTimer = null;
+            let touchStartPoint = null;
 
             document.body.addEventListener('click', () => {
                 hasUserInteracted = true;
@@ -691,11 +701,9 @@
             // --- Drag and Drop & Touch Logic ---
             const getDragAfterElement = (container, x) => {
                 const draggableElements = [...container.querySelectorAll('.channel-item:not(.dragging)')];
-                
                 if (draggableElements.length === 0) {
                     return null;
                 }
-                
                 return draggableElements.reduce((closest, child) => {
                     const box = child.getBoundingClientRect();
                     const offset = x - box.left - box.width / 2;
@@ -707,23 +715,9 @@
                 }, { offset: -Infinity, element: null }).element;
             };
 
-            // Birleştirilmiş sürükleme başlatma fonksiyonu
             const startDrag = (e, item) => {
-                // Sadece öğenin sürüklenmesi durumunda çalış
-                if (e.type.startsWith('touch')) {
-                    const rect = item.getBoundingClientRect();
-                    // Dokunma koordinatlarını sakla
-                    touchStartX = e.touches[0].clientX - rect.left;
-                    touchStartY = e.touches[0].clientY - rect.top;
+                if (draggedItem) return; // Zaten bir sürükleme varsa başkasını başlatma
 
-                    ghostItem = item.cloneNode(true);
-                    ghostItem.classList.remove('channel-item');
-                    ghostItem.classList.add('ghost-item');
-                    document.body.appendChild(ghostItem);
-                    
-                    e.preventDefault(); // Kaydırma ve tıklama olaylarını engelle
-                }
-                
                 draggedItem = item;
                 draggedItem.classList.add('dragging');
                 
@@ -732,35 +726,38 @@
                 item.parentNode.insertBefore(placeholder, item);
                 
                 setTimeout(() => {
-                    item.style.display = 'none';
+                    item.style.opacity = '0'; // Sadece opacity değiştir, display'i değil
                 }, 0);
+
+                if (e.type.startsWith('touch')) {
+                    ghostItem = draggedItem.cloneNode(true);
+                    ghostItem.classList.remove('channel-item');
+                    ghostItem.classList.add('ghost-item');
+                    document.body.appendChild(ghostItem);
+                }
             };
 
-            // Sürükleme hareketi sırasında placeholder'ı güncelleme
             const onDragMove = (e) => {
                 if (!draggedItem) return;
 
-                const clientX = e.clientX || e.touches[0].clientX;
-                const clientY = e.clientY || e.touches[0].clientY;
+                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
 
                 if (ghostItem) {
                     ghostItem.style.left = `${clientX}px`;
                     ghostItem.style.top = `${clientY}px`;
                 }
 
-                // Sürükleme hedefini bulmak için bir elementFromPoint kullan
                 const dropTarget = document.elementFromPoint(clientX, clientY);
                 if (dropTarget) {
                     const container = dropTarget.closest('.channel-row');
                     if (container) {
                         const afterElement = getDragAfterElement(container, clientX);
                         if (afterElement == null) {
-                            // En sona ekle
                             if (container.lastElementChild !== placeholder) {
                                 container.appendChild(placeholder);
                             }
                         } else {
-                            // Belirtilen öğeden önce ekle
                             if (afterElement.previousElementSibling !== placeholder) {
                                 container.insertBefore(placeholder, afterElement);
                             }
@@ -769,29 +766,87 @@
                 }
             };
             
-            // Sürükleme bitişi ve bırakma
-            const onDragEnd = (e) => {
+            const onDragEnd = () => {
                 if (draggedItem) {
                     draggedItem.classList.remove('dragging');
-                    draggedItem.style.display = '';
+                    draggedItem.style.opacity = '';
 
                     if (placeholder && placeholder.parentNode) {
-                        // Placeholder'ın yerine öğeyi yerleştir
                         placeholder.parentNode.insertBefore(draggedItem, placeholder);
                         placeholder.parentNode.removeChild(placeholder);
                     }
                     saveChannelOrder(); 
                 }
 
-                // Mobil için temizlik
                 if (ghostItem) {
                     ghostItem.remove();
                     ghostItem = null;
                 }
                 draggedItem = null;
                 placeholder = null;
-                touchStartX = null;
-                touchStartY = null;
+                dragTimer = null;
+                touchStartPoint = null;
+            };
+
+            const handleTouchStart = (e) => {
+                const item = e.target.closest('.channel-item');
+                if (!item) return;
+
+                // Tıklama ile sürüklemeyi ayırmak için bir zamanlayıcı başlat
+                dragTimer = setTimeout(() => {
+                    startDrag(e, item);
+                }, DRAG_THRESHOLD_MS);
+
+                touchStartPoint = { 
+                    x: e.touches[0].clientX, 
+                    y: e.touches[0].clientY,
+                    item: item
+                };
+            };
+            
+            const handleTouchMove = (e) => {
+                if (!touchStartPoint) return;
+                
+                const moveX = e.touches[0].clientX;
+                const moveY = e.touches[0].clientY;
+                const dist = Math.sqrt(Math.pow(moveX - touchStartPoint.x, 2) + Math.pow(moveY - touchStartPoint.y, 2));
+
+                // Eğer parmak hareket ederse ve sürükleme başlatılmamışsa
+                if (dist > DRAG_MOVE_THRESHOLD_PX && !draggedItem) {
+                    clearTimeout(dragTimer);
+                    startDrag(e, touchStartPoint.item);
+                }
+
+                // Sürükleme başladığında hareket olaylarını işle
+                if (draggedItem) {
+                    e.preventDefault(); // Varsayılan kaydırma davranışını engelle
+                    onDragMove(e);
+                }
+            };
+
+            const handleTouchEnd = (e) => {
+                if (dragTimer) {
+                    clearTimeout(dragTimer);
+                    dragTimer = null;
+                }
+
+                if (!draggedItem) {
+                    // Sürükleme başlamadıysa, tıklama işlemini yap
+                    const item = e.target.closest('.channel-item');
+                    if (item) {
+                       const channel = {
+                           name: item.dataset.name,
+                           streamUrl: item.dataset.streamUrl,
+                           logoUrl: item.dataset.logoUrl
+                       };
+                       selectChannel(channel, item);
+                    }
+                } else {
+                    // Sürükleme sona erdiyse normal bitiş işlemlerini yap
+                    onDragEnd();
+                }
+
+                touchStartPoint = null;
             };
 
             const fetchAndDisplayChannels = async () => {
@@ -860,24 +915,25 @@
                                 </div>
                                 <p class="name" title="${channel.name}">${channel.name}</p>
                             `;
-                            channelItem.addEventListener('click', () => selectChannel(channel, channelItem));
                             
-                            // Drag and drop event listeners (Desktop)
+                            // Masaüstü sürükle-bırak olayları
                             channelItem.addEventListener('dragstart', (e) => startDrag(e, channelItem));
                             channelItem.addEventListener('dragend', onDragEnd);
-
-                            // Touch event listeners (Mobile)
-                            channelItem.addEventListener('touchstart', (e) => startDrag(e, channelItem));
-                            channelItem.addEventListener('touchend', onDragEnd);
                             
-                            // Yeni: Dragover ve drop event'lerini sadece channel-row'a ekliyoruz
+                            // Mobil dokunmatik olayları
+                            channelItem.addEventListener('touchstart', handleTouchStart);
+                            channelItem.addEventListener('touchmove', handleTouchMove);
+                            channelItem.addEventListener('touchend', handleTouchEnd);
+                            
+                            // Eski click listener'ı kaldırıldı, artık touchend tarafından yönetiliyor.
+
+                            // Sürükleme hedefleri için olay dinleyicileri
                             if (!categoryRow.dataset.listenersAdded) {
-                                categoryRow.addEventListener('dragover', onDragMove);
+                                categoryRow.addEventListener('dragover', (e) => {
+                                    e.preventDefault();
+                                    onDragMove(e);
+                                });
                                 categoryRow.addEventListener('drop', onDragEnd);
-
-                                // Mobil için touchmove dinleyicisi
-                                categoryRow.addEventListener('touchmove', onDragMove);
-
                                 categoryRow.dataset.listenersAdded = 'true';
                             }
                             categoryRow.appendChild(channelItem);
