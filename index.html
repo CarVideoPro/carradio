@@ -367,12 +367,18 @@
             top: 0;
             left: 0;
             pointer-events: none;
-            opacity: 0.7;
+            opacity: 0; /* Başlangıçta görünmez */
             z-index: 10000;
             width: 80px; /* Görsel boyutunu küçülttük */
             height: 80px; /* Görsel boyutunu küçülttük */
             border-radius: 50%;
             transform: translate(-50%, -50%);
+            transition: opacity 0.2s; /* Daha yumuşak bir geçiş için */
+        }
+        
+        /* Sürükleme başladığında hayalet öğe görünür olur */
+        .ghost-item.active {
+            opacity: 0.7;
         }
 
         .ghost-item img {
@@ -469,7 +475,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const CATEGORIES = ["Favoriler", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
-            const DRAG_THRESHOLD_MS = 1000; // Sürükleme başlatmak için gereken basılı tutma süresi (ms)
+            const DRAG_THRESHOLD_MS = 500; // Sürükleme başlatmak için gereken basılı tutma süresi (ms)
             const DRAG_MOVE_THRESHOLD_PX = 10; // Sürüklemeyi iptal etmek için gereken mesafe (pixel)
 
             // DOM Elements
@@ -716,6 +722,8 @@
             };
 
             const startDrag = (e, item) => {
+                console.log("startDrag called for item:", item.dataset.name);
+
                 if (draggedItem) return;
 
                 draggedItem = item;
@@ -725,16 +733,10 @@
                 placeholder.classList.add('drag-placeholder');
                 item.parentNode.insertBefore(placeholder, item);
                 
-                setTimeout(() => {
-                    item.style.opacity = '0';
-                }, 0);
-
                 if (e.type.startsWith('touch')) {
-                    const clone = item.cloneNode(true);
-                    ghostItem = clone.querySelector('.logo-wrapper').cloneNode(true);
-                    ghostItem.classList.remove('logo-wrapper');
-                    ghostItem.classList.add('ghost-item');
-                    document.body.appendChild(ghostItem);
+                    if (ghostItem) {
+                        ghostItem.classList.add('active'); // Hayalet öğeyi görünür yap
+                    }
                 }
             };
 
@@ -746,7 +748,7 @@
 
                 const clientX = e.clientX || (e.touches && e.touches[0].clientX);
                 const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-
+                
                 if (ghostItem) {
                     ghostItem.style.left = `${clientX}px`;
                     ghostItem.style.top = `${clientY}px`;
@@ -773,7 +775,6 @@
             const onDragEnd = () => {
                 if (draggedItem) {
                     draggedItem.classList.remove('dragging');
-                    draggedItem.style.opacity = '';
 
                     if (placeholder && placeholder.parentNode) {
                         placeholder.parentNode.insertBefore(draggedItem, placeholder);
@@ -800,17 +801,31 @@
                 const item = e.target.closest('.channel-item');
                 if (!item) return;
 
+                // Sadece tek dokunuşa izin ver
+                if (e.touches.length > 1) {
+                    clearTimeout(dragTimer);
+                    return;
+                }
+
                 touchStartPoint = { 
                     x: e.touches[0].clientX, 
                     y: e.touches[0].clientY,
                     item: item,
                     time: Date.now()
                 };
-                
+
+                // Hayalet öğeyi oluştur ama görünmez yap
+                const clone = item.cloneNode(true);
+                if (ghostItem) ghostItem.remove(); // Önceki hayaleti temizle
+                ghostItem = clone.querySelector('.logo-wrapper').cloneNode(true);
+                ghostItem.classList.remove('logo-wrapper');
+                ghostItem.classList.add('ghost-item');
+                document.body.appendChild(ghostItem);
+
                 // Sürükleme başlatmak için geri sayım
                 dragTimer = setTimeout(() => {
-                    // Eğer 1 saniye sonra parmak hareket etmediyse, sürüklemeyi başlat.
-                    if (touchStartPoint) {
+                    // Eğer 0.5 saniye sonra parmak hareket etmediyse, sürüklemeyi başlat.
+                    if (touchStartPoint && !draggedItem) {
                         startDrag(e, item);
                     }
                 }, DRAG_THRESHOLD_MS);
@@ -832,6 +847,10 @@
                     // bu bir kaydırma işlemi olabilir. Sürükleme timer'ını iptal et.
                     if (dist > DRAG_MOVE_THRESHOLD_PX) {
                         clearTimeout(dragTimer);
+                        if (ghostItem) {
+                            ghostItem.remove();
+                            ghostItem = null;
+                        }
                         dragTimer = null;
                         touchStartPoint = null;
                     }
