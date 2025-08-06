@@ -469,7 +469,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const CATEGORIES = ["Favoriler", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
-            const DRAG_THRESHOLD_MS = 5000; // Sürükleme başlatmak için gereken basılı tutma süresi (ms)
+            const DRAG_THRESHOLD_MS = 1000; // Sürükleme başlatmak için gereken basılı tutma süresi (ms)
             const DRAG_MOVE_THRESHOLD_PX = 10; // Sürüklemeyi iptal etmek için gereken mesafe (pixel)
 
             // DOM Elements
@@ -806,9 +806,13 @@
                     item: item,
                     time: Date.now()
                 };
-
+                
+                // Sürükleme başlatmak için geri sayım
                 dragTimer = setTimeout(() => {
-                    startDrag(e, item);
+                    // Eğer 1 saniye sonra parmak hareket etmediyse, sürüklemeyi başlat.
+                    if (touchStartPoint) {
+                        startDrag(e, item);
+                    }
                 }, DRAG_THRESHOLD_MS);
             };
 
