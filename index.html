@@ -57,11 +57,6 @@
             flex-direction: column;
             min-height: 100vh; /* Allow content to push height */
             overflow-y: auto; /* Allow body to scroll */
-            user-select: none; /* Metin seçimini engelle */
-            -webkit-user-select: none; /* iOS için */
-            -moz-user-select: none; /* Firefox için */
-            -ms-user-select: none; /* IE/Edge için */
-            -webkit-tap-highlight-color: transparent; /* Mobil tıklama vurgusunu kaldır */
         }
 
         /* Main container now holds only the channel sections and is scrollable */
@@ -347,10 +342,12 @@
         
         /* Drag-and-Drop styles */
         .channel-item.dragging {
-            opacity: 0;
+            opacity: 0.5;
             cursor: grabbing;
+            /* Resim boyutunun değişmemesi için */
+            transform: none !important; 
         }
-
+        
         .drag-placeholder {
             width: 90px;
             height: 90px; /* Kanal öğesinin boyutuna eşit yükseklik */
@@ -359,32 +356,6 @@
             border-radius: 12px;
             margin-right: 20px; /* Kanal öğeleri arasındaki boşluk */
             box-sizing: border-box;
-        }
-
-        /* Mobil sürüklemesi için yeni stil */
-        .ghost-item {
-            position: fixed;
-            top: 0;
-            left: 0;
-            pointer-events: none;
-            opacity: 0; /* Başlangıçta görünmez */
-            z-index: 10000;
-            width: 80px; /* Görsel boyutunu küçülttük */
-            height: 80px; /* Görsel boyutunu küçülttük */
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.2s; /* Daha yumuşak bir geçiş için */
-        }
-        
-        /* Sürükleme başladığında hayalet öğe görünür olur */
-        .ghost-item.active {
-            opacity: 0.7;
-        }
-
-        .ghost-item img {
-             width: 100%;
-             height: 100%;
-             object-fit: contain;
         }
 
         /* --- Media Queries (Adjusted for new layout) --- */
@@ -474,9 +445,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const CATEGORIES = ["Favoriler", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
-            const DRAG_THRESHOLD_MS = 500; // Sürükleme başlatmak için gereken basılı tutma süresi (ms)
-            const DRAG_MOVE_THRESHOLD_PX = 10; // Sürüklemeyi iptal etmek için gereken mesafe (pixel)
+            const CATEGORIES = ["Popüler", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
 
             // DOM Elements
             const channelListContainer = document.getElementById('channel-list-container');
@@ -495,9 +464,6 @@
             let hasUserInteracted = false;
             let draggedItem = null;
             let placeholder = null;
-            let ghostItem = null;
-            let dragTimer = null;
-            let touchStartPoint = null;
 
             document.body.addEventListener('click', () => {
                 hasUserInteracted = true;
@@ -704,12 +670,28 @@
                 });
             };
 
-            // --- Drag and Drop & Touch Logic ---
+            // --- Drag and Drop Logic ---
+            const handleDragStart = (e) => {
+                draggedItem = e.target.closest('.channel-item');
+                draggedItem.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+
+                placeholder = document.createElement('div');
+                placeholder.classList.add('drag-placeholder');
+                draggedItem.parentNode.insertBefore(placeholder, draggedItem);
+                
+                setTimeout(() => {
+                    draggedItem.style.display = 'none';
+                }, 0);
+            };
+
             const getDragAfterElement = (container, x) => {
                 const draggableElements = [...container.querySelectorAll('.channel-item:not(.dragging)')];
+                
                 if (draggableElements.length === 0) {
                     return null;
                 }
+                
                 return draggableElements.reduce((closest, child) => {
                     const box = child.getBoundingClientRect();
                     const offset = x - box.left - box.width / 2;
@@ -721,161 +703,55 @@
                 }, { offset: -Infinity, element: null }).element;
             };
 
-            const startDrag = (item) => {
-                if (draggedItem) return;
+            const handleDragOver = (e) => {
+                e.preventDefault();
+                const container = e.target.closest('.channel-row');
+                if (!container || !draggedItem) return;
+
+                const afterElement = getDragAfterElement(container, e.clientX);
                 
-                draggedItem = item;
-                draggedItem.classList.add('dragging');
-                
-                placeholder = document.createElement('div');
-                placeholder.classList.add('drag-placeholder');
-                item.parentNode.insertBefore(placeholder, item);
-                
-                if (ghostItem) {
-                    ghostItem.classList.add('active'); // Hayalet öğeyi görünür yap
+                if (afterElement == null) {
+                    // Kategori boşsa veya en sağa sürükleniyorsa sona ekle
+                    container.appendChild(placeholder);
+                } else {
+                    // Aksi halde öğeden önce ekle
+                    container.insertBefore(placeholder, afterElement);
                 }
             };
 
-            const onDragMove = (e) => {
-                if (!draggedItem) return;
-                
-                e.preventDefault(); 
 
-                const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-                const clientY = e.clientY || (e.touches && e.touches[0].clientY);
-                
-                if (ghostItem) {
-                    ghostItem.style.left = `${clientX}px`;
-                    ghostItem.style.top = `${clientY}px`;
-                }
-
-                const dropTarget = document.elementFromPoint(clientX, clientY);
-                if (dropTarget) {
-                    const container = dropTarget.closest('.channel-row');
+            const handleDrop = (e) => {
+                e.preventDefault();
+                if (draggedItem && placeholder) {
+                    // Önceki kapsayıcıdaki placeholder'ı kaldır
+                    if (placeholder.parentNode) {
+                       placeholder.parentNode.removeChild(placeholder);
+                    }
+                    
+                    const container = e.target.closest('.channel-row');
                     if (container) {
-                        const afterElement = getDragAfterElement(container, clientX);
+                        const afterElement = getDragAfterElement(container, e.clientX);
                         if (afterElement == null) {
-                            if (container.lastElementChild !== placeholder) {
-                                container.appendChild(placeholder);
-                            }
+                             container.appendChild(draggedItem);
                         } else {
-                            if (afterElement.previousElementSibling !== placeholder) {
-                                container.insertBefore(placeholder, afterElement);
-                            }
+                            container.insertBefore(draggedItem, afterElement);
                         }
                     }
+
+                    saveChannelOrder(); // Save the new order
                 }
             };
-            
-            const onDragEnd = () => {
+
+            const handleDragEnd = () => {
                 if (draggedItem) {
                     draggedItem.classList.remove('dragging');
-
-                    if (placeholder && placeholder.parentNode) {
-                        placeholder.parentNode.insertBefore(draggedItem, placeholder);
-                        placeholder.parentNode.removeChild(placeholder);
-                    }
-                    saveChannelOrder(); 
+                    draggedItem.style.display = '';
                 }
-
-                if (ghostItem) {
-                    ghostItem.remove();
-                    ghostItem = null;
+                if (placeholder && placeholder.parentNode) {
+                    placeholder.parentNode.removeChild(placeholder);
                 }
-                
-                // Durumu sıfırla
                 draggedItem = null;
                 placeholder = null;
-                clearTimeout(dragTimer);
-                dragTimer = null;
-                touchStartPoint = null;
-            };
-            
-            // --- Geliştirilmiş Mobil Dokunmatik Olayları ---
-            const handleTouchStart = (e) => {
-                const item = e.target.closest('.channel-item');
-                if (!item) return;
-
-                if (e.touches.length > 1) {
-                    clearTimeout(dragTimer);
-                    return;
-                }
-
-                touchStartPoint = { 
-                    x: e.touches[0].clientX, 
-                    y: e.touches[0].clientY,
-                    item: item,
-                    time: Date.now()
-                };
-
-                const clone = item.cloneNode(true);
-                if (ghostItem) ghostItem.remove(); 
-                ghostItem = clone.querySelector('.logo-wrapper').cloneNode(true);
-                ghostItem.classList.remove('logo-wrapper');
-                ghostItem.classList.add('ghost-item');
-                document.body.appendChild(ghostItem);
-
-                dragTimer = setTimeout(() => {
-                    const dist = touchStartPoint ? Math.sqrt(Math.pow(e.touches[0].clientX - touchStartPoint.x, 2) + Math.pow(e.touches[0].clientY - touchStartPoint.y, 2)) : 0;
-                    if (dist <= DRAG_MOVE_THRESHOLD_PX) {
-                         startDrag(item);
-                    } else {
-                         if(ghostItem) ghostItem.remove();
-                         ghostItem = null;
-                    }
-                }, DRAG_THRESHOLD_MS);
-            };
-
-            const handleTouchMove = (e) => {
-                if (!touchStartPoint) return;
-                
-                if (draggedItem) {
-                    e.preventDefault();
-                    onDragMove(e);
-                    return;
-                }
-
-                const moveX = e.touches[0].clientX;
-                const moveY = e.touches[0].clientY;
-                const dist = Math.sqrt(Math.pow(moveX - touchStartPoint.x, 2) + Math.pow(moveY - touchStartPoint.y, 2));
-
-                if (dist > DRAG_MOVE_THRESHOLD_PX) {
-                     clearTimeout(dragTimer);
-                     if(ghostItem) ghostItem.remove();
-                     ghostItem = null;
-                     dragTimer = null;
-                } else if (Date.now() - touchStartPoint.time >= DRAG_THRESHOLD_MS && !draggedItem) {
-                    startDrag(touchStartPoint.item);
-                }
-            };
-
-            const handleTouchEnd = (e) => {
-                if (dragTimer) {
-                    clearTimeout(dragTimer);
-                }
-                
-                if (draggedItem) {
-                    onDragEnd();
-                } else if (touchStartPoint) {
-                    const item = touchStartPoint.item;
-                    const dist = Math.sqrt(Math.pow(e.changedTouches[0].clientX - touchStartPoint.x, 2) + Math.pow(e.changedTouches[0].clientY - touchStartPoint.y, 2));
-                    if (dist <= DRAG_MOVE_THRESHOLD_PX) {
-                       const channel = {
-                           name: item.dataset.name,
-                           streamUrl: item.dataset.streamUrl,
-                           logoUrl: item.dataset.logoUrl
-                       };
-                       selectChannel(channel, item);
-                    }
-                }
-                
-                if (ghostItem) {
-                    ghostItem.remove();
-                    ghostItem = null;
-                }
-                
-                touchStartPoint = null;
-                draggedItem = null;
             };
 
             const fetchAndDisplayChannels = async () => {
@@ -896,6 +772,7 @@
                     const allStoredUrls = new Set();
                     const storedOrders = new Map();
 
+                    // Read all stored orders first
                     CATEGORIES.forEach(cat => {
                         const storedOrder = localStorage.getItem(`channelOrder_${cat}`);
                         if (storedOrder) {
@@ -909,10 +786,12 @@
                         }
                     });
 
+                    // Display channels based on stored order or default
                     CATEGORIES.forEach(cat => {
                         const categoryRow = document.getElementById(`category-${cat}`);
                         const channelsToDisplay = [];
                         
+                        // Use stored order if it exists
                         if (storedOrders.has(cat)) {
                             storedOrders.get(cat).forEach(url => {
                                 const channel = channelMap.get(url);
@@ -922,10 +801,12 @@
                             });
                         }
 
+                        // Get default channels for this category that are not already in a stored list
                         const defaultChannels = allChannels.filter(ch => 
                             CATEGORIES[ch.categoryId] === cat && !allStoredUrls.has(ch.streamUrl)
                         );
 
+                        // Combine and display
                         [...channelsToDisplay, ...defaultChannels].forEach(channel => {
                             const channelItem = document.createElement('div');
                             channelItem.className = 'channel-item';
@@ -939,28 +820,19 @@
                                 </div>
                                 <p class="name" title="${channel.name}">${channel.name}</p>
                             `;
+                            channelItem.addEventListener('click', () => selectChannel(channel, channelItem));
                             
-                            channelItem.addEventListener('dragstart', (e) => startDrag(e, channelItem));
-                            channelItem.addEventListener('dragend', onDragEnd);
+                            // Drag and drop event listeners
+                            channelItem.addEventListener('dragstart', handleDragStart);
+                            channelItem.addEventListener('dragend', handleDragEnd);
                             
-                            channelItem.addEventListener('touchstart', handleTouchStart);
-                            channelItem.addEventListener('touchmove', handleTouchMove, { passive: false });
-                            channelItem.addEventListener('touchend', handleTouchEnd);
-                            
+                            // Yeni: Dragover ve drop event'lerini sadece channel-row'a ekliyoruz
                             if (!categoryRow.dataset.listenersAdded) {
-                                categoryRow.addEventListener('dragover', (e) => {
-                                    e.preventDefault();
-                                    onDragMove(e);
-                                });
-                                categoryRow.addEventListener('drop', onDragEnd);
-                                categoryRow.addEventListener('touchmove', (e) => {
-                                    if (draggedItem) {
-                                        e.preventDefault();
-                                        onDragMove(e);
-                                    }
-                                }, { passive: false });
+                                categoryRow.addEventListener('dragover', handleDragOver);
+                                categoryRow.addEventListener('drop', handleDrop);
                                 categoryRow.dataset.listenersAdded = 'true';
                             }
+
                             categoryRow.appendChild(channelItem);
 
                             if (!firstChannelToLoad) {
