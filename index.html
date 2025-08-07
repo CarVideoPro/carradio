@@ -54,8 +54,8 @@
             flex-direction: column;
             min-height: 100vh;
             overflow-y: auto;
-            /* Dokunmatik sürükleme sırasında sayfa kaymasını engelle */
-            touch-action: none;
+            /* Dokunmatik sürükleme sırasında sayfa kaymasını engellemek için ana gövdede touch-action ayarı */
+            touch-action: pan-y;
         }
 
         .main-container {
@@ -97,6 +97,8 @@
             min-height: 120px; /* Boşken bile sürükleme alanı için */
             border-radius: var(--md-sys-shape-corner-medium);
             transition: background-color 0.3s;
+            /* Yatay kaydırma için dokunmatik eylemi etkinleştir */
+            touch-action: pan-x;
         }
         
         .channel-row.drag-over {
@@ -172,9 +174,8 @@
 
         /* --- Sürükle & Bırak Stilleri --- */
         .channel-item.dragging {
-            opacity: 0.4;
+            opacity: 0; /* Orijinal öğeyi görünmez yap, yer tutmaya devam eder */
             cursor: grabbing;
-            transform: scale(1.05);
         }
         
         .drag-placeholder {
@@ -414,7 +415,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // "Popüler" kategorisi "Favorilerim" olarak değiştirildi.
             const CATEGORIES = ["Favorilerim", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
 
             // DOM Elementleri
@@ -432,41 +432,30 @@
             let currentChannelItem = null;
             let hasUserInteracted = false;
             
-            // --- Sürükle & Bırak için Gerekli Değişkenler ---
+            // --- YENİ SÜRÜKLE & BIRAK DEĞİŞKENLERİ ---
             let draggedItem = null;
             let placeholder = null;
+            let ghostElement = null; // Sürükleme sırasında fareyi izleyen görsel kopya
             let isDragging = false;
-            let clickTimeout = null; // Tıklama ve sürükleme ayrımı için
+            let startX, startY;
+            let isDragIntention = null; // null: kararsız, true: sürükleme, false: kaydırma
 
-            // Kullanıcının ilk etkileşimi için
-            document.body.addEventListener('click', () => {
-                hasUserInteracted = true;
-            }, { once: true });
+            document.body.addEventListener('click', () => { hasUserInteracted = true; }, { once: true });
 
             const createCategorySections = () => {
                 CATEGORIES.forEach(cat => {
                     const categoryDiv = document.createElement('div');
                     categoryDiv.className = 'category-container';
-                    categoryDiv.innerHTML = `
-                        <h3 class="category-title">${cat}</h3>
-                        <div class="channel-row" data-category="${cat}"></div>
-                    `;
+                    categoryDiv.innerHTML = `<h3 class="category-title">${cat}</h3><div class="channel-row" data-category="${cat}"></div>`;
                     channelListContainer.appendChild(categoryDiv);
                 });
             };
 
             const updatePlayerUI = (isPlaying) => {
-                if (isPlaying) {
-                    playIcon.classList.add('hidden');
-                    pauseIcon.classList.remove('hidden');
-                    playPauseBtn.setAttribute('aria-label', 'Durdur');
-                    playerContainer.classList.add('playing');
-                } else {
-                    playIcon.classList.remove('hidden');
-                    pauseIcon.classList.add('hidden');
-                    playPauseBtn.setAttribute('aria-label', 'Oynat');
-                    playerContainer.classList.remove('playing');
-                }
+                playIcon.classList.toggle('hidden', isPlaying);
+                pauseIcon.classList.toggle('hidden', !isPlaying);
+                playPauseBtn.setAttribute('aria-label', isPlaying ? 'Durdur' : 'Oynat');
+                playerContainer.classList.toggle('playing', isPlaying);
             };
             
             const playAudio = () => {
@@ -483,14 +472,12 @@
                 else audioPlayer.pause();
             };
             
-            // PLS formatındaki yayınları çözümlemek için
             const loadPLSStream = async (plsUrl) => {
                 try {
                     const response = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(plsUrl)}`);
                     const contents = (await response.json()).contents;
                     if (!contents) throw new Error("PLS içeriği alınamadı.");
-
-                    const streamUrl = contents.split('\n').find(line => line.startsWith('File1=')).split('=')[1].trim();
+                    const streamUrl = contents.split('\n').find(line => line.startsWith('File1='))?.split('=')[1]?.trim();
                     if (streamUrl) {
                         audioPlayer.src = streamUrl;
                         if (hasUserInteracted) playAudio();
@@ -505,16 +492,11 @@
             };
 
             const selectChannel = (channel, element) => {
-                // Sürükleme işlemi sırasında tıklamayı engelle
-                if (isDragging) return;
-
                 playerContainer.classList.remove('playing');
                 playerLogo.src = channel.logoUrl;
                 playerChannelName.textContent = channel.name;
                 
-                if (currentChannelItem) {
-                    currentChannelItem.classList.remove('active');
-                }
+                if (currentChannelItem) currentChannelItem.classList.remove('active');
                 currentChannelItem = element;
                 currentChannelItem.classList.add('active');
 
@@ -529,9 +511,7 @@
                         hls = new Hls();
                         hls.loadSource(channel.streamUrl);
                         hls.attachMedia(audioPlayer);
-                        hls.on(Hls.Events.MANIFEST_PARSED, () => {
-                           if (hasUserInteracted) playAudio();
-                        });
+                        hls.on(Hls.Events.MANIFEST_PARSED, () => { if (hasUserInteracted) playAudio(); });
                     } else if (audioPlayer.canPlayType('application/vnd.apple.mpegurl')) {
                         audioPlayer.src = channel.streamUrl;
                         if (hasUserInteracted) playAudio();
@@ -544,7 +524,6 @@
                 }
             };
 
-            // --- LocalStorage Fonksiyonları ---
             const saveChannelOrder = () => {
                 CATEGORIES.forEach(cat => {
                     const categoryRow = document.querySelector(`.channel-row[data-category="${cat}"]`);
@@ -556,7 +535,7 @@
                 console.log("Kanal sıralaması kaydedildi.");
             };
 
-            // --- YENİ SÜRÜKLE & BIRAK MANTIĞI (MOBİL UYUMLU) ---
+            // --- YENİ SÜRÜKLE & BIRAK & KAYDIRMA MANTIĞI ---
 
             const getDragAfterElement = (container, x) => {
                 const draggableElements = [...container.querySelectorAll('.channel-item:not(.dragging)')];
@@ -571,104 +550,146 @@
                 }, { offset: -Infinity }).element;
             };
 
-            const onDragStart = (e) => {
+            const onPointerDown = (e) => {
                 const target = e.target.closest('.channel-item');
-                if (!target) return;
-
-                // Tıklama olayını iptal et
-                clearTimeout(clickTimeout);
+                if (!target || (e.type === 'mousedown' && e.button !== 0)) return;
 
                 draggedItem = target;
-                isDragging = true;
+                startX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
+                startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
+                isDragIntention = null; // Henüz niyet belli değil
 
+                document.addEventListener('mousemove', onPointerMove);
+                document.addEventListener('touchmove', onPointerMove, { passive: false });
+                document.addEventListener('mouseup', onPointerUp);
+                document.addEventListener('touchend', onPointerUp);
+            };
+
+            const onPointerMove = (e) => {
+                if (!draggedItem || isDragging) return;
+
+                const currentX = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
+                const currentY = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                const deltaX = Math.abs(currentX - startX);
+                const deltaY = Math.abs(currentY - startY);
+
+                if (isDragIntention === null && (deltaX > 10 || deltaY > 10)) {
+                    if (deltaX > deltaY) {
+                        isDragIntention = true; // Yatay hareket -> Sürükleme
+                        startDrag(e);
+                    } else {
+                        isDragIntention = false; // Dikey hareket -> Kaydırma
+                        cleanUpListeners(); // Sürüklemeyi iptal et ve kaydırmaya izin ver
+                    }
+                }
+            };
+
+            const onPointerUp = () => {
+                if (isDragging) {
+                    endDrag();
+                } else if (isDragIntention === null && draggedItem) {
+                    // Eğer sürükleme başlamadıysa bu bir tıklamadır.
+                    const channelData = {
+                        name: draggedItem.dataset.name,
+                        logoUrl: draggedItem.dataset.logoUrl,
+                        streamUrl: draggedItem.dataset.streamUrl
+                    };
+                    selectChannel(channelData, draggedItem);
+                }
+                cleanUpListeners();
+            };
+
+            const startDrag = (e) => {
+                if (!draggedItem || isDragging) return;
+                isDragging = true;
+                
                 // Placeholder oluştur ve ekle
                 placeholder = document.createElement('div');
                 placeholder.classList.add('drag-placeholder');
                 draggedItem.parentNode.insertBefore(placeholder, draggedItem);
                 
-                // Sürüklenen öğeyi gizle ve stil ver
+                // "Hayalet" sürükleme elementi oluştur
+                ghostElement = draggedItem.cloneNode(true);
+                ghostElement.style.position = 'fixed';
+                ghostElement.style.zIndex = '2000';
+                ghostElement.style.pointerEvents = 'none';
+                ghostElement.style.opacity = '0.8';
+                ghostElement.style.transform = 'scale(1.1)';
+                ghostElement.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
+                document.body.appendChild(ghostElement);
+                
+                // Orijinal öğeyi gizle
                 draggedItem.classList.add('dragging');
 
-                // Olay dinleyicilerini ekle
-                document.addEventListener('mousemove', onDragMove);
-                document.addEventListener('touchmove', onDragMove, { passive: false });
-                document.addEventListener('mouseup', onDragEnd);
-                document.addEventListener('touchend', onDragEnd);
+                // Sürükleme olayları için dinleyicileri ayarla
+                document.addEventListener('mousemove', dragMove);
+                document.addEventListener('touchmove', dragMove, { passive: false });
+                
+                positionGhost(e);
             };
 
-            const onDragMove = (e) => {
-                if (!isDragging || !draggedItem) return;
-                e.preventDefault(); // Mobil'de sayfa kaymasını engelle
+            const dragMove = (e) => {
+                if (!isDragging) return;
+                if (e.cancelable) e.preventDefault(); // Kaydırmayı engelle
 
-                const x = e.type === 'touchmove' ? e.touches[0].clientX : e.clientX;
-                const y = e.type === 'touchmove' ? e.touches[0].clientY : e.clientY;
+                positionGhost(e);
 
-                // Sürüklenen öğenin altındaki elementi bul
-                draggedItem.style.display = 'none'; // Geçici olarak gizle
+                const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                
+                ghostElement.style.display = 'none';
                 const elementBelow = document.elementFromPoint(x, y);
-                draggedItem.style.display = ''; // Geri göster
+                ghostElement.style.display = '';
 
                 const container = elementBelow ? elementBelow.closest('.channel-row') : null;
 
-                // Vurgu için
                 document.querySelectorAll('.channel-row').forEach(row => row.classList.remove('drag-over'));
                 if (container) {
                     container.classList.add('drag-over');
                     const afterElement = getDragAfterElement(container, x);
-                    if (afterElement == null) {
-                        container.appendChild(placeholder);
-                    } else {
-                        container.insertBefore(placeholder, afterElement);
-                    }
+                    container.insertBefore(placeholder, afterElement);
                 }
             };
 
-            const onDragEnd = () => {
-                if (!isDragging || !draggedItem) return;
-
-                // Placeholder'ın olduğu yere öğeyi taşı
+            const endDrag = () => {
+                if (!isDragging) return;
+                
                 if (placeholder && placeholder.parentNode) {
                     placeholder.parentNode.insertBefore(draggedItem, placeholder);
                 }
                 
-                // Temizlik
-                if (placeholder) placeholder.remove();
-                draggedItem.classList.remove('dragging');
-                document.querySelectorAll('.channel-row').forEach(row => row.classList.remove('drag-over'));
-                
-                // Sıralamayı kaydet
                 saveChannelOrder();
-
-                // Değişkenleri sıfırla
-                draggedItem = null;
-                placeholder = null;
-                setTimeout(() => { isDragging = false; }, 50); // Kısa bir gecikme ile isDragging'i sıfırla
-
-                // Olay dinleyicilerini kaldır
-                document.removeEventListener('mousemove', onDragMove);
-                document.removeEventListener('touchmove', onDragMove);
-                document.removeEventListener('mouseup', onDragEnd);
-                document.removeEventListener('touchend', onDragEnd);
             };
 
-            // Tıklama ve sürükleme başlangıcını ayırt etmek için
-            channelListContainer.addEventListener('mousedown', (e) => {
-                // Sadece sol fare tuşu ile sürüklemeyi başlat
-                if (e.button !== 0) return;
-                const target = e.target.closest('.channel-item');
-                if (!target) return;
-                // Kanal seçimi için kısa bir gecikme ayarla
-                clickTimeout = setTimeout(() => onDragStart(e), 200);
-            });
-            channelListContainer.addEventListener('touchstart', (e) => {
-                const target = e.target.closest('.channel-item');
-                if (!target) return;
-                clickTimeout = setTimeout(() => onDragStart(e), 200);
-            });
-            
-            // Eğer sürükleme başlamadan fare bırakılırsa, tıklama olarak kabul et
-            channelListContainer.addEventListener('mouseup', () => clearTimeout(clickTimeout));
-            channelListContainer.addEventListener('touchend', () => clearTimeout(clickTimeout));
+            const positionGhost = (e) => {
+                if (!ghostElement) return;
+                const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+                ghostElement.style.left = `${x - ghostElement.offsetWidth / 2}px`;
+                ghostElement.style.top = `${y - ghostElement.offsetHeight / 2}px`;
+            };
+
+            const cleanUpListeners = () => {
+                if (draggedItem) draggedItem.classList.remove('dragging');
+                if (placeholder) placeholder.remove();
+                if (ghostElement) ghostElement.remove();
+                
+                document.querySelectorAll('.channel-row').forEach(row => row.classList.remove('drag-over'));
+
+                document.removeEventListener('mousemove', onPointerMove);
+                document.removeEventListener('touchmove', onPointerMove);
+                document.removeEventListener('mouseup', onPointerUp);
+                document.removeEventListener('touchend', onPointerUp);
+                
+                document.removeEventListener('mousemove', dragMove);
+                document.removeEventListener('touchmove', dragMove);
+
+                draggedItem = null;
+                placeholder = null;
+                ghostElement = null;
+                isDragging = false;
+                isDragIntention = null;
+            };
 
             const fetchAndDisplayChannels = async () => {
                 try {
@@ -684,7 +705,6 @@
                     const channelMap = new Map(allChannels.map(channel => [channel.streamUrl, channel]));
                     const displayedUrls = new Set();
 
-                    // Kayıtlı sıralamayı yükle ve uygula
                     CATEGORIES.forEach(cat => {
                         const categoryRow = document.querySelector(`.channel-row[data-category="${cat}"]`);
                         const storedOrder = localStorage.getItem(`channelOrder_${cat}`);
@@ -699,18 +719,14 @@
                         });
                     });
 
-                    // Henüz gösterilmemiş kanalları varsayılan kategorilerine ekle
                     allChannels.forEach(channel => {
                         if (!displayedUrls.has(channel.streamUrl)) {
                             const categoryName = CATEGORIES[channel.categoryId];
                             const categoryRow = document.querySelector(`.channel-row[data-category="${categoryName}"]`);
-                            if (categoryRow) {
-                                createChannelElement(channel, categoryRow);
-                            }
+                            if (categoryRow) createChannelElement(channel, categoryRow);
                         }
                     });
                     
-                    // İlk kanalı oynatıcıda göster
                     const firstChannelElement = document.querySelector('.channel-item');
                     if (firstChannelElement) {
                          const firstChannelData = {
@@ -720,7 +736,6 @@
                         };
                         selectChannel(firstChannelData, firstChannelElement);
                     }
-
                 } catch (error) {
                     console.error("channels.txt alınamadı veya işlenemedi:", error);
                     channelListContainer.innerHTML = `<p style="color: white;">Radyo kanalları yüklenirken hata oluştu. Lütfen <strong>channels.txt</strong> dosyasının mevcut ve erişilebilir olduğunu kontrol edin.</p>`;
@@ -730,18 +745,11 @@
             const createChannelElement = (channel, container) => {
                 const channelItem = document.createElement('div');
                 channelItem.className = 'channel-item';
-                // draggable="true" artık gerekli değil, JS ile yönetiyoruz
                 channelItem.dataset.streamUrl = channel.streamUrl;
                 channelItem.dataset.logoUrl = channel.logoUrl;
                 channelItem.dataset.name = channel.name;
-                channelItem.innerHTML = `
-                    <div class="logo-wrapper">
-                        <img src="${channel.logoUrl}" alt="${channel.name} logosu" loading="lazy" onerror="this.parentElement.style.display='none'">
-                    </div>
-                    <p class="name" title="${channel.name}">${channel.name}</p>
-                `;
-                // Tıklama olayı, sürükleme ile çakışmaması için burada yönetiliyor
-                channelItem.addEventListener('click', () => selectChannel(channel, channelItem));
+                channelItem.innerHTML = `<div class="logo-wrapper"><img src="${channel.logoUrl}" alt="${channel.name} logosu" loading="lazy" onerror="this.parentElement.style.display='none'"></div><p class="name" title="${channel.name}">${channel.name}</p>`;
+                // Tıklama olayı artık merkezi `onPointerUp` ile yönetiliyor.
                 container.appendChild(channelItem);
             };
 
@@ -755,7 +763,6 @@
                 }
             };
             
-            // Olay Dinleyicileri
             playPauseBtn.addEventListener('click', togglePlayPause);
             audioPlayer.addEventListener('play', () => updatePlayerUI(true));
             audioPlayer.addEventListener('pause', () => updatePlayerUI(false));
@@ -766,10 +773,13 @@
                 updatePlayerUI(false);
             });
 
-            // Başlangıç Fonksiyonları
             createCategorySections();
             fetchAndDisplayChannels();
             createWaveBars();
+
+            // Sürükleme için ana olay dinleyicisini ekle
+            channelListContainer.addEventListener('mousedown', onPointerDown);
+            channelListContainer.addEventListener('touchstart', onPointerDown, { passive: true });
         });
     </script>
 </body>
