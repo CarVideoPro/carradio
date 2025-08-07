@@ -48,14 +48,13 @@
 
         body {
             font-family: 'Inter', sans-serif;
-            background-color: var(--md-sys-color-surface);
+            background-color: var(--bg-color);
             color: var(--md-sys-color-on-surface);
             display: flex;
             flex-direction: column;
             min-height: 100vh;
-            overflow-y: auto;
-            /* Dokunmatik sürükleme sırasında sayfa kaymasını engellemek için ana gövdede touch-action ayarı */
-            touch-action: pan-y;
+            overflow: hidden; /* Dikey kaydırmayı JS ile yöneteceğiz */
+            touch-action: none; /* Tüm dokunmatik eylemleri JS ile yöneteceğiz */
         }
 
         .main-container {
@@ -97,8 +96,7 @@
             min-height: 120px; /* Boşken bile sürükleme alanı için */
             border-radius: var(--md-sys-shape-corner-medium);
             transition: background-color 0.3s;
-            /* Yatay kaydırma için dokunmatik eylemi etkinleştir */
-            touch-action: pan-x;
+            touch-action: pan-x; /* Sadece yatay kaydırmaya izin ver */
         }
         
         .channel-row.drag-over {
@@ -432,13 +430,13 @@
             let currentChannelItem = null;
             let hasUserInteracted = false;
             
-            // --- YENİ SÜRÜKLE & BIRAK DEĞİŞKENLERİ ---
+            // --- Geliştirilmiş Sürükle & Bırak Değişkenleri ---
             let draggedItem = null;
             let placeholder = null;
-            let ghostElement = null; // Sürükleme sırasında fareyi izleyen görsel kopya
+            let ghostElement = null; 
             let isDragging = false;
             let startX, startY;
-            let isDragIntention = null; // null: kararsız, true: sürükleme, false: kaydırma
+            let isDragIntention = null;
 
             document.body.addEventListener('click', () => { hasUserInteracted = true; }, { once: true });
 
@@ -535,7 +533,7 @@
                 console.log("Kanal sıralaması kaydedildi.");
             };
 
-            // --- YENİ SÜRÜKLE & BIRAK & KAYDIRMA MANTIĞI ---
+            // --- Geliştirilmiş Sürükle & Bırak & Kaydırma Mantığı ---
 
             const getDragAfterElement = (container, x) => {
                 const draggableElements = [...container.querySelectorAll('.channel-item:not(.dragging)')];
@@ -550,8 +548,21 @@
                 }, { offset: -Infinity }).element;
             };
 
+            const findDropContainer = (x, y) => {
+                const rows = document.querySelectorAll('.channel-row');
+                for (const row of rows) {
+                    const rect = row.getBoundingClientRect();
+                    // İmlecin dikey olarak satırın sınırları içinde olup olmadığını kontrol et
+                    if (y >= rect.top && y <= rect.bottom) {
+                        return row;
+                    }
+                }
+                return null;
+            };
+
             const onPointerDown = (e) => {
                 const target = e.target.closest('.channel-item');
+                // Sadece sol fare tuşu veya dokunma ile başlat
                 if (!target || (e.type === 'mousedown' && e.button !== 0)) return;
 
                 draggedItem = target;
@@ -559,10 +570,11 @@
                 startY = e.type === 'touchstart' ? e.touches[0].clientY : e.clientY;
                 isDragIntention = null; // Henüz niyet belli değil
 
-                document.addEventListener('mousemove', onPointerMove);
-                document.addEventListener('touchmove', onPointerMove, { passive: false });
-                document.addEventListener('mouseup', onPointerUp);
-                document.addEventListener('touchend', onPointerUp);
+                // Olay dinleyicilerini `document` yerine `window`'a eklemek, iframe senaryolarında daha güvenilir olabilir.
+                window.addEventListener('mousemove', onPointerMove);
+                window.addEventListener('touchmove', onPointerMove, { passive: false });
+                window.addEventListener('mouseup', onPointerUp);
+                window.addEventListener('touchend', onPointerUp);
             };
 
             const onPointerMove = (e) => {
@@ -573,14 +585,23 @@
                 const deltaX = Math.abs(currentX - startX);
                 const deltaY = Math.abs(currentY - startY);
 
-                if (isDragIntention === null && (deltaX > 10 || deltaY > 10)) {
-                    if (deltaX > deltaY) {
-                        isDragIntention = true; // Yatay hareket -> Sürükleme
-                        startDrag(e);
-                    } else {
-                        isDragIntention = false; // Dikey hareket -> Kaydırma
-                        cleanUpListeners(); // Sürüklemeyi iptal et ve kaydırmaya izin ver
+                if (isDragIntention === null) {
+                    // Karar vermek için minimum hareket eşiği
+                    if (deltaX > 10 || deltaY > 10) {
+                        // Yatay hareket dikey hareketten önemli ölçüde fazlaysa sürükle
+                        if (deltaX > deltaY) {
+                            isDragIntention = true;
+                            startDrag(e);
+                        } else {
+                            // Dikey hareket fazlaysa bu bir kaydırmadır, sürüklemeyi iptal et
+                            isDragIntention = false;
+                            cleanUpListeners();
+                        }
                     }
+                }
+                 // Eğer sürükleme başladıysa, hareketi yönet
+                if (isDragging) {
+                    dragMove(e);
                 }
             };
 
@@ -588,7 +609,7 @@
                 if (isDragging) {
                     endDrag();
                 } else if (isDragIntention === null && draggedItem) {
-                    // Eğer sürükleme başlamadıysa bu bir tıklamadır.
+                    // Eğer hiç hareket olmadıysa, bu bir tıklamadır.
                     const channelData = {
                         name: draggedItem.dataset.name,
                         logoUrl: draggedItem.dataset.logoUrl,
@@ -603,12 +624,10 @@
                 if (!draggedItem || isDragging) return;
                 isDragging = true;
                 
-                // Placeholder oluştur ve ekle
                 placeholder = document.createElement('div');
                 placeholder.classList.add('drag-placeholder');
                 draggedItem.parentNode.insertBefore(placeholder, draggedItem);
                 
-                // "Hayalet" sürükleme elementi oluştur
                 ghostElement = draggedItem.cloneNode(true);
                 ghostElement.style.position = 'fixed';
                 ghostElement.style.zIndex = '2000';
@@ -618,30 +637,21 @@
                 ghostElement.style.boxShadow = '0 10px 20px rgba(0,0,0,0.2)';
                 document.body.appendChild(ghostElement);
                 
-                // Orijinal öğeyi gizle
                 draggedItem.classList.add('dragging');
-
-                // Sürükleme olayları için dinleyicileri ayarla
-                document.addEventListener('mousemove', dragMove);
-                document.addEventListener('touchmove', dragMove, { passive: false });
                 
                 positionGhost(e);
             };
 
             const dragMove = (e) => {
                 if (!isDragging) return;
-                if (e.cancelable) e.preventDefault(); // Kaydırmayı engelle
+                if (e.cancelable) e.preventDefault();
 
                 positionGhost(e);
 
                 const x = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
                 const y = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
                 
-                ghostElement.style.display = 'none';
-                const elementBelow = document.elementFromPoint(x, y);
-                ghostElement.style.display = '';
-
-                const container = elementBelow ? elementBelow.closest('.channel-row') : null;
+                const container = findDropContainer(x, y);
 
                 document.querySelectorAll('.channel-row').forEach(row => row.classList.remove('drag-over'));
                 if (container) {
@@ -676,13 +686,10 @@
                 
                 document.querySelectorAll('.channel-row').forEach(row => row.classList.remove('drag-over'));
 
-                document.removeEventListener('mousemove', onPointerMove);
-                document.removeEventListener('touchmove', onPointerMove);
-                document.removeEventListener('mouseup', onPointerUp);
-                document.removeEventListener('touchend', onPointerUp);
-                
-                document.removeEventListener('mousemove', dragMove);
-                document.removeEventListener('touchmove', dragMove);
+                window.removeEventListener('mousemove', onPointerMove);
+                window.removeEventListener('touchmove', onPointerMove);
+                window.removeEventListener('mouseup', onPointerUp);
+                window.removeEventListener('touchend', onPointerUp);
 
                 draggedItem = null;
                 placeholder = null;
@@ -749,7 +756,6 @@
                 channelItem.dataset.logoUrl = channel.logoUrl;
                 channelItem.dataset.name = channel.name;
                 channelItem.innerHTML = `<div class="logo-wrapper"><img src="${channel.logoUrl}" alt="${channel.name} logosu" loading="lazy" onerror="this.parentElement.style.display='none'"></div><p class="name" title="${channel.name}">${channel.name}</p>`;
-                // Tıklama olayı artık merkezi `onPointerUp` ile yönetiliyor.
                 container.appendChild(channelItem);
             };
 
@@ -779,7 +785,7 @@
 
             // Sürükleme için ana olay dinleyicisini ekle
             channelListContainer.addEventListener('mousedown', onPointerDown);
-            channelListContainer.addEventListener('touchstart', onPointerDown, { passive: true });
+            channelListContainer.addEventListener('touchstart', onPointerDown, { passive: false });
         });
     </script>
 </body>
