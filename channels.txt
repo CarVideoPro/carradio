@@ -1,3 +1,4 @@
+TRT RADYO 1,https://trt.radyotvonline.net/trt1,https://trt-public-static.trt.com.tr/eradyo/public/dm_upload/modul2/ded6c190-5f9e-4de3-a5e5-868f789df1a5.jpg,1
 TRT FM,https://trt.radyotvonline.net/trtfm,https://i.hizliresim.com/7to99he.png,1
 Slow Türk,https://radyo.duhnet.tv/slowturk?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/slow-turk-dinle.jpg,1
 Power Türk Love,https://livetv.powerapp.com.tr/plove/love.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_36.png?v=10,1
@@ -86,6 +87,7 @@ S SPORTS,https://live.sportstv.com.tr/hls/low/sportstv_hd/index.m3u8,https://i.i
 A SPOR,https://live-cdn-65984.varplaycdn.cfd/aspor/index.m3u8,https://i.ibb.co/rwnrgFV/a-spor.png,4
 Lig Radyo,https://ligradyo.radyotvonline.net/ligradyo,https://www.canliradyodinle.fm/wp-content/uploads/lig-radyo.jpg,4
 Radyo Spor,https://moondigitaledge.radyotvonline.net/radyospor/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-spor.jpg,4
+
 
 
 
