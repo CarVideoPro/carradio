@@ -394,7 +394,7 @@
 
   <script>
     const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
-    const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi";
+    const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 İletişim : Telegram : t.me/car_video_pro 📞 ";
 
     const G_UI = {
         groups: document.getElementById("groups"),
@@ -628,7 +628,7 @@
         incrementListenCount(channel.streamUrl);
         
         // Kayan Yazıyı güncelle
-        const scrollText = `${channel.name} - ${DEFAULT_SCROLL_TEXT}`;
+        const scrollText = ` 🎵 ${channel.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`;
         G_UI.player.channelName.innerHTML = `<span>${scrollText}</span><span>${scrollText}</span>`;
         
         // Ana ekranı güncelle
