@@ -6,7 +6,7 @@ Best FM,https://officialbestfm.radyotvonline.net/bestfmofficial?/;stream.mp3,htt
 Power Türk Akustik,https://livetv.powerapp.com.tr/pturkakustik/akustik.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_42.png?v=4,3
 Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/joy-turk-dinle.jpg,3
 Power Türk Slow,https://listen.powerapp.com.tr/powerturkslow/abr/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_2450.png?v=4,3
-Alem FM,https://alemfm.radyotvonline.net/alemfmaac?/;stream.mp3,https://upload.wikimedia.org/wikipedia/tr/b/bf/Alem_fm.jpg,3
+Alem FM,https://turkmedya.radyotvonline.net/alemfmaac?,https://upload.wikimedia.org/wikipedia/tr/b/bf/Alem_fm.jpg,3
 Power Türk Taptaze,https://livetv.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_43.png?v=4,3
 Fenomen,https://live.radyofenomen.com/fenomen/128/icecast.audio?,https://www.canliradyodinle.fm/wp-content/uploads/radyo-fenomen.jpg,3
 Radyo Pause,https://radyopause.ozelip.com.tr:8040/stream?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-pause.png,3
@@ -25,7 +25,7 @@ Radyo 45lik,https:\/\/stream.radyo45lik.com:4545\/,https://radyo45lik.com/wp-con
 Aşk FM,https://stream.netradyom.com/radio/8000/radio.mp3?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/ask-fm.jpg,2
 Best FM,https://officialbestfm.radyotvonline.net/bestfmofficial?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/best-fm-dinle-100x100.png,2
 Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/joy-turk-dinle.jpg,2
-Alem FM,https://alemfm.radyotvonline.net/alemfmaac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/alem-fm.jpg,2
+Alem FM,https://turkmedya.radyotvonline.net/alemfmaac?,https://www.canliradyodinle.fm/wp-content/uploads/alem-fm.jpg,2
 Kral FM,https://dygedge2.radyotvonline.net/kralfm/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/kral-fm.jpg,2
 Metro FM,https://playerservices.streamtheworld.com/api/livestream-redirect/METRO_FM128AAC.aac?/;stream.mp3,https://mediacdns.karnaval.com/media/station_media/2/logos/meta_image.png?v=110924010401,2
 Pal Nostalji,https://moondigitaledge.radyotvonline.net/palnostalji/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/pal-nostalji-radyo.jpg,2
