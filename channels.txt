@@ -87,3 +87,12 @@ S SPORTS,https://live.sportstv.com.tr/hls/low/sportstv_hd/index.m3u8,https://i.i
 A SPOR,https://trkvz-radyolar.ercdn.net/asporradyo/chunklist.m3u8,https://i.ibb.co/rwnrgFV/a-spor.png,6
 Lig Radyo,https://ligradyo.radyotvonline.net/ligradyo,https://www.canliradyodinle.fm/wp-content/uploads/lig-radyo.jpg,6
 Radyo Spor,https://moondigitaledge.radyotvonline.net/radyospor/playlist.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/radyo-spor.jpg,6
+
+
+
+
+
+
+
+
+
