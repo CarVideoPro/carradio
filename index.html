@@ -63,7 +63,7 @@
     
     /* --- GÖRSELLEŞTİRİCİ VE LOGO DÜZENİ --- */
     #visualizer-wrapper {
-        display: none; /* Müzik çalınca flex olacak */
+        display: none;
         flex-direction: column;
         justify-content: space-between;
         align-items: center;
@@ -75,7 +75,6 @@
         z-index: 2;
     }
     
-    /* Ekolayzer Satırları */
     .analyzer-row { display: flex; justify-content: center; align-items: flex-end; height: 60px; width: 100%; gap: 5px; }
     .analyzer-row.top { transform: rotate(180deg); margin-bottom: 10px; }
     .analyzer-row.bottom { margin-top: 10px; }
@@ -86,12 +85,11 @@
         animation: analyzer-wave 0.8s infinite ease-in-out alternate;
     }
 
-    /* Orta Satır: Butonlar ve Logo */
     #middle-controls-row {
         display: flex;
         align-items: center;
         justify-content: center;
-        gap: 20px; /* Butonlar ve logo arası boşluk */
+        gap: 20px;
         flex: 1; 
         width: 100%;
     }
@@ -106,33 +104,22 @@
 
     /* --- YUVARLAK VE BÜYÜK BUTONLAR --- */
     .mid-nav-btn {
-        /* Şekil ve Boyut */
         width: 75px; 
         height: 75px; 
-        border-radius: 50%; /* Tam Daire */
-        
-        /* Renk ve Stil */
+        border-radius: 50%; 
         background: rgba(0, 0, 0, 0.3); 
         border: 3px solid var(--accent-color); 
         color: var(--text-primary);
-        
-        /* Yazı/İkon */
         font-size: 32px;
-        
-        /* Hizalama */
         cursor: pointer;
         display: flex; align-items: center; justify-content: center;
-        
-        /* Efektler */
         transition: all 0.2s cubic-bezier(.4,2,.3,.7);
         backdrop-filter: blur(6px);
         box-shadow: 0 0 15px rgba(0,0,0,0.3);
     }
     
     /* OPTİK HİZALAMA DÜZELTMESİ */
-    /* İleri oku görsel olarak solda ağır basar, sağa itiyoruz */
     #next-btn { padding-left: 6px; } 
-    /* Geri oku görsel olarak sağda ağır basar, sola itiyoruz */
     #prev-btn { padding-right: 4px; }
 
     .mid-nav-btn:hover {
@@ -154,7 +141,7 @@
         100% { height: 100%; opacity: 1; }
     }
 
-    /* --- SAĞ DİKEY KONTROL ALANI (ZOOM + TEMA) --- */
+    /* --- SAĞ DİKEY KONTROL ALANI --- */
     #side-controls-container {
         position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
         display: flex; flex-direction: column; gap: 15px; z-index: 100;
@@ -174,9 +161,7 @@
     .zoom-btn:hover { background-color: var(--accent-color); border-color: #fff; }
     .zoom-btn svg { width: 20px; height: 20px; fill: currentColor; }
 
-    #theme-list {
-        display: flex; flex-direction: column; gap: 10px;
-    }
+    #theme-list { display: flex; flex-direction: column; gap: 10px; }
     
     .theme-swatch {
            width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color);
@@ -221,7 +206,7 @@
     .fav-btn:hover { transform: scale(1.2); }
     .fav-btn.favorited { color: var(--favorite-color); }
 
-    /* PLAYER BAR (SADECE KAYAN YAZI) */
+    /* PLAYER BAR */
     #playerContainer {
         position: fixed; bottom: 0; left: 0; width: 100%; height: var(--player-height); background: var(--bg-secondary);
         display: flex; z-index: 999; align-items: center; padding: 0 10px;
@@ -248,12 +233,9 @@
     .player-text .title span { display: inline-block; padding-right: 50px; }
     @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
 
-
-    /* Mobil Uyumluluğu */
     @media (max-width: 768px) {
         #channels { flex: 0 0 200px; }
         #main-logo-display { width: 130px; height: 130px; }
-        /* Mobilde buton boyutları */
         .mid-nav-btn { width: 60px; height: 60px; font-size: 26px; }
         #middle-controls-row { gap: 10px; }
         #side-controls-container { right: 5px; padding: 10px 5px; }
@@ -339,7 +321,7 @@
         htmlElement: document.documentElement
     };
     
-    // TEMA Fonksiyonları
+    // TEMA
     const themes = {
         'default': { name: 'Varsayılan', color: '#3366cc' }, 'forest': { name: 'Orman', color: '#4CAF50' }, 'royal': { name: 'Kraliyet', color: '#9C27B0' },
         'sunset': { name: 'Gün Batımı', color: '#FF5722' }, 'steel': { name: 'Çelik', color: '#757575' }, 'yellow': { name: 'Sarı', color: '#FFD600' }
@@ -359,21 +341,20 @@
         }
     }
     
-    // Global Değişkenler
+    // Global
     let hls;
     let allChannelsMap = new Map(); 
     let currentChannelList = []; 
     let currentChannelIndex = -1; 
     let activeGroupName = ''; 
     
-    // Zoom Değişkenleri
+    // Zoom
     const ZOOM_KEY = 'carRadioZoomLevel';
     const ZOOM_STEP = 0.05;
     const MIN_ZOOM = 0.7;
     const MAX_ZOOM = 1.3;
     let currentZoom = 1.0;
 
-    // --- Zoom Fonksiyonları ---
     const applyZoom = (zoomLevel) => { G_UI.htmlElement.style.zoom = zoomLevel; };
     const updateZoom = (newZoom) => {
         currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
@@ -388,10 +369,11 @@
         }
     };
 
-    // --- Favori & Dinleme ---
+    // --- FAVORİ İŞLEMLERİ ---
     function getFavorites() { return JSON.parse(localStorage.getItem('favoriteRadios') || '[]'); }
     function saveFavorites(favs) { localStorage.setItem('favoriteRadios', JSON.stringify(favs)); }
     function getListenCounts() { return JSON.parse(localStorage.getItem('radioListenCounts') || '{}'); }
+    
     function incrementListenCount(streamUrl) {
         if (!streamUrl) return;
         const counts = getListenCounts();
@@ -399,31 +381,46 @@
         localStorage.setItem('radioListenCounts', JSON.stringify(counts));
         if (activeGroupName === 'En Çok Dinlenenler') { listChannels(activeGroupName); }
     }
+    
+    // Favori Ekle/Çıkar (Güncellendi)
     function toggleFavorite(streamUrl, favButton) {
         let favorites = getFavorites();
         const index = favorites.indexOf(streamUrl);
-        const wasEmpty = favorites.length === 0;
-        const wasOnFavoritesTab = (activeGroupName === 'Favorilerim');
-        if (index > -1) { favorites.splice(index, 1); favButton.classList.remove('favorited'); } 
-        else { favorites.push(streamUrl); favButton.classList.add('favorited'); }
+        
+        if (index > -1) { 
+            favorites.splice(index, 1); 
+            favButton.classList.remove('favorited'); 
+        } else { 
+            favorites.push(streamUrl); 
+            favButton.classList.add('favorited'); 
+        }
         saveFavorites(favorites);
-        const isEmptyNow = favorites.length === 0;
-        if (wasEmpty !== isEmptyNow) { listGroups(); }
-        if (wasOnFavoritesTab) { listChannels('Favorilerim'); }
+        
+        // Her değişiklikte menüyü güncelle (Favoriler boşsa gizlenir, doluysa gelir)
+        listGroups(); 
+        
+        // Eğer şu an Favorilerim sekmesindeysek listeyi de anlık güncelle
+        if (activeGroupName === 'Favorilerim') { 
+            listChannels('Favorilerim'); 
+        }
     }
 
-    // --- Listeleme ---
+    // --- LİSTELEME ---
     function listGroups() {
       const currentActiveGroup = document.querySelector('.group.active')?.textContent || CATEGORIES[0];
       G_UI.groups.innerHTML = ""; 
       let groupToActivate = null;
-      const favoritesCount = getFavorites().length;
+      
+      const favoritesCount = getFavorites().length; // Anlık favori sayısı
       const listenCounts = getListenCounts();
       const mostListenedCount = Object.keys(listenCounts).length;
       
       CATEGORIES.forEach((g) => {
+        // EĞER FAVORİ YOKSA BU KATEGORİYİ OLUŞTURMA (RETURN)
         if (g === 'Favorilerim' && favoritesCount === 0) return;
+        
         if (g === 'En Çok Dinlenenler' && mostListenedCount === 0) return;
+        
         const el = document.createElement("div"); el.className = "group"; el.textContent = g;
         el.onclick = () => { 
             document.querySelectorAll(".group.active").forEach(e => e.classList.remove("active")); 
@@ -432,7 +429,13 @@
         G_UI.groups.appendChild(el); 
         if (g === currentActiveGroup) groupToActivate = el;
       });
-      if (groupToActivate) { groupToActivate.click(); } else if (G_UI.groups.firstChild) { G_UI.groups.firstChild.click(); }
+      
+      // Eğer aktif olan grup kaybolduysa (örn: son favoriyi sildik), ilk sekmeye tıkla
+      if (groupToActivate) {
+          groupToActivate.click();
+      } else if (G_UI.groups.firstChild) {
+          G_UI.groups.firstChild.click();
+      }
     }
 
     function listChannels(group) {
@@ -473,7 +476,7 @@
       });
     }
     
-    // --- Oynatıcı ---
+    // --- OYNATICI ---
     function stopStream(audioElement, hlsInstance) {
         audioElement.pause(); audioElement.removeAttribute("src");
         try { audioElement.load(); } catch (e) {}
@@ -519,7 +522,7 @@
         }
     }
 
-    // --- Veri Yükleme ---
+    // --- VERİ YÜKLEME ---
     async function fetchAndDisplayChannels() {
         try {
             const response = await fetch('./channels.txt?v=' + new Date().getTime()); 
@@ -550,7 +553,6 @@
       applyTheme(localStorage.getItem('iptvTheme') || 'steel');
       loadSavedZoom();
       
-      // Ekolayzer Oluşturma
       [G_UI.preview.analyzerTop, G_UI.preview.analyzerBottom].forEach(analyzer => {
           for (let i = 0; i < 30; i++) { 
               const bar = document.createElement('div');
