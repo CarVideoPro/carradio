@@ -1,580 +1,359 @@
 <!DOCTYPE html>
 <html lang="tr">
+
 <head>
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Car Video Pro Radyo</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-  
-  <style>
-    :root {
-        --player-height: 55px;
-        --category-bar-height: 40px;
-    }
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Car Video Pro Radyo</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
 
-    /* TEMA RENK DEĞİŞKENLERİ */
-    [data-theme='default'] { --bg-primary: linear-gradient(135deg, #232526 0%, #414345 100%); --bg-secondary: #232526; --bg-tertiary: #414345; --bg-hover: #5c5c5c; --border-color: #3366cc; --accent-color: #00c6ff; --accent-color-darker: #0072ff; --text-primary: #fff; --text-secondary: #b3c6ff; --favorite-color: #ffd700; }
-    [data-theme='forest'] { --bg-primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); --bg-secondary: #11998e; --bg-tertiary: #38ef7d; --bg-hover: #56c596; --border-color: #38ef7d; --accent-color: #43e97b; --accent-color-darker: #38ef7d; --text-primary: #fff; --text-secondary: #d0ffd6; --favorite-color: #ffeb3b; }
-    [data-theme='royal'] { --bg-primary: linear-gradient(135deg, #654ea3 0%, #eaafc8 100%); --bg-secondary: #654ea3; --bg-tertiary: #eaafc8; --bg-hover: #b983ff; --border-color: #eaafc8; --accent-color: #b983ff; --accent-color-darker: #654ea3; --text-primary: #fff; --text-secondary: #f3e5f5; --favorite-color: #fdd835; }
-    [data-theme='sunset'] { --bg-primary: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); --bg-secondary: #ff9966; --bg-tertiary: #ff5e62; --bg-hover: #ff7e5f; --border-color: #ff5e62; --accent-color: #ff7e5f; --accent-color-darker: #ff9966; --text-primary: #fff3e0; --text-secondary: #ffccbc; --favorite-color: #ffc107; }
-    [data-theme='steel'] { --bg-primary: linear-gradient(135deg, #485563 0%, #29323c 100%); --bg-secondary: #485563; --bg-tertiary: #29323c; --bg-hover: #6e7f80; --border-color: #757575; --accent-color: #a8c0ff; --accent-color-darker: #485563; --text-primary: #f5f5f5; --text-secondary: #bdbdbd; --favorite-color: #f5f5f5; }
-    [data-theme='yellow'] { --bg-primary: linear-gradient(135deg, #fffde7 0%, #fff176 100%); --bg-secondary: #fffde7; --bg-tertiary: #fff176; --bg-hover: #ffee58; --border-color: #fbc02d; --accent-color: #ffd600; --accent-color-darker: #ffb300; --text-primary: #795548; --text-secondary: #a1887f; --favorite-color: #ffeb3b; --icon-color: #000; --icon-shadow: 0 0 8px #ffb300; }
+    <style>
+        :root {
+            --player-height: 55px;
+            --category-bar-height: 40px;
+        }
 
-    * { box-sizing: border-box; }
-    html, body {
-        margin: 0; height: 100%; background: var(--bg-primary); font-family: 'Montserrat', 'Segoe UI', 'Arial Black', Arial, sans-serif; overflow: hidden;
-        color: var(--text-primary);
-        font-size: 15px;
-        font-weight: 500;
-    }
-    
-    #app {
-      display: flex; flex-direction: column; height: 100%;
-      padding-bottom: calc(var(--player-height) + var(--category-bar-height));
-    }
-    #main {
-      display: flex; flex: 1; overflow: hidden;
-    }
-    
-    #channels {
-      flex: 0 0 260px;
-      background: var(--bg-secondary);
-      border-right: 2px solid var(--border-color);
-      overflow-y: auto;
-      padding: 8px;
-      display: flex; flex-direction: column; gap: 6px;
-    }
-    
-    /* --- ANA GÖRÜNÜM ALANI --- */
-    #previewArea {
-        flex: 1; display: flex; flex-direction: column;
-        justify-content: center; align-items: center;
-        background: var(--bg-primary); overflow: hidden; position: relative;
-    }
+        /* TEMA RENK DEĞİŞKENLERİ */
+        [data-theme='default'] { --bg-primary: linear-gradient(135deg, #232526 0%, #414345 100%); --bg-secondary: #232526; --bg-tertiary: #414345; --bg-hover: #5c5c5c; --border-color: #3366cc; --accent-color: #00c6ff; --accent-color-darker: #0072ff; --text-primary: #fff; --text-secondary: #b3c6ff; --favorite-color: #ffd700; }
+        [data-theme='forest'] { --bg-primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); --bg-secondary: #11998e; --bg-tertiary: #38ef7d; --bg-hover: #56c596; --border-color: #38ef7d; --accent-color: #43e97b; --accent-color-darker: #38ef7d; --text-primary: #fff; --text-secondary: #d0ffd6; --favorite-color: #ffeb3b; }
+        [data-theme='royal'] { --bg-primary: linear-gradient(135deg, #654ea3 0%, #eaafc8 100%); --bg-secondary: #654ea3; --bg-tertiary: #eaafc8; --bg-hover: #b983ff; --border-color: #eaafc8; --accent-color: #b983ff; --accent-color-darker: #654ea3; --text-primary: #fff; --text-secondary: #f3e5f5; --favorite-color: #fdd835; }
+        [data-theme='sunset'] { --bg-primary: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); --bg-secondary: #ff9966; --bg-tertiary: #ff5e62; --bg-hover: #ff7e5f; --border-color: #ff5e62; --accent-color: #ff7e5f; --accent-color-darker: #ff9966; --text-primary: #fff3e0; --text-secondary: #ffccbc; --favorite-color: #ffc107; }
+        [data-theme='steel'] { --bg-primary: linear-gradient(135deg, #485563 0%, #29323c 100%); --bg-secondary: #485563; --bg-tertiary: #29323c; --bg-hover: #6e7f80; --border-color: #757575; --accent-color: #a8c0ff; --accent-color-darker: #485563; --text-primary: #f5f5f5; --text-secondary: #bdbdbd; --favorite-color: #f5f5f5; }
+        [data-theme='yellow'] { --bg-primary: linear-gradient(135deg, #fffde7 0%, #fff176 100%); --bg-secondary: #fffde7; --bg-tertiary: #fff176; --bg-hover: #ffee58; --border-color: #fbc02d; --accent-color: #ffd600; --accent-color-darker: #ffb300; --text-primary: #795548; --text-secondary: #a1887f; --favorite-color: #ffeb3b; }
 
-    #previewPlaceholder {
-        padding: 20px; display: flex; flex-direction: column;
-        align-items: center; justify-content: center; text-align: center;
-        gap: 15px; color: #555; height: 100%; cursor: default; z-index: 1;
-    }
-    #previewPlaceholder h2 { font-size: 1.5em; }
-    #previewPlaceholder p { font-size: 1em; }
-    
-    /* --- GÖRSELLEŞTİRİCİ VE LOGO DÜZENİ --- */
-    #visualizer-wrapper {
-        display: none;
-        flex-direction: column;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0; left: 0;
-        padding: 10px 0;
-        z-index: 2;
-    }
-    
-    .analyzer-row { display: flex; justify-content: center; align-items: flex-end; height: 60px; width: 100%; gap: 5px; }
-    .analyzer-row.top { transform: rotate(180deg); margin-bottom: 10px; }
-    .analyzer-row.bottom { margin-top: 10px; }
+        * { box-sizing: border-box; }
+        html, body { margin: 0; height: 100%; background: var(--bg-primary); font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif; overflow: hidden; color: var(--text-primary); font-size: 15px; font-weight: 500; }
+        #app { display: flex; flex-direction: column; height: 100%; padding-bottom: calc(var(--player-height) + var(--category-bar-height)); }
+        #main { display: flex; flex: 1; overflow: hidden; }
+        #channels { flex: 0 0 260px; background: var(--bg-secondary); border-right: 2px solid var(--border-color); overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
+        
+        #previewArea { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--bg-primary); overflow: hidden; position: relative; }
+        #previewPlaceholder { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 15px; color: #555; height: 100%; cursor: default; z-index: 1; }
+        #previewPlaceholder h2 { font-size: 1.5em; }
+        
+        #visualizer-wrapper { display: none; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; padding: 10px 0; z-index: 2; }
+        .analyzer-row { display: flex; justify-content: center; align-items: flex-end; height: 60px; width: 100%; gap: 5px; }
+        .analyzer-row.top { transform: rotate(180deg); margin-bottom: 10px; }
+        .analyzer-row.bottom { margin-top: 10px; }
+        .analyzer-bar { width: 12px; background-color: var(--accent-color); border-radius: 3px; animation: analyzer-wave 0.8s infinite ease-in-out alternate; }
+        
+        #effect-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.9; }
+        .visualizer-hidden { visibility: hidden; opacity: 0; }
 
-    .analyzer-bar {
-        width: 12px; background-color: var(--accent-color);
-        border-radius: 3px;
-        animation: analyzer-wave 0.8s infinite ease-in-out alternate;
-    }
+        #middle-controls-row { display: flex; align-items: center; justify-content: center; gap: 20px; flex: 1; width: 100%; position: relative; z-index: 10; }
+        #main-logo-display { width: 240px; height: 240px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); flex-shrink: 0; transition: all 0.3s ease; }
+        #main-logo-display:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
+        
+        .mid-nav-btn { width: 75px; height: 75px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); border: 3px solid var(--accent-color); color: var(--text-primary); font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
+        #next-btn { padding-left: 6px; } #prev-btn { padding-right: 4px; }
+        .mid-nav-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.15); box-shadow: 0 0 25px var(--accent-color); border-color: #fff; }
+        
+        #previewArea.is-playing #previewPlaceholder { display: none; }
+        #previewArea.is-playing #visualizer-wrapper { display: flex; }
+        @keyframes analyzer-wave { 0% { height: 10%; opacity: 0.5; } 100% { height: 100%; opacity: 1; } }
 
-    #middle-controls-row {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 20px;
-        flex: 1; 
-        width: 100%;
-    }
+        #side-controls-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 100; background: rgba(0, 0, 0, 0.3); padding: 15px 8px; border-radius: 30px; backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.1); align-items: center; }
+        .zoom-btn { background-color: var(--bg-tertiary); color: var(--text-primary); border: 2px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-weight: bold; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); }
+        .zoom-btn:hover { background-color: var(--accent-color); border-color: #fff; }
+        .zoom-btn svg { width: 20px; height: 20px; fill: currentColor; }
+        
+        #theme-list { display: flex; flex-direction: column; gap: 10px; }
+        .theme-swatch { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: 0.2s; }
+        .theme-swatch:hover { transform: scale(1.3); }
+        .theme-swatch.active { border-color: #fff; box-shadow: 0 0 10px var(--accent-color); transform: scale(1.2); }
+        #audio-player { display: none; }
 
-    #main-logo-display {
-        width: 240px; height: 240px; border-radius: 50%;
-        object-fit: contain; background-color: rgba(255,255,255,0.05);
-        border: 4px solid var(--bg-tertiary);
-        box-shadow: 0 5px 25px rgba(0,0,0,0.3);
-        flex-shrink: 0;
-    }
+        #groups { position: fixed; bottom: var(--player-height); left: 0; width: 100%; height: var(--category-bar-height); background: var(--bg-secondary); border-top: 1px solid var(--border-color); display: flex; overflow-x: auto; z-index: 1000; scrollbar-width: thin; scrollbar-color: var(--accent-color) var(--bg-secondary); }
+        #groups::-webkit-scrollbar { height: 6px; } #groups::-webkit-scrollbar-track { background: var(--bg-secondary); } #groups::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
+        .group { padding: 0 18px; cursor: pointer; background: transparent; border-right: 1px solid var(--border-color); line-height: var(--category-bar-height); white-space: nowrap; flex-shrink: 0; transition: background-color 0.2s; }
+        .group:hover, .group.active { background: var(--accent-color); }
 
-    /* --- YUVARLAK VE BÜYÜK BUTONLAR --- */
-    .mid-nav-btn {
-        width: 75px; 
-        height: 75px; 
-        border-radius: 50%; 
-        background: rgba(0, 0, 0, 0.3); 
-        border: 3px solid var(--accent-color); 
-        color: var(--text-primary);
-        font-size: 32px;
-        cursor: pointer;
-        display: flex; align-items: center; justify-content: center;
-        transition: all 0.2s cubic-bezier(.4,2,.3,.7);
-        backdrop-filter: blur(6px);
-        box-shadow: 0 0 15px rgba(0,0,0,0.3);
-    }
-    
-    /* OPTİK HİZALAMA DÜZELTMESİ */
-    #next-btn { padding-left: 6px; } 
-    #prev-btn { padding-right: 4px; }
+        .channel { display: flex; align-items: center; gap: 8px; background: var(--bg-tertiary); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); transition: 0.25s; }
+        .channel-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; }
+        .channel-info>div>div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 900; }
+        .channel:hover { background: var(--bg-hover); }
+        .channel.active { border-color: var(--accent-color); background: var(--accent-color-darker); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 12px var(--accent-color); }
+        .channel img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; border-radius: 8px; }
+        .fav-btn { font-size: 22px; cursor: pointer; padding: 5px; color: var(--text-secondary); transition: 0.2s; flex-shrink: 0; }
+        .fav-btn:hover { transform: scale(1.2); } .fav-btn.favorited { color: var(--favorite-color); }
 
-    .mid-nav-btn:hover {
-        background: var(--accent-color);
-        color: #000;
-        transform: scale(1.15);
-        box-shadow: 0 0 25px var(--accent-color);
-        border-color: #fff;
-    }
-    
-    .mid-nav-btn:active { transform: scale(0.95); }
+        #playerContainer { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--player-height); background: var(--bg-secondary); display: flex; z-index: 999; align-items: center; padding: 0 10px; border-top: 2px solid var(--border-color); box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18); }
+        .player-text { width: 100%; text-align: left; overflow: hidden; white-space: nowrap; background: linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.18) 100%); border-radius: 8px; border: 1.5px solid var(--accent-color); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18) inset, 0 0 8px var(--accent-color) inset; height: 40px; display: flex; align-items: center; }
+        .player-text .title { display: inline-block; white-space: nowrap; animation: marquee-scroll 20s linear infinite; animation-play-state: paused; font-size: 1.22em; font-weight: 900; color: var(--text-primary); text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 0 16px var(--accent-color); padding-left: 10px; }
+        #playerContainer.playing .player-text .title { animation-play-state: running; }
+        .player-text .title span { display: inline-block; padding-right: 50px; }
+        @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+        
+        #effect-name-toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); color: var(--accent-color); padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 200; border: 1px solid var(--accent-color); box-shadow: 0 0 15px var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
 
-    /* Oynatma Durumu */
-    #previewArea.is-playing #previewPlaceholder { display: none; }
-    #previewArea.is-playing #visualizer-wrapper { display: flex; }
-    
-    @keyframes analyzer-wave {
-        0% { height: 10%; opacity: 0.5; }
-        100% { height: 100%; opacity: 1; }
-    }
-
-    /* --- SAĞ DİKEY KONTROL ALANI --- */
-    #side-controls-container {
-        position: absolute; right: 15px; top: 50%; transform: translateY(-50%);
-        display: flex; flex-direction: column; gap: 15px; z-index: 100;
-        background: rgba(0, 0, 0, 0.3); padding: 15px 8px; border-radius: 30px;
-        backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.1);
-        align-items: center;
-    }
-    
-    .zoom-btn {
-        background-color: var(--bg-tertiary); color: var(--text-primary);
-        border: 2px solid var(--border-color);
-        width: 32px; height: 32px; border-radius: 50%;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: 0.2s; font-weight: bold;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-    }
-    .zoom-btn:hover { background-color: var(--accent-color); border-color: #fff; }
-    .zoom-btn svg { width: 20px; height: 20px; fill: currentColor; }
-
-    #theme-list { display: flex; flex-direction: column; gap: 10px; }
-    
-    .theme-swatch {
-           width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color);
-           box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
-    }
-    .theme-swatch:hover { transform: scale(1.3); }
-    .theme-swatch.active { border-color: #fff; box-shadow: 0 0 10px var(--accent-color); transform: scale(1.2); }
-
-    #audio-player { display: none; }
-    
-    /* GRUPLAR */
-    #groups {
-        position: fixed; bottom: var(--player-height); left: 0; width: 100%; height: var(--category-bar-height);
-        background: var(--bg-secondary); border-top: 1px solid var(--border-color);
-        display: flex; overflow-x: auto; z-index: 1000;
-        scrollbar-width: thin; scrollbar-color: var(--accent-color) var(--bg-secondary);
-    }
-    #groups::-webkit-scrollbar { height: 6px; }
-    #groups::-webkit-scrollbar-track { background: var(--bg-secondary); }
-    #groups::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
-
-    .group {
-      padding: 0 18px; cursor: pointer; background: transparent; border-right: 1px solid var(--border-color);
-      line-height: var(--category-bar-height); white-space: nowrap; flex-shrink: 0; transition: background-color 0.2s;
-    }
-    .group:hover, .group.active { background: var(--accent-color); }
-
-    /* KANAL LİSTESİ */
-    .channel {
-        display: flex; align-items: center; gap: 8px; background: var(--bg-tertiary);
-        border-radius: 12px; padding: 10px; border: 1px solid var(--border-color);
-        box-shadow: 0 4px 16px rgba(0,0,0,0.18), 0 1.5px 0.5px rgba(255,255,255,0.08) inset;
-        transition: all 0.25s cubic-bezier(.4,2,.3,.7);
-    }
-    .channel-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; }
-    .channel-info > div > div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 900; }
-    .channel:hover { background: var(--bg-hover); }
-    .channel.active { border-color: var(--accent-color); background: var(--accent-color-darker); box-shadow: 0 8px 32px rgba(0,0,0,0.25), 0 0 12px var(--accent-color); }
-    .channel img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.18)) brightness(1.1); border-radius: 8px; }
-    
-    .fav-btn { font-size: 22px; cursor: pointer; padding: 5px; color: var(--text-secondary); transition: color 0.2s, transform 0.2s; flex-shrink: 0; }
-    .fav-btn:hover { transform: scale(1.2); }
-    .fav-btn.favorited { color: var(--favorite-color); }
-
-    /* PLAYER BAR */
-    #playerContainer {
-        position: fixed; bottom: 0; left: 0; width: 100%; height: var(--player-height); background: var(--bg-secondary);
-        display: flex; z-index: 999; align-items: center; padding: 0 10px;
-        border-top: 2px solid var(--border-color); 
-        box-shadow: 0 -4px 24px rgba(0,0,0,0.18), 0 1.5px 0.5px rgba(255,255,255,0.08) inset;
-    }
-    
-    .player-text { 
-           width: 100%; /* Tam genişlik */
-           text-align: left; overflow: hidden; white-space: nowrap;
-           background: linear-gradient(90deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.18) 100%);
-           border-radius: 8px; border: 1.5px solid var(--accent-color);
-           box-shadow: 0 2px 12px rgba(0,0,0,0.18) inset, 0 0 8px var(--accent-color) inset;
-           height: 40px; display: flex; align-items: center;
-    }
-    .player-text .title { 
-           display: inline-block; white-space: nowrap; will-change: transform; 
-           animation: marquee-scroll 20s linear infinite; animation-play-state: paused; 
-           font-size: 1.22em; font-weight: 900; color: var(--text-primary);
-           text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 0 16px var(--accent-color), 0 0 2px #fff;
-           padding-left: 10px;
-    }
-    #playerContainer.playing .player-text .title { animation-play-state: running; }
-    .player-text .title span { display: inline-block; padding-right: 50px; }
-    @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-
-    @media (max-width: 768px) {
-        #channels { flex: 0 0 200px; }
-        #main-logo-display { width: 130px; height: 130px; }
-        .mid-nav-btn { width: 60px; height: 60px; font-size: 26px; }
-        #middle-controls-row { gap: 10px; }
-        #side-controls-container { right: 5px; padding: 10px 5px; }
-        .theme-swatch { width: 20px; height: 20px; }
-        .zoom-btn { width: 28px; height: 28px; }
-    }
-  </style>
+        @media (max-width: 768px) {
+            #channels { flex: 0 0 200px; }
+            #main-logo-display { width: 130px; height: 130px; }
+            .mid-nav-btn { width: 60px; height: 60px; font-size: 26px; }
+            #side-controls-container { right: 5px; padding: 10px 5px; }
+            .theme-swatch { width: 20px; height: 20px; }
+        }
+    </style>
 </head>
 <body data-theme="steel">
-  
-  <div id="app">
-    <div id="main">
-      <div id="channels"></div>
-      
-      <div id="previewArea">
-        
-        <div id="side-controls-container">
-            <button class="zoom-btn" id="zoom-in-btn" title="Büyüt">
-                <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            </button>
-            
-            <div id="theme-list"></div> 
-            
-            <button class="zoom-btn" id="zoom-out-btn" title="Küçült">
-                <svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg>
-            </button>
-        </div>
 
-        <div id="previewPlaceholder">
-          <h1> 📻 Car Video Pro Radyo 📻</h1>
-          <h2> 📞 İletişim : Telegram : t.me/car_video_pro 📞</h2>
-          <p>✔️ Lütfen bir kategori seçip radyo kanalına tıklayınız. ✔️</p>
-        </div>
-        
-        <div id="visualizer-wrapper">
-            <div class="analyzer-row top" id="analyzer-top"></div>
-            
-            <div id="middle-controls-row">
-                <button class="mid-nav-btn" id="prev-btn" onclick="changeChannel(-1)">&#9664;</button>
-                <img id="main-logo-display" src="" alt="Radyo Logosu">
-                <button class="mid-nav-btn" id="next-btn" onclick="changeChannel(1)">&#9654;</button>
+    <div id="app">
+        <div id="main">
+            <div id="channels"></div>
+            <div id="previewArea">
+                <div id="effect-name-toast">Efekt</div>
+                <div id="side-controls-container">
+                    <button class="zoom-btn" id="zoom-in-btn" title="Büyüt"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
+                    <div id="theme-list"></div>
+                    <button class="zoom-btn" id="zoom-out-btn" title="Küçült"><svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></button>
+                </div>
+                <div id="previewPlaceholder">
+                    <h1>📻 Car Video Pro Radyo 📻</h1>
+                    <h2>📞 İletişim: t.me/car_video_pro 📞</h2>
+                    <p>✔️ Bir kanal seçin ve keyfini çıkarın ✔️</p>
+                </div>
+                <div id="visualizer-wrapper">
+                    <canvas id="effect-canvas"></canvas>
+                    <div class="analyzer-row top" id="analyzer-top"></div>
+                    <div id="middle-controls-row">
+                        <button class="mid-nav-btn" id="prev-btn" onclick="changeChannel(-1)">&#9664;</button>
+                        <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
+                        <button class="mid-nav-btn" id="next-btn" onclick="changeChannel(1)">&#9654;</button>
+                    </div>
+                    <div class="analyzer-row bottom" id="analyzer-bottom"></div>
+                </div>
             </div>
-            
-            <div class="analyzer-row bottom" id="analyzer-bottom"></div>
         </div>
-        
-      </div>
     </div>
-  </div>
+    <div id="groups"></div>
+    <div id="playerContainer">
+        <div class="player-text"><div class="title" id="player-channel-name"></div></div>
+    </div>
+    <audio id="audio-player"></audio>
 
-  <div id="groups"></div>
+    <script>
+        const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
+        const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 Telegram: t.me/car_video_pro 📞 ";
+        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast") };
 
-  <div id="playerContainer">
-      <div class="player-text">
-        <div class="title" id="player-channel-name"></div>
-      </div>
-  </div>
-
-  <audio id="audio-player"></audio>
-
-  <script>
-    const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
-    const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 İletişim : Telegram : t.me/car_video_pro 📞 ";
-
-    const G_UI = {
-        groups: document.getElementById("groups"),
-        channels: document.getElementById("channels"),
-        preview: {
-            area: document.getElementById("previewArea"),
-            placeholder: document.getElementById("previewPlaceholder"),
-            mainLogo: document.getElementById("main-logo-display"),
-            analyzerTop: document.getElementById("analyzer-top"),
-            analyzerBottom: document.getElementById("analyzer-bottom"),
-        },
-        player: { 
-            container: document.getElementById("playerContainer"), 
-            channelName: document.getElementById("player-channel-name")
-        },
-        themeList: document.getElementById("theme-list"),
-        audioPlayer: document.getElementById("audio-player"),
-        zoomInBtn: document.getElementById("zoom-in-btn"),
-        zoomOutBtn: document.getElementById("zoom-out-btn"),
-        htmlElement: document.documentElement
-    };
-    
-    // TEMA
-    const themes = {
-        'default': { name: 'Varsayılan', color: '#3366cc' }, 'forest': { name: 'Orman', color: '#4CAF50' }, 'royal': { name: 'Kraliyet', color: '#9C27B0' },
-        'sunset': { name: 'Gün Batımı', color: '#FF5722' }, 'steel': { name: 'Çelik', color: '#757575' }, 'yellow': { name: 'Sarı', color: '#FFD600' }
-    };
-    function applyTheme(themeName) {
-        document.body.dataset.theme = themeName;
-        localStorage.setItem('iptvTheme', themeName); 
-        document.querySelectorAll('.theme-swatch').forEach(swatch => swatch.classList.toggle('active', swatch.dataset.theme === themeName));
-    }
-    function createThemeSelector() {
-        G_UI.themeList.innerHTML = "";
-        for (const [key, theme] of Object.entries(themes)) {
-            const swatch = document.createElement('div');
-            swatch.className = 'theme-swatch'; swatch.dataset.theme = key; swatch.title = theme.name;
-            swatch.style.backgroundColor = theme.color; swatch.onclick = () => applyTheme(key);
-            G_UI.themeList.appendChild(swatch);
-        }
-    }
-    
-    // Global
-    let hls;
-    let allChannelsMap = new Map(); 
-    let currentChannelList = []; 
-    let currentChannelIndex = -1; 
-    let activeGroupName = ''; 
-    
-    // Zoom
-    const ZOOM_KEY = 'carRadioZoomLevel';
-    const ZOOM_STEP = 0.05;
-    const MIN_ZOOM = 0.7;
-    const MAX_ZOOM = 1.3;
-    let currentZoom = 1.0;
-
-    const applyZoom = (zoomLevel) => { G_UI.htmlElement.style.zoom = zoomLevel; };
-    const updateZoom = (newZoom) => {
-        currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, newZoom));
-        applyZoom(currentZoom);
-        localStorage.setItem(ZOOM_KEY, currentZoom);
-    };
-    const loadSavedZoom = () => {
-        const savedZoom = localStorage.getItem(ZOOM_KEY);
-        if (savedZoom) {
-            currentZoom = parseFloat(savedZoom);
-            applyZoom(currentZoom);
-        }
-    };
-
-    // --- FAVORİ İŞLEMLERİ ---
-    function getFavorites() { return JSON.parse(localStorage.getItem('favoriteRadios') || '[]'); }
-    function saveFavorites(favs) { localStorage.setItem('favoriteRadios', JSON.stringify(favs)); }
-    function getListenCounts() { return JSON.parse(localStorage.getItem('radioListenCounts') || '{}'); }
-    
-    function incrementListenCount(streamUrl) {
-        if (!streamUrl) return;
-        const counts = getListenCounts();
-        counts[streamUrl] = (counts[streamUrl] || 0) + 1;
-        localStorage.setItem('radioListenCounts', JSON.stringify(counts));
-        if (activeGroupName === 'En Çok Dinlenenler') { listChannels(activeGroupName); }
-    }
-    
-    // Favori Ekle/Çıkar (Güncellendi)
-    function toggleFavorite(streamUrl, favButton) {
-        let favorites = getFavorites();
-        const index = favorites.indexOf(streamUrl);
-        
-        if (index > -1) { 
-            favorites.splice(index, 1); 
-            favButton.classList.remove('favorited'); 
-        } else { 
-            favorites.push(streamUrl); 
-            favButton.classList.add('favorited'); 
-        }
-        saveFavorites(favorites);
-        
-        // Her değişiklikte menüyü güncelle (Favoriler boşsa gizlenir, doluysa gelir)
-        listGroups(); 
-        
-        // Eğer şu an Favorilerim sekmesindeysek listeyi de anlık güncelle
-        if (activeGroupName === 'Favorilerim') { 
-            listChannels('Favorilerim'); 
-        }
-    }
-
-    // --- LİSTELEME ---
-    function listGroups() {
-      const currentActiveGroup = document.querySelector('.group.active')?.textContent || CATEGORIES[0];
-      G_UI.groups.innerHTML = ""; 
-      let groupToActivate = null;
-      
-      const favoritesCount = getFavorites().length; // Anlık favori sayısı
-      const listenCounts = getListenCounts();
-      const mostListenedCount = Object.keys(listenCounts).length;
-      
-      CATEGORIES.forEach((g) => {
-        // EĞER FAVORİ YOKSA BU KATEGORİYİ OLUŞTURMA (RETURN)
-        if (g === 'Favorilerim' && favoritesCount === 0) return;
-        
-        if (g === 'En Çok Dinlenenler' && mostListenedCount === 0) return;
-        
-        const el = document.createElement("div"); el.className = "group"; el.textContent = g;
-        el.onclick = () => { 
-            document.querySelectorAll(".group.active").forEach(e => e.classList.remove("active")); 
-            el.classList.add("active"); activeGroupName = g; listChannels(g); 
+        // --- EFEKT SİSTEMİ ---
+        const EFFECTS = [
+            'equalizer', 'rain', 'analog', 'waves', 'sonar', 'dvdbounce', 'nebula', 'spiral', 'confetti', 'gradient', 'bars3d',
+            'starfield', 'circular', 'tunnel', 'traffic', 'retrogrid', 'radar', 
+            'snow', 'classicbars', 'energyorb', 'bokeh', 'hexagons', 'lightning', 'pulse', 
+            'fire', 'matrix', 'particles'
+        ];
+        const EFFECT_NAMES = {
+            'equalizer': 'Standart Barlar', 
+            'rain': 'Yağmur Efekti', 'analog': 'Analog İbre', 'waves': 'Sinus Dalgaları',
+            'sonar': 'Sonar Dalgaları', 'dvdbounce': 'Seken Logo', 'nebula': 'Uzay Bulutu',
+            'spiral': 'Hipnoz Spirali', 'confetti': 'Konfeti', 'gradient': 'Renk Akışı', 'bars3d': '3D Bloklar',
+            'starfield': 'Warp Sürüşü', 'circular': 'Dairesel Spectrum', 'tunnel': 'Neon Tünel', 'traffic': 'Gece Trafiği', 
+            'retrogrid': 'Retro Grid 80s', 'radar': 'Güvenlik Radarı', 'snow': 'Kış Sürüşü', 'classicbars': 'Klasik Ekolayzer', 
+            'energyorb': 'Enerji Küresi', 'bokeh': 'Şehir Işıkları', 'hexagons': 'Petek Dokusu', 'lightning': 'Fırtına Şimşek', 
+            'pulse': 'Bass Nabzı', 'fire': 'Ateş Efekti', 'matrix': 'Matrix Kodu', 'particles': 'Parçacıklar'
         };
-        G_UI.groups.appendChild(el); 
-        if (g === currentActiveGroup) groupToActivate = el;
-      });
-      
-      // Eğer aktif olan grup kaybolduysa (örn: son favoriyi sildik), ilk sekmeye tıkla
-      if (groupToActivate) {
-          groupToActivate.click();
-      } else if (G_UI.groups.firstChild) {
-          G_UI.groups.firstChild.click();
-      }
-    }
 
-    function listChannels(group) {
-      G_UI.channels.innerHTML = "";
-      const favorites = getFavorites();
-      
-      if (group === 'Favorilerim') {
-        currentChannelList = favorites.map(url => allChannelsMap.get(url)).filter(Boolean); 
-      } else if (group === 'En Çok Dinlenenler') {
-        const listenCounts = getListenCounts();
-        currentChannelList = Object.entries(listenCounts)
-            .sort(([, countA], [, countB]) => countB - countA)
-            .map(([url]) => allChannelsMap.get(url)).filter(Boolean).slice(0, 20);
-      } else {
-        const categoryId = CATEGORIES.indexOf(group);
-        currentChannelList = Array.from(allChannelsMap.values()).filter(c => c.categoryId === categoryId);
-      }
-      
-      currentChannelList.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-      
-      currentChannelList.forEach((c, idx) => {
-        const isFavorited = favorites.includes(c.streamUrl);
-        const el = document.createElement("div"); el.className = "channel";
-        el.innerHTML = `
-            <div class="channel-info">
-                <img src="${c.logoUrl || ''}" onerror="this.style.display='none'" alt="logo">
-                <div><div>${c.name}</div></div>
-            </div>
-            <span class="fav-btn ${isFavorited ? 'favorited' : ''}">★</span>
-        `;
-        const channelInfo = el.querySelector('.channel-info'), favButton = el.querySelector('.fav-btn');
-        channelInfo.onclick = () => { 
-            document.querySelectorAll(".channel.active").forEach(ch => ch.classList.remove("active")); 
-            el.classList.add("active"); playChannel(idx); 
-        };
-        favButton.onclick = (e) => { e.stopPropagation(); toggleFavorite(c.streamUrl, favButton); };
-        G_UI.channels.appendChild(el);
-      });
-    }
-    
-    // --- OYNATICI ---
-    function stopStream(audioElement, hlsInstance) {
-        audioElement.pause(); audioElement.removeAttribute("src");
-        try { audioElement.load(); } catch (e) {}
-        if (hlsInstance) { hlsInstance.destroy(); hls = null; }
-        updatePlayerUI(false); 
-    }
+        let currentEffectIndex = 0;
+        let animationFrameId;
+        let activeEffectInstance = null;
+        const SAVED_EFFECT_KEY = 'carRadioLastEffect'; 
 
-    async function playStream(audioElement, url) {
-        stopStream(audioElement, hls); 
-        const isHLS = url.includes('.m3u8');
-        if (isHLS && Hls.isSupported()) { 
-            hls = new Hls(); hls.loadSource(url); hls.attachMedia(audioElement); 
-        } else { 
-            hls = null; audioElement.src = url; 
+        /* ================= EFEKT SINIFLARI (ÖNLEM: Resize işleminde canvas boyutu atanır) ================= */
+        class RainEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.drops=[]; this.init(); } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } init() { for(let i=0; i<100; i++) this.drops.push({x:Math.random()*this.c.width, y:Math.random()*this.c.height, l:Math.random()*20+10, v:Math.random()*10+15}); } draw() { this.x.fillStyle='rgba(0,0,0,0.3)'; this.x.fillRect(0,0,this.c.width,this.c.height); this.x.strokeStyle='rgba(174,194,224,0.6)'; this.x.lineWidth=2; for(let d of this.drops) { this.x.beginPath(); this.x.moveTo(d.x, d.y); this.x.lineTo(d.x-2, d.y+d.l); this.x.stroke(); d.y += d.v; d.x -= 0.5; if(d.y > this.c.height) { d.y = -d.l; d.x = Math.random()*this.c.width; } } } }
+        class AnalogMeterEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.val=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); const cx=this.c.width/2, cy=this.c.height*0.8, r=Math.min(this.c.width,this.c.height)*0.4; this.x.beginPath(); this.x.arc(cx,cy,r,Math.PI,0); this.x.lineWidth=10; this.x.strokeStyle='#333'; this.x.stroke(); for(let i=0; i<=10; i++) { let a = Math.PI + (i/10)*Math.PI; let tx = cx + Math.cos(a)*(r-20), ty = cy + Math.sin(a)*(r-20); let tx2 = cx + Math.cos(a)*(r-5), ty2 = cy + Math.sin(a)*(r-5); this.x.beginPath(); this.x.moveTo(tx,ty); this.x.lineTo(tx2,ty2); this.x.lineWidth=3; this.x.strokeStyle = i>7?'red':'white'; this.x.stroke(); } this.val += (Math.random()-0.5)*0.3; this.val = Math.max(0, Math.min(1, this.val)); if(Math.random()>0.9) this.val = Math.random(); let na = Math.PI + this.val*Math.PI; this.x.beginPath(); this.x.moveTo(cx,cy); this.x.lineTo(cx+Math.cos(na)*(r-30), cy+Math.sin(na)*(r-30)); this.x.lineWidth=4; this.x.strokeStyle='red'; this.x.stroke(); this.x.beginPath(); this.x.arc(cx,cy,10,0,Math.PI*2); this.x.fillStyle='#555'; this.x.fill(); } }
+        class SineWavesEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); this.t+=0.1; const cy = this.c.height/2; for(let i=0; i<3; i++) { this.x.beginPath(); this.x.lineWidth=3; this.x.strokeStyle = `hsl(${this.t*20 + i*50}, 70%, 60%)`; for(let x=0; x<this.c.width; x+=5) { let y = cy + Math.sin(x*0.01 + this.t + i)*50 * Math.sin(this.t*0.5); x===0 ? this.x.moveTo(x,y) : this.x.lineTo(x,y); } this.x.stroke(); } } }
+        class SonarEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.rings=[]; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.fillStyle='rgba(0,20,40,0.1)'; this.x.fillRect(0,0,this.c.width,this.c.height); if(Math.random()>0.95) this.rings.push({r:0, o:1}); const cx=this.c.width/2, cy=this.c.height/2; for(let i=0; i<this.rings.length; i++) { let r=this.rings[i]; r.r += 2; r.o -= 0.01; this.x.beginPath(); this.x.arc(cx,cy,r.r,0,Math.PI*2); this.x.strokeStyle=`rgba(0,255,100,${r.o})`; this.x.lineWidth=2; this.x.stroke(); if(r.o<=0) { this.rings.splice(i,1); i--; } } this.x.strokeStyle='rgba(0,255,100,0.3)'; this.x.lineWidth=1; this.x.beginPath(); this.x.moveTo(cx,0); this.x.lineTo(cx,this.c.height); this.x.stroke(); this.x.beginPath(); this.x.moveTo(0,cy); this.x.lineTo(this.c.width,cy); this.x.stroke(); } }
+        class DvdBounceEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.bx=10; this.by=10; this.vx=3; this.vy=3; this.col='#f00'; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); this.x.font = "bold 40px Arial"; this.x.fillStyle = this.col; this.x.fillText("DVD", this.bx, this.by); this.x.strokeStyle = 'white'; this.x.lineWidth=2; this.x.strokeText("DVD", this.bx, this.by); this.bx += this.vx; this.by += this.vy; let hit = false; if(this.bx + 80 > this.c.width || this.bx < 0) { this.vx *= -1; hit=true; } if(this.by > this.c.height || this.by < 30) { this.vy *= -1; hit=true; } if(hit) this.col = `hsl(${Math.random()*360}, 100%, 50%)`; } }
+        class NebulaEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.t += 0.01; this.x.fillStyle = 'rgba(0,0,0,0.05)'; this.x.fillRect(0,0,this.c.width,this.c.height); const cx=this.c.width/2, cy=this.c.height/2; for(let i=0; i<3; i++) { const x = cx + Math.sin(this.t + i)*100; const y = cy + Math.cos(this.t*1.3 + i)*50; const g = this.x.createRadialGradient(x,y,10,x,y,200); g.addColorStop(0, `hsla(${this.t*20 + i*120}, 80%, 60%, 0.1)`); g.addColorStop(1, 'transparent'); this.x.fillStyle = g; this.x.fillRect(0,0,this.c.width,this.c.height); } } }
+        class SpiralEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.a=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.fillStyle = 'rgba(0,0,0,0.1)'; this.x.fillRect(0,0,this.c.width,this.c.height); this.a += 0.1; const cx=this.c.width/2, cy=this.c.height/2; this.x.save(); this.x.translate(cx,cy); this.x.rotate(this.a); for(let i=0; i<20; i++) { this.x.beginPath(); this.x.strokeStyle = `hsl(${i*18 + this.a*50}, 100%, 50%)`; this.x.lineWidth = 2 + i; this.x.arc(0,0, i*10 + Math.abs(Math.sin(this.a)*50), 0, Math.PI*1.5); this.x.stroke(); this.x.rotate(0.5); } this.x.restore(); } }
+        class ConfettiEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.p=[]; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); if(this.p.length < 100) this.p.push({x:Math.random()*this.c.width, y:-10, vx:(Math.random()-0.5)*2, vy:Math.random()*3+2, c:`hsl(${Math.random()*360},100%,50%)`, r:Math.random()*5+2}); for(let i=0; i<this.p.length; i++) { let p = this.p[i]; this.x.fillStyle = p.c; this.x.fillRect(p.x, p.y, p.r, p.r); p.x += p.vx; p.y += p.vy; p.vx += Math.sin(p.y*0.1)*0.1; if(p.y > this.c.height) { this.p.splice(i,1); i--; } } } }
+        class GradientEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.hue=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.hue += 0.5; let g = this.x.createLinearGradient(0,0,this.c.width,this.c.height); g.addColorStop(0, `hsl(${this.hue}, 60%, 40%)`); g.addColorStop(1, `hsl(${this.hue+60}, 60%, 40%)`); this.x.fillStyle = g; this.x.fillRect(0,0,this.c.width,this.c.height); } }
+        class Bars3DEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.vals=new Array(10).fill(0); } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); const w = this.c.width/10; for(let i=0; i<10; i++) { if(Math.random()>0.5) this.vals[i] = Math.max(this.vals[i]-2, Math.random()*100); else this.vals[i] = Math.max(0, this.vals[i]-2); let h = this.vals[i] * 2; let x = i*w; let y = this.c.height/2 + 50; this.x.fillStyle = '#444'; this.x.beginPath(); this.x.moveTo(x, y-h); this.x.lineTo(x+20, y-h-10); this.x.lineTo(x+w-10, y-h-10); this.x.lineTo(x+w-30, y-h); this.x.fill(); this.x.fillStyle = `hsl(${i*20}, 70%, 50%)`; this.x.fillRect(x, y-h, w-30, h); this.x.fillStyle = `hsl(${i*20}, 70%, 30%)`; this.x.beginPath(); this.x.moveTo(x+w-30, y-h); this.x.lineTo(x+w-10, y-h-10); this.x.lineTo(x+w-10, y-10); this.x.lineTo(x+w-30, y); this.x.fill(); } } }
+        class TrafficEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.l=[];for(let i=0;i<40;i++)this.l.push(this.cl());}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}cl(){return{x:Math.random()*this.c.width,y:Math.random()*this.c.height,z:Math.random()*this.c.width,s:5+Math.random()*5,c:Math.random()>0.5?'#f00':'#fff'};}draw(){this.x.fillStyle='rgba(0,0,0,0.3)';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;for(let l of this.l){l.z-=l.s;if(l.z<=0){l.z=this.c.width;l.x=(Math.random()-0.5)*this.c.width*3;l.y=(Math.random()-0.5)*this.c.height*1.5;}const sc=300/(l.z||1),x=cx+l.x*sc,y=cy+l.y*sc,s=sc*2;this.x.fillStyle=l.c;this.x.globalAlpha=Math.min(1,sc);this.x.fillRect(x,y,s*3,s);this.x.globalAlpha=1;}}}
+        class RetroGridEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.o=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='black';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;this.x.strokeStyle='magenta';this.x.lineWidth=2;this.o=(this.o+2)%40;for(let i=0;i<this.c.height/2;i+=40){let y=cy+i+(this.o*(i/100));if(y>this.c.height)y=cy;this.x.beginPath();this.x.moveTo(0,y);this.x.lineTo(this.c.width,y);this.x.stroke();}for(let i=-20;i<=20;i++){this.x.beginPath();this.x.moveTo(cx+i*40,cy);this.x.lineTo(cx+i*120,this.c.height);this.x.stroke();}let g=this.x.createLinearGradient(0,0,0,cy);g.addColorStop(0,'black');g.addColorStop(1,'transparent');this.x.fillStyle=g;this.x.fillRect(0,0,this.c.width,this.c.height);}}
+        class RadarEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.a=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,20,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2,r=Math.min(cx,cy)-20;this.x.strokeStyle='#0f0';this.x.lineWidth=1;this.x.beginPath();this.x.arc(cx,cy,r,0,6.28);this.x.stroke();this.x.beginPath();this.x.arc(cx,cy,r*0.6,0,6.28);this.x.stroke();this.a+=0.05;this.x.save();this.x.translate(cx,cy);this.x.rotate(this.a);let g=this.x.createLinearGradient(0,0,r,0);g.addColorStop(0,'transparent');g.addColorStop(1,'rgba(0,255,0,0.8)');this.x.fillStyle=g;this.x.beginPath();this.x.moveTo(0,0);this.x.arc(0,0,r,0,0.4);this.x.fill();this.x.restore();}}
+        class SnowEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.f=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.f.length<150)this.f.push({x:Math.random()*this.c.width,y:0,s:Math.random()*3+1,v:Math.random()*3+1});this.x.fillStyle='white';for(let i=0;i<this.f.length;i++){let f=this.f[i];this.x.beginPath();this.x.arc(f.x,f.y,f.s,0,6.28);this.x.fill();f.y+=f.v;f.x+=Math.sin(f.y/50)*0.5;if(f.y>this.c.height){this.f.splice(i,1);i--;}}}}
+        class ClassicBarsEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.v=new Array(32).fill(0);}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);const w=this.c.width/32;for(let i=0;i<32;i++){this.v[i]=Math.max(0,this.v[i]-2);if(Math.random()>0.5)this.v[i]=Math.max(this.v[i],Math.random()*(this.c.height/2));const h=this.v[i];this.x.fillStyle=`hsl(${i*10},100%,50%)`;this.x.fillRect(i*w,this.c.height-h-10,w-2,h);this.x.fillStyle=`hsla(${i*10},100%,50%,0.3)`;this.x.fillRect(i*w,this.c.height-10,w-2,h/2);}}}
+        class EnergyOrbEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;this.t+=0.1;this.x.strokeStyle='cyan';this.x.lineWidth=2;for(let i=0;i<10;i++){this.x.beginPath();const r=130+Math.sin(this.t+i)*20;this.x.ellipse(cx,cy,r,r*(0.5+Math.sin(this.t*0.5)*0.2),this.t+i,0,6.28);this.x.stroke();}}}
+        class BokehEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.o=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.o.length<30)this.o.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,r:Math.random()*30+10,c:`hsla(${Math.random()*360},70%,50%,0.2)`,dx:(Math.random()-.5),dy:(Math.random()-.5)});for(let o of this.o){o.x+=o.dx;o.y+=o.dy;this.x.beginPath();this.x.fillStyle=o.c;this.x.arc(o.x,o.y,o.r,0,6.28);this.x.fill();if(o.x<0||o.x>this.c.width||o.y<0||o.y>this.c.height)o.x=Math.random()*this.c.width;}}}
+        class HexagonsEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.h=[];this.init();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.init();}init(){this.h=[];for(let x=0;x<this.c.width;x+=40)for(let y=0;y<this.c.height;y+=40)if(Math.random()>0.7)this.h.push({x,y,a:0});}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.strokeStyle='#333';for(let h of this.h){h.a+=0.05;const al=(Math.sin(h.a)+1)/2;this.x.fillStyle=`rgba(0,200,255,${al*0.5})`;this.x.beginPath();for(let i=0;i<6;i++)this.x.lineTo(h.x+18*Math.cos(i*1.047),h.y+18*Math.sin(i*1.047));this.x.closePath();this.x.fill();this.x.stroke();}}}
+        class LightningEffect { constructor(c){this.c=c;this.x=c.getContext('2d');}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.2)';this.x.fillRect(0,0,this.c.width,this.c.height);if(Math.random()>0.95){let x=Math.random()*this.c.width,y=0;this.x.beginPath();this.x.strokeStyle='#fff';this.x.lineWidth=2;this.x.moveTo(x,y);while(y<this.c.height){x+=(Math.random()-.5)*40;y+=Math.random()*20+5;this.x.lineTo(x,y);}this.x.stroke();this.x.fillStyle='rgba(255,255,255,0.3)';this.x.fillRect(0,0,this.c.width,this.c.height);}}}
+        class PulseEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.s=1;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;if(Math.random()>0.9)this.s=1.4;this.s+=(1-this.s)*0.1;this.x.beginPath();this.x.strokeStyle=`rgba(255,0,0,${this.s-1})`;this.x.lineWidth=10;this.x.arc(cx,cy,130*this.s,0,6.28);this.x.stroke();this.x.beginPath();this.x.strokeStyle='white';this.x.lineWidth=2;this.x.arc(cx,cy,140*this.s,0,6.28);this.x.stroke();}}
+        class StarfieldEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.s=[];for(let i=0;i<200;i++)this.s.push({x:Math.random()*c.width-c.width/2,y:Math.random()*c.height-c.height/2,z:Math.random()*c.width});}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle="rgba(0,0,0,0.2)";this.x.fillRect(0,0,this.c.width,this.c.height);const w=this.c.width/2,h=this.c.height/2;for(let s of this.s){s.z-=4;if(s.z<=0){s.x=Math.random()*this.c.width-w;s.y=Math.random()*this.c.height-h;s.z=this.c.width;}const k=200/s.z,x=s.x*k+w,y=s.y*k+h,sz=(1-s.z/this.c.width)*3;this.x.fillStyle="#fff";this.x.beginPath();this.x.arc(x,y,sz,0,6.28);this.x.fill();}}}
+        class CircularSpectrumEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.t+=0.1;const w=this.c.width/2,h=this.c.height/2,r=130;for(let i=0;i<60;i++){const a=i*0.1047,v=Math.random()*40+Math.sin(i+this.t)*10,x1=w+Math.cos(a)*r,y1=h+Math.sin(a)*r,x2=w+Math.cos(a)*(r+v),y2=h+Math.sin(a)*(r+v);this.x.strokeStyle=`hsl(${i*6+this.t*10},100%,50%)`;this.x.lineWidth=4;this.x.beginPath();this.x.moveTo(x1,y1);this.x.lineTo(x2,y2);this.x.stroke();}}}
+        class TunnelEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.r=[];this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);this.t++;if(this.t%10==0)this.r.push({s:10,h:this.t%360});const w=this.c.width/2,h=this.c.height/2;for(let i=0;i<this.r.length;i++){let o=this.r[i];o.s*=1.05;this.x.strokeStyle=`hsl(${o.h},80%,50%)`;this.x.lineWidth=o.s*0.02;this.x.beginPath();for(let j=0;j<6;j++){let a=j*1.047,px=w+Math.cos(a)*o.s,py=h+Math.sin(a)*o.s;j==0?this.x.moveTo(px,py):this.x.lineTo(px,py);}this.x.closePath();this.x.stroke();if(o.s>Math.max(w,h)*2.5){this.r.splice(i,1);i--;}}}}
+        class FireEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.globalCompositeOperation='screen';if(this.p.length<100)this.p.push({x:Math.random()*this.c.width,y:this.c.height,s:Math.random()*20+10,vy:Math.random()*3+1,vx:(Math.random()-0.5)*2,l:1});for(let i=0;i<this.p.length;i++){let p=this.p[i];this.x.beginPath();let g=this.x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.s);g.addColorStop(0,`rgba(255,100,0,${p.l})`);g.addColorStop(1,'rgba(255,50,0,0)');this.x.fillStyle=g;this.x.arc(p.x,p.y,p.s,0,6.28);this.x.fill();p.y-=p.vy;p.x+=p.vx;p.l-=0.02;p.s*=0.95;if(p.l<=0)this.p.splice(i--,1);}this.x.globalCompositeOperation='source-over';}}
+        class MatrixEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.d=[];this.resize();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.cols=Math.floor(this.c.width/14);this.d=[];for(let i=0;i<this.cols;i++)this.d[i]=Math.random()*-100;}draw(){this.x.fillStyle='rgba(0,0,0,0.05)';this.x.fillRect(0,0,this.c.width,this.c.height);this.x.fillStyle='#0F0';this.x.font='14px monospace';for(let i=0;i<this.d.length;i++){this.x.fillText(String.fromCharCode(0x30A0+Math.random()*96),i*14,this.d[i]*14);if(this.d[i]*14>this.c.height&&Math.random()>0.975)this.d[i]=0;this.d[i]++;}}}
+        class ParticlesEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.p.length<60)this.p.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,c:`hsl(${Math.random()*360},70%,50%)`});for(let p of this.p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=this.c.width;if(p.x>this.c.width)p.x=0;if(p.y<0)p.y=this.c.height;if(p.y>this.c.height)p.y=0;this.x.fillStyle=p.c;this.x.beginPath();this.x.arc(p.x,p.y,2,0,6.28);this.x.fill();}}}
+
+        function initEffects() {
+            G_UI.preview.mainLogo.style.cursor = "pointer";
+            G_UI.preview.mainLogo.addEventListener('click', switchEffect);
+
+            // --- ÖNEMLİ: RESIZE OBSERVER EKLENDİ ---
+            // Bu kod, kapsayıcı div her değiştiğinde (ilk açılış dahil) canvas boyutunu düzeltir.
+            const resizeObserver = new ResizeObserver(() => {
+                if (activeEffectInstance) {
+                    G_UI.canvas.width = G_UI.canvas.clientWidth;
+                    G_UI.canvas.height = G_UI.canvas.clientHeight;
+                    activeEffectInstance.resize();
+                }
+            });
+            resizeObserver.observe(G_UI.preview.area);
         }
-        audioElement.muted = false; audioElement.volume = 1.0;
-        try { await audioElement.play(); } catch (err) { console.error("Otomatik oynatma engellendi:", err); updatePlayerUI(false); }
-    }
-    
-    function playChannel(localIdx) {
-        currentChannelIndex = localIdx; 
-        const channel = currentChannelList[localIdx]; 
-        if (!channel) return;
-        incrementListenCount(channel.streamUrl);
-        const scrollText = ` 🎵 ${channel.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`;
-        G_UI.player.channelName.innerHTML = `<span>${scrollText}</span><span>${scrollText}</span>`;
-        G_UI.preview.mainLogo.src = channel.logoUrl || '';
-        playStream(G_UI.audioPlayer, channel.streamUrl, true);
-    }
-    
-    function updatePlayerUI(isPlaying) {
-        G_UI.player.container.classList.toggle('playing', isPlaying);
-        G_UI.preview.area.classList.toggle('is-playing', isPlaying);
-    }
-    
-    function changeChannel(direction) {
-        if (currentChannelList.length === 0 || currentChannelIndex < 0) return;
-        const newIndex = (currentChannelIndex + direction + currentChannelList.length) % currentChannelList.length;
-        const channelElements = G_UI.channels.querySelectorAll('.channel');
-        if (channelElements[newIndex]) { 
-            channelElements[newIndex].scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-            channelElements[newIndex].querySelector('.channel-info').click(); 
+
+        function showEffectName(name) {
+            G_UI.toast.textContent = name; G_UI.toast.style.opacity = '1';
+            setTimeout(() => { G_UI.toast.style.opacity = '0'; }, 2000);
         }
-    }
 
-    // --- VERİ YÜKLEME ---
-    async function fetchAndDisplayChannels() {
-        try {
-            const response = await fetch('./channels.txt?v=' + new Date().getTime()); 
-            if (!response.ok) throw new Error(`HTTP hatası! Durum: ${response.status}`);
+        function switchEffect() {
+            currentEffectIndex = (currentEffectIndex + 1) % EFFECTS.length;
+            const selectedEffect = EFFECTS[currentEffectIndex];
+            applyEffect(selectedEffect);
+            localStorage.setItem(SAVED_EFFECT_KEY, selectedEffect);
+        }
+
+        function applyEffect(effectName) {
+            showEffectName(EFFECT_NAMES[effectName]);
+            G_UI.preview.analyzerTop.classList.remove('visualizer-hidden');
+            G_UI.preview.analyzerBottom.classList.remove('visualizer-hidden');
             
-            const data = await response.text();
-            const allChannels = data.trim().split('\n').map(line => {
-                const [name, streamUrl, logoUrl, categoryIdStr] = line.split(',').map(item => item.trim());
-                const categoryId = parseInt(categoryIdStr);
-                return { name, streamUrl, logoUrl, categoryId };
-            }).filter(ch => ch.name && ch.streamUrl && ch.logoUrl && !isNaN(ch.categoryId));
+            if(activeEffectInstance && activeEffectInstance.x) {
+                activeEffectInstance.x.clearRect(0,0, G_UI.canvas.width, G_UI.canvas.height);
+            }
+            G_UI.canvas.style.display = 'none';
+            if (activeEffectInstance) activeEffectInstance = null;
+            if (effectName === 'equalizer') return;
 
-            allChannelsMap.clear();
-            allChannels.forEach(channel => allChannelsMap.set(channel.streamUrl, channel));
-            listGroups();
+            G_UI.preview.analyzerTop.classList.add('visualizer-hidden');
+            G_UI.preview.analyzerBottom.classList.add('visualizer-hidden');
+            G_UI.canvas.style.display = 'block';
             
-          } catch (error) {
-            console.error('Kanal listesi yüklenemedi:', error);
-            if (!navigator.onLine) {
-                 G_UI.channels.innerHTML = '<p style="padding:10px; color:white;">Kanal listesi yüklenemedi. İnternet bağlantısı yok.</p>';
-             }
-          }
-    }
-    
-    // --- BAŞLATMA ---
-    window.addEventListener("load", async () => {
-      createThemeSelector(); 
-      applyTheme(localStorage.getItem('iptvTheme') || 'steel');
-      loadSavedZoom();
-      
-      [G_UI.preview.analyzerTop, G_UI.preview.analyzerBottom].forEach(analyzer => {
-          for (let i = 0; i < 30; i++) { 
-              const bar = document.createElement('div');
-              bar.classList.add('analyzer-bar');
-              bar.style.animationDelay = `${Math.random() * -1.5}s`;
-              bar.style.animationDuration = `${Math.random() * 1 + 0.5}s`;
-              analyzer.appendChild(bar);
-          }
-      });
-      
-      G_UI.audioPlayer.addEventListener('play', () => updatePlayerUI(true));
-      G_UI.audioPlayer.addEventListener('pause', () => updatePlayerUI(false));
-      G_UI.audioPlayer.addEventListener('ended', () => updatePlayerUI(false));
-      
-      G_UI.zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + ZOOM_STEP));
-      G_UI.zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - ZOOM_STEP));
+            // Boyutları hemen al (clientWidth kullanmak daha güvenli)
+            G_UI.canvas.width = G_UI.canvas.clientWidth || G_UI.preview.area.clientWidth;
+            G_UI.canvas.height = G_UI.canvas.clientHeight || G_UI.preview.area.clientHeight;
 
-      await fetchAndDisplayChannels();
-      
-      const defaultText = `Radyo Seçin - ${DEFAULT_SCROLL_TEXT}`;
-      G_UI.player.channelName.innerHTML = `<span>${defaultText}</span><span>${defaultText}</span>`;
-    });
-  </script>
+            switch(effectName) {
+                case 'rain': activeEffectInstance = new RainEffect(G_UI.canvas); break;
+                case 'analog': activeEffectInstance = new AnalogMeterEffect(G_UI.canvas); break;
+                case 'waves': activeEffectInstance = new SineWavesEffect(G_UI.canvas); break;
+                case 'sonar': activeEffectInstance = new SonarEffect(G_UI.canvas); break;
+                case 'dvdbounce': activeEffectInstance = new DvdBounceEffect(G_UI.canvas); break;
+                case 'nebula': activeEffectInstance = new NebulaEffect(G_UI.canvas); break;
+                case 'spiral': activeEffectInstance = new SpiralEffect(G_UI.canvas); break;
+                case 'confetti': activeEffectInstance = new ConfettiEffect(G_UI.canvas); break;
+                case 'gradient': activeEffectInstance = new GradientEffect(G_UI.canvas); break;
+                case 'bars3d': activeEffectInstance = new Bars3DEffect(G_UI.canvas); break;
+                case 'starfield': activeEffectInstance = new StarfieldEffect(G_UI.canvas); break;
+                case 'circular': activeEffectInstance = new CircularSpectrumEffect(G_UI.canvas); break;
+                case 'tunnel': activeEffectInstance = new TunnelEffect(G_UI.canvas); break;
+                case 'traffic': activeEffectInstance = new TrafficEffect(G_UI.canvas); break;
+                case 'retrogrid': activeEffectInstance = new RetroGridEffect(G_UI.canvas); break;
+                case 'radar': activeEffectInstance = new RadarEffect(G_UI.canvas); break;
+                case 'snow': activeEffectInstance = new SnowEffect(G_UI.canvas); break;
+                case 'classicbars': activeEffectInstance = new ClassicBarsEffect(G_UI.canvas); break;
+                case 'energyorb': activeEffectInstance = new EnergyOrbEffect(G_UI.canvas); break;
+                case 'bokeh': activeEffectInstance = new BokehEffect(G_UI.canvas); break;
+                case 'hexagons': activeEffectInstance = new HexagonsEffect(G_UI.canvas); break;
+                case 'lightning': activeEffectInstance = new LightningEffect(G_UI.canvas); break;
+                case 'pulse': activeEffectInstance = new PulseEffect(G_UI.canvas); break;
+                case 'fire': activeEffectInstance = new FireEffect(G_UI.canvas); break;
+                case 'matrix': activeEffectInstance = new MatrixEffect(G_UI.canvas); break;
+                case 'particles': activeEffectInstance = new ParticlesEffect(G_UI.canvas); break;
+            }
+            if (activeEffectInstance) activeEffectInstance.resize();
+        }
+
+        function renderEffects() {
+            if (activeEffectInstance && !G_UI.audioPlayer.paused && G_UI.canvas.width > 0 && G_UI.canvas.height > 0) { 
+                activeEffectInstance.draw(); 
+            }
+            animationFrameId = requestAnimationFrame(renderEffects);
+        }
+
+        const themes = { 'default': { name: 'Varsayılan', color: '#3366cc' }, 'forest': { name: 'Orman', color: '#4CAF50' }, 'royal': { name: 'Kraliyet', color: '#9C27B0' }, 'sunset': { name: 'Gün Batımı', color: '#FF5722' }, 'steel': { name: 'Çelik', color: '#757575' }, 'yellow': { name: 'Sarı', color: '#FFD600' } };
+        function applyTheme(themeName) { document.body.dataset.theme = themeName; localStorage.setItem('iptvTheme', themeName); document.querySelectorAll('.theme-swatch').forEach(swatch => swatch.classList.toggle('active', swatch.dataset.theme === themeName)); }
+        function createThemeSelector() { G_UI.themeList.innerHTML = ""; for (const [key, theme] of Object.entries(themes)) { const swatch = document.createElement('div'); swatch.className = 'theme-swatch'; swatch.dataset.theme = key; swatch.title = theme.name; swatch.style.backgroundColor = theme.color; swatch.onclick = () => applyTheme(key); G_UI.themeList.appendChild(swatch); } }
+
+        let hls, allChannelsMap = new Map(), currentChannelList = [], currentChannelIndex = -1, activeGroupName = '';
+        const ZOOM_KEY = 'carRadioZoomLevel', ZOOM_STEP = 0.05, MIN_ZOOM = 0.7, MAX_ZOOM = 1.3; let currentZoom = 1.0;
+        const applyZoom = (z) => { G_UI.htmlElement.style.zoom = z; };
+        const updateZoom = (z) => { currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z)); applyZoom(currentZoom); localStorage.setItem(ZOOM_KEY, currentZoom); };
+        const loadSavedZoom = () => { const z = localStorage.getItem(ZOOM_KEY); if (z) { currentZoom = parseFloat(z); applyZoom(currentZoom); } };
+
+        function getFavorites() { return JSON.parse(localStorage.getItem('favoriteRadios') || '[]'); }
+        function saveFavorites(favs) { localStorage.setItem('favoriteRadios', JSON.stringify(favs)); }
+        function getListenCounts() { return JSON.parse(localStorage.getItem('radioListenCounts') || '{}'); }
+        function incrementListenCount(url) { if (!url) return; const c = getListenCounts(); c[url] = (c[url] || 0) + 1; localStorage.setItem('radioListenCounts', JSON.stringify(c)); if (activeGroupName === 'En Çok Dinlenenler') listChannels(activeGroupName); }
+        function toggleFavorite(url, btn) { let f = getFavorites(); const i = f.indexOf(url); if (i > -1) { f.splice(i, 1); btn.classList.remove('favorited'); } else { f.push(url); btn.classList.add('favorited'); } saveFavorites(f); listGroups(); if (activeGroupName === 'Favorilerim') listChannels('Favorilerim'); }
+
+        function listGroups() {
+            const cur = document.querySelector('.group.active')?.textContent || CATEGORIES[0];
+            G_UI.groups.innerHTML = ""; let activate = null;
+            const favC = getFavorites().length, lisC = Object.keys(getListenCounts()).length;
+            CATEGORIES.forEach((g) => {
+                if (g === 'Favorilerim' && favC === 0) return; if (g === 'En Çok Dinlenenler' && lisC === 0) return;
+                const el = document.createElement("div"); el.className = "group"; el.textContent = g;
+                el.onclick = () => { document.querySelectorAll(".group.active").forEach(e => e.classList.remove("active")); el.classList.add("active"); activeGroupName = g; listChannels(g); };
+                G_UI.groups.appendChild(el); if (g === cur) activate = el;
+            });
+            if (activate) activate.click(); else if (G_UI.groups.firstChild) G_UI.groups.firstChild.click();
+        }
+
+        function listChannels(g) {
+            G_UI.channels.innerHTML = ""; const f = getFavorites();
+            if (g === 'Favorilerim') currentChannelList = f.map(u => allChannelsMap.get(u)).filter(Boolean);
+            else if (g === 'En Çok Dinlenenler') currentChannelList = Object.entries(getListenCounts()).sort(([, a], [, b]) => b - a).map(([u]) => allChannelsMap.get(u)).filter(Boolean).slice(0, 20);
+            else { const id = CATEGORIES.indexOf(g); currentChannelList = Array.from(allChannelsMap.values()).filter(c => c.categoryId === id); }
+            currentChannelList.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
+            currentChannelList.forEach((c, i) => {
+                const isF = f.includes(c.streamUrl);
+                const el = document.createElement("div"); el.className = "channel";
+                el.innerHTML = `<div class="channel-info"><img src="${c.logoUrl||''}" onerror="this.style.display='none'"><div><div>${c.name}</div></div></div><span class="fav-btn ${isF?'favorited':''}">★</span>`;
+                el.querySelector('.channel-info').onclick = () => { document.querySelectorAll(".channel.active").forEach(ch => ch.classList.remove("active")); el.classList.add("active"); playChannel(i); };
+                el.querySelector('.fav-btn').onclick = (e) => { e.stopPropagation(); toggleFavorite(c.streamUrl, el.querySelector('.fav-btn')); };
+                G_UI.channels.appendChild(el);
+            });
+        }
+
+        function stopStream(a, h) { a.pause(); a.removeAttribute("src"); try { a.load(); } catch (e) { } if (h) { h.destroy(); hls = null; } updatePlayerUI(false); }
+        async function playStream(a, u) { stopStream(a, hls); const isHLS = u.includes('.m3u8'); if (isHLS && Hls.isSupported()) { hls = new Hls(); hls.loadSource(u); hls.attachMedia(a); } else { hls = null; a.src = u; } a.muted = false; a.volume = 1.0; try { await a.play(); } catch (e) { console.error(e); updatePlayerUI(false); } }
+        function playChannel(i) { currentChannelIndex = i; const c = currentChannelList[i]; if (!c) return; incrementListenCount(c.streamUrl); const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; G_UI.preview.mainLogo.src = c.logoUrl || ''; playStream(G_UI.audioPlayer, c.streamUrl); }
+        function updatePlayerUI(p) { G_UI.player.container.classList.toggle('playing', p); G_UI.preview.area.classList.toggle('is-playing', p); if (p && !animationFrameId) renderEffects(); }
+        function changeChannel(d) { if (currentChannelList.length === 0 || currentChannelIndex < 0) return; const n = (currentChannelIndex + d + currentChannelList.length) % currentChannelList.length; const el = G_UI.channels.querySelectorAll('.channel')[n]; if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.querySelector('.channel-info').click(); } }
+
+        async function fetchAndDisplayChannels() {
+            try {
+                const r = await fetch('./channels.txt?v=' + new Date().getTime()); if (!r.ok) throw new Error(r.status);
+                const d = await r.text();
+                const all = d.trim().split('\n').map(l => { const [n, s, lo, c] = l.split(',').map(i => i.trim()); return { name: n, streamUrl: s, logoUrl: lo, categoryId: parseInt(c) }; }).filter(c => c.name && c.streamUrl && !isNaN(c.categoryId));
+                allChannelsMap.clear(); all.forEach(c => allChannelsMap.set(c.streamUrl, c)); listGroups();
+            } catch (e) { console.error(e); if (!navigator.onLine) G_UI.channels.innerHTML = '<p style="padding:10px;color:white;">Bağlantı yok.</p>'; }
+        }
+
+        window.addEventListener("load", async () => {
+            createThemeSelector(); applyTheme(localStorage.getItem('iptvTheme') || 'steel'); loadSavedZoom();
+            [G_UI.preview.analyzerTop, G_UI.preview.analyzerBottom].forEach(a => { for (let i = 0; i < 30; i++) { const b = document.createElement('div'); b.className = 'analyzer-bar'; b.style.animationDelay = Math.random() * -1.5 + 's'; b.style.animationDuration = Math.random() * 1 + 0.5 + 's'; a.appendChild(b); } });
+            G_UI.audioPlayer.addEventListener('play', () => updatePlayerUI(true)); G_UI.audioPlayer.addEventListener('pause', () => updatePlayerUI(false)); G_UI.audioPlayer.addEventListener('ended', () => updatePlayerUI(false));
+            G_UI.zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + ZOOM_STEP)); G_UI.zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - ZOOM_STEP));
+            await fetchAndDisplayChannels();
+            const def = `Radyo Seçin - ${DEFAULT_SCROLL_TEXT}`; G_UI.player.channelName.innerHTML = `<span>${def}</span><span>${def}</span>`;
+            
+            initEffects();
+            
+            const savedEffect = localStorage.getItem(SAVED_EFFECT_KEY);
+            if (savedEffect && EFFECTS.includes(savedEffect)) {
+                currentEffectIndex = EFFECTS.indexOf(savedEffect);
+                applyEffect(savedEffect);
+            } else {
+                applyEffect(EFFECTS[0]);
+            }
+            
+            renderEffects();
+        });
+    </script>
 </body>
 </html>
