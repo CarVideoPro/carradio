@@ -192,8 +192,6 @@
             G_UI.preview.mainLogo.style.cursor = "pointer";
             G_UI.preview.mainLogo.addEventListener('click', switchEffect);
 
-            // --- ÖNEMLİ: RESIZE OBSERVER EKLENDİ ---
-            // Bu kod, kapsayıcı div her değiştiğinde (ilk açılış dahil) canvas boyutunu düzeltir.
             const resizeObserver = new ResizeObserver(() => {
                 if (activeEffectInstance) {
                     G_UI.canvas.width = G_UI.canvas.clientWidth;
@@ -232,9 +230,9 @@
             G_UI.preview.analyzerBottom.classList.add('visualizer-hidden');
             G_UI.canvas.style.display = 'block';
             
-            // Boyutları hemen al (clientWidth kullanmak daha güvenli)
-            G_UI.canvas.width = G_UI.canvas.clientWidth || G_UI.preview.area.clientWidth;
-            G_UI.canvas.height = G_UI.canvas.clientHeight || G_UI.preview.area.clientHeight;
+            // DÜZELTME: Canvas gizliyken (0x0) bile kapsayıcının boyutunu kullan
+            G_UI.canvas.width = G_UI.preview.area.clientWidth;
+            G_UI.canvas.height = G_UI.preview.area.clientHeight;
 
             switch(effectName) {
                 case 'rain': activeEffectInstance = new RainEffect(G_UI.canvas); break;
@@ -322,7 +320,25 @@
         function stopStream(a, h) { a.pause(); a.removeAttribute("src"); try { a.load(); } catch (e) { } if (h) { h.destroy(); hls = null; } updatePlayerUI(false); }
         async function playStream(a, u) { stopStream(a, hls); const isHLS = u.includes('.m3u8'); if (isHLS && Hls.isSupported()) { hls = new Hls(); hls.loadSource(u); hls.attachMedia(a); } else { hls = null; a.src = u; } a.muted = false; a.volume = 1.0; try { await a.play(); } catch (e) { console.error(e); updatePlayerUI(false); } }
         function playChannel(i) { currentChannelIndex = i; const c = currentChannelList[i]; if (!c) return; incrementListenCount(c.streamUrl); const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; G_UI.preview.mainLogo.src = c.logoUrl || ''; playStream(G_UI.audioPlayer, c.streamUrl); }
-        function updatePlayerUI(p) { G_UI.player.container.classList.toggle('playing', p); G_UI.preview.area.classList.toggle('is-playing', p); if (p && !animationFrameId) renderEffects(); }
+        
+        // --- DÜZELTİLEN FONKSİYON: Canvas boyutlandırma düzeltmesi eklendi ---
+        function updatePlayerUI(p) { 
+            G_UI.player.container.classList.toggle('playing', p); 
+            G_UI.preview.area.classList.toggle('is-playing', p); 
+            
+            if (p) {
+                // Oynatma başladığında, div görünür olduktan kısa süre sonra canvas boyutunu ayarla
+                setTimeout(() => {
+                    G_UI.canvas.width = G_UI.preview.area.clientWidth;
+                    G_UI.canvas.height = G_UI.preview.area.clientHeight;
+                    if (activeEffectInstance) activeEffectInstance.resize();
+                }, 50);
+                
+                if (!animationFrameId) renderEffects(); 
+            }
+        }
+        // --------------------------------------------------------------------
+
         function changeChannel(d) { if (currentChannelList.length === 0 || currentChannelIndex < 0) return; const n = (currentChannelIndex + d + currentChannelList.length) % currentChannelList.length; const el = G_UI.channels.querySelectorAll('.channel')[n]; if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.querySelector('.channel-info').click(); } }
 
         async function fetchAndDisplayChannels() {
