@@ -42,12 +42,46 @@
         .visualizer-hidden { visibility: hidden; opacity: 0; }
 
         #middle-controls-row { display: flex; align-items: center; justify-content: center; gap: 20px; flex: 1; width: 100%; position: relative; z-index: 10; }
-        #main-logo-display { width: 240px; height: 240px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); flex-shrink: 0; transition: all 0.3s ease; }
+        
+        /* ORTA ALAN DÜZENİ: Logo ve Altındaki Buton için Container */
+        #center-display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
+
+        #main-logo-display { width: 220px; height: 220px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); flex-shrink: 0; transition: all 0.3s ease; }
         #main-logo-display:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
         
-        .mid-nav-btn { width: 75px; height: 75px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); border: 3px solid var(--accent-color); color: var(--text-primary); font-size: 32px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
-        #next-btn { padding-left: 6px; } #prev-btn { padding-right: 4px; }
+        .mid-nav-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--accent-color); color: var(--text-primary); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
+        #next-btn { padding-left: 4px; } #prev-btn { padding-right: 2px; }
         .mid-nav-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.15); box-shadow: 0 0 25px var(--accent-color); border-color: #fff; }
+
+        /* YENİ OYNAT/DURDUR BUTONU STİLİ */
+        #main-play-btn {
+            width: 70px; height: 70px;
+            border-radius: 50%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 3px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+        #main-play-btn svg { width: 35px; height: 35px; fill: currentColor; transition: 0.2s; }
+        #main-play-btn:hover {
+            background: var(--accent-color);
+            color: #000;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px var(--accent-color);
+            border-color: #fff;
+        }
+        #main-play-btn.playing {
+            background: var(--accent-color-darker);
+            color: #fff;
+            border-color: #fff;
+            box-shadow: 0 0 40px var(--accent-color);
+            animation: pulse-btn 2s infinite;
+        }
+        @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         
         #previewArea.is-playing #previewPlaceholder { display: none; }
         #previewArea.is-playing #visualizer-wrapper { display: flex; }
@@ -73,21 +107,11 @@
         .channel-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; }
         .channel-info>div>div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 900; }
         .channel:hover { background: var(--bg-hover); }
+        /* Aktif kanal için sadece renk değişimi */
         .channel.active { border-color: var(--accent-color); background: var(--accent-color-darker); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 12px var(--accent-color); }
         .channel img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; border-radius: 8px; }
         .fav-btn { font-size: 22px; cursor: pointer; padding: 5px; color: var(--text-secondary); transition: 0.2s; flex-shrink: 0; }
         .fav-btn:hover { transform: scale(1.2); } .fav-btn.favorited { color: var(--favorite-color); }
-
-        /* --- YENİ EKLENEN STILLER: DURDURMA BUTONU İÇİN --- */
-        .channel-name-text { display: block; }
-        .channel-stop-icon { display: none; color: var(--text-primary); font-weight: bold; letter-spacing: 1px; text-transform: uppercase; }
-        .channel-stop-icon svg { width: 20px; height: 20px; vertical-align: middle; fill: currentColor; margin-right: 5px; }
-        
-        /* Radyo çalarken isim gizlenir, durdur ikonu görünür */
-        .channel.playing-active .channel-name-text { display: none; }
-        .channel.playing-active .channel-stop-icon { display: flex; align-items: center; color: #fff; animation: pulse-stop 1.5s infinite; }
-        @keyframes pulse-stop { 0% { opacity: 0.8; } 50% { opacity: 1; text-shadow: 0 0 10px var(--accent-color); } 100% { opacity: 0.8; } }
-        /* -------------------------------------------------- */
 
         #playerContainer { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--player-height); background: var(--bg-secondary); display: flex; z-index: 999; align-items: center; padding: 0 10px; border-top: 2px solid var(--border-color); box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18); }
         .player-text { width: 100%; text-align: left; overflow: hidden; white-space: nowrap; background: linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.18) 100%); border-radius: 8px; border: 1.5px solid var(--accent-color); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18) inset, 0 0 8px var(--accent-color) inset; height: 40px; display: flex; align-items: center; }
@@ -101,7 +125,8 @@
         @media (max-width: 768px) {
             #channels { flex: 0 0 200px; }
             #main-logo-display { width: 130px; height: 130px; }
-            .mid-nav-btn { width: 60px; height: 60px; font-size: 26px; }
+            .mid-nav-btn { width: 50px; height: 50px; font-size: 20px; }
+            #main-play-btn { width: 60px; height: 60px; } /* Mobilde buton boyutu */
             #side-controls-container { right: 5px; padding: 10px 5px; }
             .theme-swatch { width: 20px; height: 20px; }
         }
@@ -129,7 +154,15 @@
                     <div class="analyzer-row top" id="analyzer-top"></div>
                     <div id="middle-controls-row">
                         <button class="mid-nav-btn" id="prev-btn" onclick="changeChannel(-1)">&#9664;</button>
-                        <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
+                        
+                        <div id="center-display-container">
+                            <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
+                            <button id="main-play-btn" onclick="togglePlayback()" title="Oynat / Durdur">
+                                <svg id="play-icon-svg" viewBox="0 0 24 24" style="display:block;"><path d="M8 5v14l11-7z"/></svg>
+                                <svg id="pause-icon-svg" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
+                            </button>
+                        </div>
+                        
                         <button class="mid-nav-btn" id="next-btn" onclick="changeChannel(1)">&#9654;</button>
                     </div>
                     <div class="analyzer-row bottom" id="analyzer-bottom"></div>
@@ -146,7 +179,7 @@
     <script>
         const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
         const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 Telegram: t.me/car_video_pro 📞 ";
-        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast") };
+        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
 
         // --- EFEKT SİSTEMİ ---
         const EFFECTS = [
@@ -313,7 +346,9 @@
         function applyTheme(themeName) { document.body.dataset.theme = themeName; localStorage.setItem('iptvTheme', themeName); document.querySelectorAll('.theme-swatch').forEach(swatch => swatch.classList.toggle('active', swatch.dataset.theme === themeName)); }
         function createThemeSelector() { G_UI.themeList.innerHTML = ""; for (const [key, theme] of Object.entries(themes)) { const swatch = document.createElement('div'); swatch.className = 'theme-swatch'; swatch.dataset.theme = key; swatch.title = theme.name; swatch.style.backgroundColor = theme.color; swatch.onclick = () => applyTheme(key); G_UI.themeList.appendChild(swatch); } }
 
-        let hls, allChannelsMap = new Map(), currentChannelList = [], currentChannelIndex = -1, activeGroupName = '';
+        // --- DEĞİŞKENLER ---
+        let hls, allChannelsMap = new Map(), currentChannelList = [], currentChannelIndex = -1, activeGroupName = '', activeStreamUrl = null;
+        
         const ZOOM_KEY = 'carRadioZoomLevel', ZOOM_STEP = 0.05, MIN_ZOOM = 0.7, MAX_ZOOM = 1.3; let currentZoom = 1.0;
         const applyZoom = (z) => { G_UI.htmlElement.style.zoom = z; };
         const updateZoom = (z) => { currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z)); applyZoom(currentZoom); localStorage.setItem(ZOOM_KEY, currentZoom); };
@@ -338,41 +373,46 @@
             if (activate) activate.click(); else if (G_UI.groups.firstChild) G_UI.groups.firstChild.click();
         }
 
+        // --- GÜNCELLENEN FONKSİYON: Listeleme (SADELEŞTİRİLDİ) ---
         function listChannels(g) {
-            G_UI.channels.innerHTML = ""; const f = getFavorites();
+            G_UI.channels.innerHTML = ""; 
+            const f = getFavorites();
+            
             if (g === 'Favorilerim') currentChannelList = f.map(u => allChannelsMap.get(u)).filter(Boolean);
             else if (g === 'En Çok Dinlenenler') currentChannelList = Object.entries(getListenCounts()).sort(([, a], [, b]) => b - a).map(([u]) => allChannelsMap.get(u)).filter(Boolean).slice(0, 20);
             else { const id = CATEGORIES.indexOf(g); currentChannelList = Array.from(allChannelsMap.values()).filter(c => c.categoryId === id); }
+            
             currentChannelList.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
             
-            const currentUrl = G_UI.audioPlayer.src || (hls ? hls.url : '');
-
             currentChannelList.forEach((c, i) => {
                 const isF = f.includes(c.streamUrl);
-                const isPlaying = (c.streamUrl === currentUrl) && !G_UI.audioPlayer.paused;
+                
+                // Sadece hangi kanalın aktif olduğunu anlamak için renk veriyoruz
+                // Karmaşık Durdur butonları kaldırıldı
+                const isUrlMatch = (activeStreamUrl && c.streamUrl === activeStreamUrl);
+                
+                if (isUrlMatch) {
+                    currentChannelIndex = i;
+                }
 
-                const el = document.createElement("div"); el.className = "channel";
-                // Eger bu kanal su an caliyorsa 'playing-active' sinifi ekle
-                if(isPlaying) el.classList.add('playing-active');
+                const el = document.createElement("div"); 
+                el.className = "channel";
+                if(isUrlMatch) el.classList.add('active');
 
                 el.innerHTML = `
                     <div class="channel-info">
                         <img src="${c.logoUrl||''}" onerror="this.style.display='none'">
                         <div>
-                            <div class="channel-name-text">${c.name}</div>
-                            <div class="channel-stop-icon"><svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg>DURDUR</div>
+                            <div>${c.name}</div>
                         </div>
                     </div>
                     <span class="fav-btn ${isF?'favorited':''}">★</span>
                 `;
                 
-                // TIKLAMA MANTIGI GÜNCELLENDI
                 el.querySelector('.channel-info').onclick = () => { 
-                    // Eğer tıklanan kanal zaten çalıyorsa DURDUR
-                    if (currentChannelIndex === i && !G_UI.audioPlayer.paused) {
-                        stopStream(G_UI.audioPlayer, hls);
-                    } else {
-                        // Değilse OYNAT
+                    // Kanal zaten çalıyorsa listeden tıklayınca hiçbir şey yapma (ortadaki butonu kullansınlar)
+                    // Veya sadece kanalı değiştirsin.
+                    if (c.streamUrl !== activeStreamUrl) {
                         document.querySelectorAll(".channel.active").forEach(ch => ch.classList.remove("active")); 
                         el.classList.add("active"); 
                         playChannel(i);
@@ -384,27 +424,93 @@
             });
         }
 
-        function stopStream(a, h) { a.pause(); a.removeAttribute("src"); try { a.load(); } catch (e) { } if (h) { h.destroy(); hls = null; } updatePlayerUI(false); }
-        async function playStream(a, u) { stopStream(a, hls); const isHLS = u.includes('.m3u8'); if (isHLS && Hls.isSupported()) { hls = new Hls(); hls.loadSource(u); hls.attachMedia(a); } else { hls = null; a.src = u; } a.muted = false; a.volume = 1.0; try { await a.play(); } catch (e) { console.error(e); updatePlayerUI(false); } }
-        function playChannel(i) { currentChannelIndex = i; const c = currentChannelList[i]; if (!c) return; incrementListenCount(c.streamUrl); const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; G_UI.preview.mainLogo.src = c.logoUrl || ''; playStream(G_UI.audioPlayer, c.streamUrl); }
+        // --- YENİ: Ortadaki Oynat/Durdur Buton Mantığı ---
+        function togglePlayback() {
+            if (!activeStreamUrl) {
+                // Hiçbir şey çalmıyorsa listeden ilki veya rastgele birini başlatabiliriz
+                if(currentChannelList.length > 0) playChannel(0);
+                return;
+            }
+            
+            if (G_UI.audioPlayer.paused) {
+                G_UI.audioPlayer.play();
+                updatePlayerUI(true);
+            } else {
+                G_UI.audioPlayer.pause();
+                updatePlayerUI(false);
+            }
+        }
+
+        function stopStream(a, h) { 
+            activeStreamUrl = null; 
+            a.pause(); 
+            a.removeAttribute("src"); 
+            try { a.load(); } catch (e) { } 
+            if (h) { h.destroy(); hls = null; } 
+            updatePlayerUI(false); 
+        }
+
+        async function playStream(a, u) { 
+            // HLS kontrolü ve yükleme
+            if (hls) { hls.destroy(); hls = null; }
+            
+            const isHLS = u.includes('.m3u8'); 
+            if (isHLS && Hls.isSupported()) { 
+                hls = new Hls(); 
+                hls.loadSource(u); 
+                hls.attachMedia(a); 
+                hls.on(Hls.Events.MANIFEST_PARSED, function() {
+                     a.play().catch(e => { console.error("Oynatma hatası:", e); updatePlayerUI(false); });
+                });
+            } else { 
+                a.src = u; 
+                a.play().catch(e => { console.error("Oynatma hatası:", e); updatePlayerUI(false); });
+            } 
+            a.muted = false; 
+            a.volume = 1.0; 
+        }
         
+        function playChannel(i) { 
+            currentChannelIndex = i; 
+            const c = currentChannelList[i]; 
+            if (!c) return; 
+            
+            activeStreamUrl = c.streamUrl; 
+            incrementListenCount(c.streamUrl); 
+            
+            const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; 
+            G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; 
+            G_UI.preview.mainLogo.src = c.logoUrl || ''; 
+            
+            playStream(G_UI.audioPlayer, c.streamUrl);
+            updatePlayerUI(true); // UI'yı hemen güncelle
+        }
+        
+        // --- UI GÜNCELLEME ---
         function updatePlayerUI(p) { 
             G_UI.player.container.classList.toggle('playing', p); 
             G_UI.preview.area.classList.toggle('is-playing', p); 
+            G_UI.mainPlayBtn.classList.toggle('playing', p);
+
+            // İkonları Değiştir
+            if(p) {
+                G_UI.playIcon.style.display = 'none';
+                G_UI.pauseIcon.style.display = 'block';
+            } else {
+                G_UI.playIcon.style.display = 'block';
+                G_UI.pauseIcon.style.display = 'none';
+            }
             
-            // GÖRSEL GÜNCELLEME: Listede çalan kanalın ikonunu/ismini güncelle
-            const currentUrl = currentChannelList[currentChannelIndex]?.streamUrl;
+            // Kanal listesindeki aktiflik durumu
+            const currentUrl = activeStreamUrl;
             const channelElements = document.querySelectorAll('#channels .channel');
-            
             channelElements.forEach((el, index) => {
-                // Listedeki sıraya göre URL kontrolü (daha güvenli)
                 const itemData = currentChannelList[index];
-                if (itemData && itemData.streamUrl === currentUrl && p) {
-                     el.classList.add('playing-active');
-                     el.classList.add('active'); // Aktif rengi de ver
+                // Sadece URL eşleşiyorsa active yap, playing-active falan yok artık
+                if (itemData && itemData.streamUrl === currentUrl) {
+                     el.classList.add('active'); 
                 } else {
-                     el.classList.remove('playing-active');
-                     if(!p) el.classList.remove('active'); // Durunca aktif rengi de sil (isteğe bağlı)
+                     el.classList.remove('active'); 
                 }
             });
 

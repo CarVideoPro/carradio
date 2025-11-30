@@ -22,6 +22,7 @@ TRT Memleketim FM,https://radio-trtmemleketimfm.medya.trt.com.tr/master.m3u8,htt
 KRALPOP,https://kralpop.radyotvonline.net/,https://upload.wikimedia.org/wikipedia/tr/thumb/9/9f/Kral_Pop_logosu.png/960px-Kral_Pop_logosu.png,2
 Radyo 45lik,https:\/\/stream.radyo45lik.com:4545\/,https://radyo45lik.com/wp-content/uploads/2022/12/radyo45lik_c1a.jpg,2
 90lar,https://moondigitaledge.radyotvonline.net/90lar/playlist.m3u8,https://static.mytuner.mobi/media/tvos_radios/806/radyo-home-90-lar.bed4b7d9.png,2
+İstanbul FM,https://rdfenlive.mediatriple.net/fenomen/istanbulfm/playlist.m3u8,https://www.istanbulfm.com.tr/assets/logo.png?v=55,2
 Aşk FM,https://stream.netradyom.com/radio/8000/radio.mp3?/;stream.mp3,https://i.hizliresim.com/j0w23jd.jpg,2
 Best FM,https://officialbestfm.radyotvonline.net/bestfmofficial?/;stream.mp3,https://play-lh.googleusercontent.com/AjGVciEToJPTaWJ9YkGlSWH87riopsnI_2nWA6jER3qnvmgrseTDRem7GFBFJDkXvJA=w840-h1080-rw,2
 Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,https://mediacdns.karnaval.com/media/station_media/4/logos/meta_image.png?v=290425114833,2
@@ -48,7 +49,7 @@ Diyanet Kuran Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxli
 Diyanet Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c1171d7d2a.smil/playlist.m3u8,https://i.ytimg.com/vi/kVgXGzjbTWo/hqdefault.jpg,7
 Radyo 7 Kuran Meali,https://ssl4.radyotvonline.com/radyohome/kuranmeal.stream_aac/playlist.m3u8,https://cdn.kanal7.com/radyo7/newsite/big/2022/15/c5d82f7c43d89fd9674405e7fb9e669739c7193d.jpg,7
 Enderun FM,https://yayin2.canliyayin.org:10996/;,https://enderunfm.com/wp-content/uploads/2023/07/enderun_logo.svg,7
-Lalegül FM,https://icecast.netmedya.net/lalegulfm,https://scontent.fasr1-1.fna.fbcdn.net/v/t39.30808-1/308532016_455144076637458_3835727126040852382_n.png?stp=dst-png_s200x200&_nc_cat=109&ccb=1-7&_nc_sid=2d3e12&_nc_ohc=3ii3e7wDDlgQ7kNvwHQXyxf&_nc_oc=Adm_V2TndUCOacP2TJUJl6bggf2nMzeh6tOID6XTEhLvXHXSAQ_IIxHtYQfBK9-vaCw&_nc_zt=24&_nc_ht=scontent.fasr1-1.fna&_nc_gid=C0tr-Bg81kfjzXdlq3PGwQ&oh=00_Afj8M1LEPCKugbUwP80Wo8HcflIIS1eKIsUGjctrZX778A&oe=6923E3BA,7
+Lalegül FM,https://icecast.netmedya.net/lalegulfm,https://static.mytuner.mobi/media/tvos_radios/218/lalegul-fm2.9edbe45f.png,7
 Erkam Radyo,https://api-tv5.yayin.com.tr:8002/mp3?/;stream.mp3,https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/8f/56/82/8f568272-d339-db4f-c7cc-04d33153b89c/AppIcon-0-0-1x_U007emarketing-0-7-0-85-220.png/1200x630wa.jpg,7
 Bayram FM,https://sslyayin.netyayin.net/3442/stream/;stream.mp3,https://i.hizliresim.com/4itail8.png,7
 TGRT FM,https://canli1.ihlasdigitalassets.com/tgrtfm.m3u8,https://www.canliradyodinle.fm/wp-content/uploads/tgrtfm.jpg,7
@@ -70,6 +71,8 @@ Radyo Ankara,https://radyoankara.ozelip.net:8152/;stream.mp3,https://www.canlira
 Radyo Banko,https://stream.netradyom.com/listen/radyobanko/radio.mp3/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-banko.jpg,8
 Avrasya Türk,https://sslyayin.netyayin.net:10909/;/;stream.mp3,https://static.mytuner.mobi/media/tvos_radios/zSXYEYzWq2.jpg,8
 Kiss FM,https://kiss.radyotvonline.net/kissfm?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/kiss-fm.jpg,8
+Esas Radyo,https://yayin.turkhosted.com:6034/;stream.mp3,https://www.lokomotifradyolari.com/logolar/esas.png,8
+
 
 NTV Radyo,https://dygedge.radyotvonline.net/ntvradyo/playlist.m3u8,https://images.ntvradyo.com.tr/cover/f6a6f4db-613c-435f-a26c-db099750ad27-SOSYALMEDYACOVERLAR400x400copy.jpg,5
 TRT HABER,https://tv-trthaber.medya.trt.com.tr/master_720.m3u8,https://i.ibb.co/LzcNGmm8/unnamed.png,5
