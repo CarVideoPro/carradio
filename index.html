@@ -29,10 +29,27 @@
         #channels { flex: 0 0 260px; background: var(--bg-secondary); border-right: 2px solid var(--border-color); overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
         
         #previewArea { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--bg-primary); overflow: hidden; position: relative; }
-        #previewPlaceholder { padding: 20px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 15px; color: #555; height: 100%; cursor: default; z-index: 1; }
-        #previewPlaceholder h2 { font-size: 1.5em; }
         
-        #visualizer-wrapper { display: none; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; padding: 10px 0; z-index: 2; }
+        /* KARŞILAMA EKRANI */
+        #previewPlaceholder { 
+            padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; height: auto; cursor: default; z-index: 10;
+            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 90%; width: 600px;
+            opacity: 1; visibility: visible; transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        #previewPlaceholder h1 { font-size: 2.2em; margin: 0; font-weight: 900; letter-spacing: 1px; background: linear-gradient(to right, #ffffff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 5px 15px rgba(0,0,0,0.3); line-height: 1.2; }
+        #previewPlaceholder h2 { font-size: 1.1em; color: var(--text-secondary); margin: 0; font-weight: 500; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05); }
+        #previewPlaceholder p { font-size: 1em; color: var(--text-primary); opacity: 0.8; margin: 0; }
+        #previewPlaceholder .welcome-icon { font-size: 3em; margin-bottom: 10px; filter: drop-shadow(0 0 10px var(--accent-color)); }
+        
+        #visualizer-wrapper { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; padding: 10px 0; z-index: 2; opacity: 0; visibility: hidden; transition: opacity 0.8s ease, visibility 0.8s ease; }
+        
+        #previewArea.is-playing #previewPlaceholder { opacity: 0; visibility: hidden; transform: scale(0.9); position: absolute; }
+        #previewArea.is-playing #visualizer-wrapper { opacity: 1; visibility: visible; }
+
         .analyzer-row { display: flex; justify-content: center; align-items: flex-end; height: 60px; width: 100%; gap: 5px; }
         .analyzer-row.top { transform: rotate(180deg); margin-bottom: 10px; }
         .analyzer-row.bottom { margin-top: 10px; }
@@ -43,10 +60,17 @@
 
         #middle-controls-row { display: flex; align-items: center; justify-content: center; gap: 20px; flex: 1; width: 100%; position: relative; z-index: 10; }
         
-        /* ORTA ALAN DÜZENİ */
-        #center-display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; }
+        /* ORTA ALAN ve ANİMASYONU */
+        #center-display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         
-        /* LOGO AYARLARI */
+        /* Bu animasyon kalıyor (Logo/Player geçişi) */
+        @keyframes channelSwitchPulse {
+            0% { transform: scale(1); opacity: 1; filter: brightness(1); }
+            50% { transform: scale(0.92); opacity: 0.7; filter: brightness(1.5); }
+            100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+        }
+        .switching-anim { animation: channelSwitchPulse 0.4s ease-in-out; }
+
         #main-logo-display { width: 200px; height: 200px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; margin-top: 10px; }
         #main-logo-display:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
         
@@ -54,17 +78,12 @@
         #next-btn { padding-left: 4px; } #prev-btn { padding-right: 2px; }
         .mid-nav-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.15); box-shadow: 0 0 25px var(--accent-color); border-color: #fff; }
 
-        /* PLAY BUTONU */
-        #main-play-btn {
-            width: 70px; height: 70px; border-radius: 50%; background: rgba(0, 0, 0, 0.4); border: 3px solid var(--accent-color); color: var(--accent-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); margin-top: 15px;
-        }
+        #main-play-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(0, 0, 0, 0.4); border: 3px solid var(--accent-color); color: var(--accent-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); margin-top: 15px; }
         #main-play-btn svg { width: 35px; height: 35px; fill: currentColor; transition: 0.2s; }
         #main-play-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.1); box-shadow: 0 0 30px var(--accent-color); border-color: #fff; }
         #main-play-btn.playing { background: var(--accent-color-darker); color: #fff; border-color: #fff; box-shadow: 0 0 40px var(--accent-color); animation: pulse-btn 2s infinite; }
         @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         
-        #previewArea.is-playing #previewPlaceholder { display: none; }
-        #previewArea.is-playing #visualizer-wrapper { display: flex; }
         @keyframes analyzer-wave { 0% { height: 10%; opacity: 0.5; } 100% { height: 100%; opacity: 1; } }
 
         #side-controls-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 100; background: rgba(0, 0, 0, 0.3); padding: 15px 8px; border-radius: 30px; backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.1); align-items: center; }
@@ -83,10 +102,13 @@
         .group { padding: 0 18px; cursor: pointer; background: transparent; border-right: 1px solid var(--border-color); line-height: var(--category-bar-height); white-space: nowrap; flex-shrink: 0; transition: background-color 0.2s; }
         .group:hover, .group.active { background: var(--accent-color); }
 
-        .channel { display: flex; align-items: center; gap: 8px; background: var(--bg-tertiary); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); transition: 0.25s; }
+        /* KANAL LİSTESİ ANIMASYONU KALDIRILDI, SADECE DÜZ GÖRÜNÜM */
+        .channel { 
+            display: flex; align-items: center; gap: 8px; background: var(--bg-tertiary); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); transition: 0.25s; 
+        }
         .channel-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; }
         .channel-info>div>div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 900; }
-        .channel:hover { background: var(--bg-hover); }
+        .channel:hover { background: var(--bg-hover); transform: translateY(-2px); }
         .channel.active { border-color: var(--accent-color); background: var(--accent-color-darker); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 12px var(--accent-color); }
         .channel img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; border-radius: 8px; }
         .fav-btn { font-size: 22px; cursor: pointer; padding: 5px; color: var(--text-secondary); transition: 0.2s; flex-shrink: 0; }
@@ -108,6 +130,8 @@
             #main-play-btn { width: 60px; height: 60px; } 
             #side-controls-container { right: 5px; padding: 10px 5px; }
             .theme-swatch { width: 20px; height: 20px; }
+            #previewPlaceholder { padding: 20px; width: 95%; }
+            #previewPlaceholder h1 { font-size: 1.5em; }
         }
     </style>
 </head>
@@ -123,11 +147,14 @@
                     <div id="theme-list"></div>
                     <button class="zoom-btn" id="zoom-out-btn" title="Küçült"><svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></button>
                 </div>
+                
                 <div id="previewPlaceholder">
-                    <h1>📻 Car Video Pro Radyo 📻</h1>
-                    <h2>📞 İletişim: t.me/car_video_pro 📞</h2>
-                    <p>✔️ Bir kanal seçin ve keyfini çıkarın ✔️</p>
+                    <div class="welcome-icon">📻</div>
+                    <h1>CAR VIDEO PRO RADYO</h1>
+                    <h2>📞 t.me/car_video_pro</h2>
+                    <p>Keyifli sürüşler için bir kanal seçin.</p>
                 </div>
+                
                 <div id="visualizer-wrapper">
                     <canvas id="effect-canvas"></canvas>
                     <div class="analyzer-row top" id="analyzer-top"></div>
@@ -135,9 +162,7 @@
                         <button class="mid-nav-btn" id="prev-btn" onclick="changeChannel(-1)">&#9664;</button>
                         
                         <div id="center-display-container">
-                            
                             <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
-                            
                             <button id="main-play-btn" onclick="togglePlayback()" title="Oynat / Durdur">
                                 <svg id="play-icon-svg" viewBox="0 0 24 24" style="display:block;"><path d="M8 5v14l11-7z"/></svg>
                                 <svg id="pause-icon-svg" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -160,7 +185,7 @@
     <script>
         const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
         const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 Telegram: t.me/car_video_pro 📞 ";
-        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
+        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom") }, centerContainer: document.getElementById("center-display-container"), player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
 
         const EFFECTS = [ 'equalizer', 'rain', 'cybermesh', 'neonrings', 'waves', 'nebula', 'digitalwave', 'confetti', 'gradient', 'bars3d', 'starwarp2', 'audioorbs', 'hexpulse', 'traffic', 'retrogrid', 'lasershow', 'snow', 'classicbars', 'eqcircular', 'plasma', 'bokeh', 'hexagons', 'lightning', 'pulse', 'fire', 'gridfloor', 'dna', 'matrix', 'particles', 'binaryrain', 'solarflare', 'rippleclick', 'pixelglitch', 'aurora', 'vinyl', 'speedtunnel', 'floatingbars' ];
         const EFFECT_NAMES = { 'equalizer': 'Standart Barlar', 'rain': 'Yağmur Efekti', 'cybermesh': 'Siber Ağ (Network)', 'neonrings': 'Neon Halkalar', 'waves': 'Sinus Dalgaları', 'nebula': 'Uzay Bulutu', 'digitalwave': 'Dijital Dalga', 'confetti': 'Konfeti', 'gradient': 'Renk Akışı', 'bars3d': '3D Bloklar', 'starwarp2': 'Hiper Uzay', 'audioorbs': 'Ses Küreleri', 'hexpulse': 'Altıgen Nabız', 'traffic': 'Gece Trafiği', 'retrogrid': 'Retro Grid 80s', 'lasershow': 'Lazer Şovu', 'snow': 'Kış Sürüşü', 'classicbars': 'Klasik Ekolayzer', 'eqcircular': 'Dairesel EQ', 'plasma': 'Plazma Akışı', 'bokeh': 'Şehir Işıkları', 'hexagons': 'Petek Dokusu', 'lightning': 'Fırtına Şimşek', 'pulse': 'Bass Nabzı', 'fire': 'Ateş Efekti', 'gridfloor': 'Siber Zemin', 'dna': 'DNA Sarmalı', 'matrix': 'Matrix Kodu', 'particles': 'Parçacıklar', 'binaryrain': 'Binary (01)', 'solarflare': 'Güneş Patlaması', 'rippleclick': 'Su Dalgası', 'pixelglitch': 'Piksel Glitch', 'aurora': 'Kuzey Işıkları', 'vinyl': 'Dönen Plak', 'speedtunnel': 'Hız Tüneli', 'floatingbars': 'Uçan Çubuklar' };
@@ -170,7 +195,7 @@
         let activeEffectInstance = null;
         const SAVED_EFFECT_KEY = 'carRadioLastEffect_v2'; 
 
-        // EFEKT SINIFLARI (Kısaltılmış)
+        // EFEKT SINIFLARI
         class RainEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.drops=[]; this.init(); } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } init() { for(let i=0; i<100; i++) this.drops.push({x:Math.random()*this.c.width, y:Math.random()*this.c.height, l:Math.random()*20+10, v:Math.random()*10+15}); } draw() { this.x.fillStyle='rgba(0,0,0,0.3)'; this.x.fillRect(0,0,this.c.width,this.c.height); this.x.strokeStyle='rgba(174,194,224,0.6)'; this.x.lineWidth=2; for(let d of this.drops) { this.x.beginPath(); this.x.moveTo(d.x, d.y); this.x.lineTo(d.x-2, d.y+d.l); this.x.stroke(); d.y += d.v; d.x -= 0.5; if(d.y > this.c.height) { d.y = -d.l; d.x = Math.random()*this.c.width; } } } }
         class SineWavesEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); this.t+=0.1; const cy = this.c.height/2; for(let i=0; i<3; i++) { this.x.beginPath(); this.x.lineWidth=3; this.x.strokeStyle = `hsl(${this.t*20 + i*50}, 70%, 60%)`; for(let x=0; x<this.c.width; x+=5) { let y = cy + Math.sin(x*0.01 + this.t + i)*50 * Math.sin(this.t*0.5); x===0 ? this.x.moveTo(x,y) : this.x.lineTo(x,y); } this.x.stroke(); } } }
         class NebulaEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.t += 0.01; this.x.fillStyle = 'rgba(0,0,0,0.05)'; this.x.fillRect(0,0,this.c.width,this.c.height); const cx=this.c.width/2, cy=this.c.height/2; for(let i=0; i<3; i++) { const x = cx + Math.sin(this.t + i)*100; const y = cy + Math.cos(this.t*1.3 + i)*50; const g = this.x.createRadialGradient(x,y,10,x,y,200); g.addColorStop(0, `hsla(${this.t*20 + i*120}, 80%, 60%, 0.1)`); g.addColorStop(1, 'transparent'); this.x.fillStyle = g; this.x.fillRect(0,0,this.c.width,this.c.height); } } }
@@ -336,6 +361,7 @@
                 const el = document.createElement("div"); 
                 el.className = "channel";
                 if(isUrlMatch) el.classList.add('active');
+                
                 el.innerHTML = `<div class="channel-info"><img src="${c.logoUrl||''}" onerror="this.style.display='none'"><div><div>${c.name}</div></div></div><span class="fav-btn ${isF?'favorited':''}">★</span>`;
                 el.querySelector('.channel-info').onclick = () => { playChannel(i); };
                 el.querySelector('.fav-btn').onclick = (e) => { e.stopPropagation(); toggleFavorite(c.streamUrl, el.querySelector('.fav-btn')); };
@@ -358,14 +384,24 @@
             } else { a.src = u; a.play().catch(e => { console.error("Hata:", e); updatePlayerUI(false); }); } 
             a.muted = false; a.volume = 1.0; 
         }
+
         function playChannel(i) { 
             currentChannelIndex = i; const c = currentChannelList[i]; if (!c) return; 
+            
+            // --- LOGO / PLAYER ANIMASYONU (KORUNDU) ---
+            if(G_UI.centerContainer) {
+                G_UI.centerContainer.classList.remove('switching-anim');
+                void G_UI.centerContainer.offsetWidth; // Reflow
+                G_UI.centerContainer.classList.add('switching-anim');
+            }
+
             activeStreamUrl = c.streamUrl; incrementListenCount(c.streamUrl); 
             const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; 
             G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; 
             G_UI.preview.mainLogo.src = c.logoUrl || ''; 
             playStream(G_UI.audioPlayer, c.streamUrl); updatePlayerUI(true);
         }
+        
         function updatePlayerUI(p) { 
             G_UI.player.container.classList.toggle('playing', p); 
             G_UI.preview.area.classList.toggle('is-playing', p); 
