@@ -33,6 +33,9 @@ Pal Nostalji,https://moondigitaledge.radyotvonline.net/palnostalji/playlist.m3u8
 Pop 90lar,https://playerservices.streamtheworld.com/api/livestream-redirect/POP90128AAC.aac?/;stream.mp3,https://ik.fskit.net/radyohome/media/station/31/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=ff9833&tr=w-1000%3A%2Cbg-ff9833&v=060520030000,2
 Radyo 7,https://moondigitaledge.radyotvonline.net/radyo7/playlist.m3u8,https://cdn.kanal7.com/radyo7//application/assets/home/images/radyo_7_kare.jpg,2
 Radyo Alaturka,https://yayin.jumboserver.net:9100/stream?/;stream.mp3,https://play-lh.googleusercontent.com/7-UIFJnOIhRX8b9VLWdPF4nxGCxE9nIJ6ZeJI0ZfKOKYpypVZOloiRtcenwTw42DB6w,2
+Virgin Radio,https://22733.live.streamtheworld.com/VIRGIN_RADIOAAC.aac,https://upload.wikimedia.org/wikipedia/tr/b/ba/Virgin_Radio.png,2
+Show Radyo,https://edge1.radyotvonline.net/shoutcast/play/showradyo,https://radyolar.net.tr/uploads/img/show-radyo.jpg,2
+
 
 Arabesk Radyo,https://yayin.santraltr.com/hls/arabeskyeni.m3u8,https://is2-ssl.mzstatic.com/image/thumb/Purple19/v4/ac/38/1a/ac381a7b-8b9d-e1ea-d07e-ca783d8d990b/source/512x512bb.jpg,4
 Damar Radyo,https://live.radyositesihazir.com/7000/stream/;stream.mp3,https://www.sahmatajans.com/wp-content/uploads/2022/04/damarfmturkiye-logo.jpg,4
@@ -72,6 +75,9 @@ Radyo Banko,https://stream.netradyom.com/listen/radyobanko/radio.mp3/;stream.mp3
 Avrasya Türk,https://sslyayin.netyayin.net:10909/;/;stream.mp3,https://static.mytuner.mobi/media/tvos_radios/zSXYEYzWq2.jpg,8
 Kiss FM,https://kiss.radyotvonline.net/kissfm?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/kiss-fm.jpg,8
 Esas Radyo,https://yayin.turkhosted.com:6034/;stream.mp3,https://www.lokomotifradyolari.com/logolar/esas.png,8
+Radyo Net,https://sslyayin.netyayin.net:8068/stream,https://radyolar.net.tr/uploads/img/radyo-net-konya.png,8
+Can Radyo,https://canradyo.kesintisizyayin.com:3838/;,https://radyolar.net.tr/uploads/img/can-radyo-101.png,8
+
 
 
 NTV Radyo,https://dygedge.radyotvonline.net/ntvradyo/playlist.m3u8,https://images.ntvradyo.com.tr/cover/f6a6f4db-613c-435f-a26c-db099750ad27-SOSYALMEDYACOVERLAR400x400copy.jpg,5
