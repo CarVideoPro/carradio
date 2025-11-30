@@ -50,50 +50,6 @@
         #main-logo-display { width: 200px; height: 200px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; margin-top: 10px; }
         #main-logo-display:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
         
-        /* AI BUTONU - BAĞIMSIZ VE SABİT KONUM */
-        /* Bu ayarlar ile buton diğer elementleri İTEKLEMEZ */
-        #ai-style-btn {
-            position: absolute; /* Akıştan çıkar */
-            top: -70px; /* Logonun 70px yukarısına sabitle */
-            left: 50%;
-            transform: translateX(-50%); /* Tam ortala */
-            
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--accent-color);
-            color: var(--text-primary);
-            padding: 8px 24px;
-            border-radius: 50px; 
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            backdrop-filter: blur(8px);
-            box-shadow: 0 0 15px rgba(0,0,0,0.3), inset 0 0 10px rgba(255,255,255,0.05);
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            
-            /* Uzun metinler için koruma */
-            max-width: 300px; /* Maksimum genişlik */
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            z-index: 20;
-            justify-content: center;
-        }
-
-        #ai-style-btn:hover { background: var(--accent-color); color: #000; box-shadow: 0 0 25px var(--accent-color); transform: translateX(-50%) translateY(-2px); }
-        #ai-style-btn svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
-        
-        #ai-style-btn.listening {
-            border-color: #ff4081; color: #ff4081; background: rgba(0, 0, 0, 0.6);
-            animation: glow-pulse 1.5s infinite alternate;
-        }
-        
-        @keyframes glow-pulse { from { box-shadow: 0 0 5px #ff4081, inset 0 0 5px #ff4081; } to { box-shadow: 0 0 20px #ff4081, inset 0 0 10px #ff4081; } }
-
         .mid-nav-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--accent-color); color: var(--text-primary); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
         #next-btn { padding-left: 4px; } #prev-btn { padding-right: 2px; }
         .mid-nav-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.15); box-shadow: 0 0 25px var(--accent-color); border-color: #fff; }
@@ -148,7 +104,6 @@
         @media (max-width: 768px) {
             #channels { flex: 0 0 200px; }
             #main-logo-display { width: 150px; height: 150px; }
-            #ai-style-btn { font-size: 12px; padding: 6px 16px; min-width: 130px; top: -55px; } /* Mobilde konumu ayarla */
             .mid-nav-btn { width: 50px; height: 50px; font-size: 20px; }
             #main-play-btn { width: 60px; height: 60px; } 
             #side-controls-container { right: 5px; padding: 10px 5px; }
@@ -181,11 +136,6 @@
                         
                         <div id="center-display-container">
                             
-                            <div id="ai-style-btn" onclick="identifySong()" title="Şarkıyı Bul (AI)">
-                                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9v7c0 1.1.9 2 2 2h4v-8H5v-1c0-3.87 3.13-7 7-7s7 3.13 7 7v1h-4v8h4c1.1 0 2-.9 2-2v-7c0-4.97-4.03-9-9-9z"/></svg>
-                                <span id="ai-btn-text">Şarkıyı Bul</span>
-                            </div>
-
                             <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
                             
                             <button id="main-play-btn" onclick="togglePlayback()" title="Oynat / Durdur">
@@ -208,22 +158,9 @@
     <audio id="audio-player"></audio>
 
     <script>
-        // --- API ANAHTARLARI HAVUZU ---
-        const API_KEYS = [
-            '1539e9fcdab98bb010fa7b6ad687885c',
-            '1539e9fcdab98bb010fa7b6ad687885c'
-        ];
-        
-        let currentKeyIndex = 0; 
-        function getNextApiKey() {
-            const key = API_KEYS[currentKeyIndex];
-            currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
-            return key;
-        }
-
         const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
         const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 Telegram: t.me/car_video_pro 📞 ";
-        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), aiBtn: document.getElementById("ai-style-btn"), aiText: document.getElementById("ai-btn-text"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
+        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
 
         const EFFECTS = [ 'equalizer', 'rain', 'cybermesh', 'neonrings', 'waves', 'nebula', 'digitalwave', 'confetti', 'gradient', 'bars3d', 'starwarp2', 'audioorbs', 'hexpulse', 'traffic', 'retrogrid', 'lasershow', 'snow', 'classicbars', 'eqcircular', 'plasma', 'bokeh', 'hexagons', 'lightning', 'pulse', 'fire', 'gridfloor', 'dna', 'matrix', 'particles', 'binaryrain', 'solarflare', 'rippleclick', 'pixelglitch', 'aurora', 'vinyl', 'speedtunnel', 'floatingbars' ];
         const EFFECT_NAMES = { 'equalizer': 'Standart Barlar', 'rain': 'Yağmur Efekti', 'cybermesh': 'Siber Ağ (Network)', 'neonrings': 'Neon Halkalar', 'waves': 'Sinus Dalgaları', 'nebula': 'Uzay Bulutu', 'digitalwave': 'Dijital Dalga', 'confetti': 'Konfeti', 'gradient': 'Renk Akışı', 'bars3d': '3D Bloklar', 'starwarp2': 'Hiper Uzay', 'audioorbs': 'Ses Küreleri', 'hexpulse': 'Altıgen Nabız', 'traffic': 'Gece Trafiği', 'retrogrid': 'Retro Grid 80s', 'lasershow': 'Lazer Şovu', 'snow': 'Kış Sürüşü', 'classicbars': 'Klasik Ekolayzer', 'eqcircular': 'Dairesel EQ', 'plasma': 'Plazma Akışı', 'bokeh': 'Şehir Işıkları', 'hexagons': 'Petek Dokusu', 'lightning': 'Fırtına Şimşek', 'pulse': 'Bass Nabzı', 'fire': 'Ateş Efekti', 'gridfloor': 'Siber Zemin', 'dna': 'DNA Sarmalı', 'matrix': 'Matrix Kodu', 'particles': 'Parçacıklar', 'binaryrain': 'Binary (01)', 'solarflare': 'Güneş Patlaması', 'rippleclick': 'Su Dalgası', 'pixelglitch': 'Piksel Glitch', 'aurora': 'Kuzey Işıkları', 'vinyl': 'Dönen Plak', 'speedtunnel': 'Hız Tüneli', 'floatingbars': 'Uçan Çubuklar' };
@@ -439,69 +376,6 @@
             if (p) { setTimeout(() => { G_UI.canvas.width = G_UI.preview.area.clientWidth; G_UI.canvas.height = G_UI.preview.area.clientHeight; if (activeEffectInstance) activeEffectInstance.resize(); }, 50); if (!animationFrameId) renderEffects(); }
         }
         function changeChannel(d) { if (currentChannelList.length === 0 || currentChannelIndex < 0) return; const n = (currentChannelIndex + d + currentChannelList.length) % currentChannelList.length; const el = G_UI.channels.querySelectorAll('.channel')[n]; if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.querySelector('.channel-info').click(); } }
-
-        let aiResetTimeout;
-        function updateAIButtonState(text, isListening = false) {
-            G_UI.aiText.textContent = text;
-            if (isListening) { G_UI.aiBtn.classList.add('listening'); } else { G_UI.aiBtn.classList.remove('listening'); }
-        }
-        function resetAIButton() { updateAIButtonState("Şarkıyı Bul"); if(aiResetTimeout) clearTimeout(aiResetTimeout); }
-
-        async function identifySong() {
-            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { updateAIButtonState("Mikrofon Yok"); aiResetTimeout = setTimeout(resetAIButton, 3000); return; }
-            
-            try {
-                if(aiResetTimeout) clearTimeout(aiResetTimeout);
-                
-                // Kayıt Başlıyor
-                updateAIButtonState("Dinleniyor...", true);
-                
-                // Havuzdan sıradaki anahtarı al
-                const activeKey = getNextApiKey();
-                
-                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-                const mediaRecorder = new MediaRecorder(stream);
-                const audioChunks = [];
-                mediaRecorder.addEventListener("dataavailable", event => { audioChunks.push(event.data); });
-                mediaRecorder.addEventListener("stop", async () => {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    const formData = new FormData();
-                    formData.append("api_token", activeKey); // Dinamik anahtar kullanımı
-                    formData.append("file", audioBlob);
-                    formData.append("return", "timecode,apple_music,spotify");
-                    
-                    updateAIButtonState("Analiz Ediliyor...", true);
-                    
-                    try {
-                        const response = await fetch("https://api.audd.io/", { method: "POST", body: formData });
-                        const result = await response.json();
-                        stream.getTracks().forEach(track => track.stop()); // Mikrofonu kapat
-                        
-                        if (result.status === "success" && result.result) {
-                            const song = result.result;
-                            updateAIButtonState(`🎵 ${song.artist} - ${song.title}`, false);
-                            aiResetTimeout = setTimeout(resetAIButton, 20000);
-                            
-                            // Kayan yazıya da ekleyelim
-                            const msg = `${song.artist} - ${song.title}`;
-                            G_UI.player.channelName.innerHTML = `<span>${msg} - ${DEFAULT_SCROLL_TEXT}</span><span>${msg} - ${DEFAULT_SCROLL_TEXT}</span>`;
-                        } else { 
-                            updateAIButtonState("Bulunamadı ❌", false); 
-                            aiResetTimeout = setTimeout(resetAIButton, 3000); 
-                        }
-                    } catch (err) { 
-                        console.error(err); 
-                        updateAIButtonState("Hata Oluştu ⚠️", false); 
-                        stream.getTracks().forEach(track => track.stop()); 
-                        aiResetTimeout = setTimeout(resetAIButton, 3000); 
-                    }
-                });
-                
-                // Kayıt süresi 7 saniyeye çıkarıldı (Daha iyi sonuç için)
-                mediaRecorder.start();
-                setTimeout(() => { mediaRecorder.stop(); }, 7000); 
-            } catch (err) { console.error(err); updateAIButtonState("Mikrofon İzni Yok", false); aiResetTimeout = setTimeout(resetAIButton, 3000); }
-        }
 
         async function fetchAndDisplayChannels() {
             try {
