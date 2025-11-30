@@ -43,44 +43,68 @@
 
         #middle-controls-row { display: flex; align-items: center; justify-content: center; gap: 20px; flex: 1; width: 100%; position: relative; z-index: 10; }
         
-        /* ORTA ALAN DÜZENİ: Logo ve Altındaki Buton için Container */
-        #center-display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 15px; }
-
-        #main-logo-display { width: 220px; height: 220px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); flex-shrink: 0; transition: all 0.3s ease; }
+        /* ORTA ALAN DÜZENİ */
+        #center-display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; }
+        
+        /* LOGO AYARLARI */
+        #main-logo-display { width: 200px; height: 200px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; margin-top: 10px; }
         #main-logo-display:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
         
+        /* AI BUTONU - BAĞIMSIZ VE SABİT KONUM */
+        /* Bu ayarlar ile buton diğer elementleri İTEKLEMEZ */
+        #ai-style-btn {
+            position: absolute; /* Akıştan çıkar */
+            top: -70px; /* Logonun 70px yukarısına sabitle */
+            left: 50%;
+            transform: translateX(-50%); /* Tam ortala */
+            
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--accent-color);
+            color: var(--text-primary);
+            padding: 8px 24px;
+            border-radius: 50px; 
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 0 15px rgba(0,0,0,0.3), inset 0 0 10px rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            
+            /* Uzun metinler için koruma */
+            max-width: 300px; /* Maksimum genişlik */
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            z-index: 20;
+            justify-content: center;
+        }
+
+        #ai-style-btn:hover { background: var(--accent-color); color: #000; box-shadow: 0 0 25px var(--accent-color); transform: translateX(-50%) translateY(-2px); }
+        #ai-style-btn svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+        
+        #ai-style-btn.listening {
+            border-color: #ff4081; color: #ff4081; background: rgba(0, 0, 0, 0.6);
+            animation: glow-pulse 1.5s infinite alternate;
+        }
+        
+        @keyframes glow-pulse { from { box-shadow: 0 0 5px #ff4081, inset 0 0 5px #ff4081; } to { box-shadow: 0 0 20px #ff4081, inset 0 0 10px #ff4081; } }
+
         .mid-nav-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--accent-color); color: var(--text-primary); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
         #next-btn { padding-left: 4px; } #prev-btn { padding-right: 2px; }
         .mid-nav-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.15); box-shadow: 0 0 25px var(--accent-color); border-color: #fff; }
 
-        /* YENİ OYNAT/DURDUR BUTONU STİLİ */
+        /* PLAY BUTONU */
         #main-play-btn {
-            width: 70px; height: 70px;
-            border-radius: 50%;
-            background: rgba(0, 0, 0, 0.4);
-            border: 3px solid var(--accent-color);
-            color: var(--accent-color);
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            backdrop-filter: blur(10px);
-            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            width: 70px; height: 70px; border-radius: 50%; background: rgba(0, 0, 0, 0.4); border: 3px solid var(--accent-color); color: var(--accent-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); margin-top: 15px;
         }
         #main-play-btn svg { width: 35px; height: 35px; fill: currentColor; transition: 0.2s; }
-        #main-play-btn:hover {
-            background: var(--accent-color);
-            color: #000;
-            transform: scale(1.1);
-            box-shadow: 0 0 30px var(--accent-color);
-            border-color: #fff;
-        }
-        #main-play-btn.playing {
-            background: var(--accent-color-darker);
-            color: #fff;
-            border-color: #fff;
-            box-shadow: 0 0 40px var(--accent-color);
-            animation: pulse-btn 2s infinite;
-        }
+        #main-play-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.1); box-shadow: 0 0 30px var(--accent-color); border-color: #fff; }
+        #main-play-btn.playing { background: var(--accent-color-darker); color: #fff; border-color: #fff; box-shadow: 0 0 40px var(--accent-color); animation: pulse-btn 2s infinite; }
         @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         
         #previewArea.is-playing #previewPlaceholder { display: none; }
@@ -107,7 +131,6 @@
         .channel-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; }
         .channel-info>div>div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 900; }
         .channel:hover { background: var(--bg-hover); }
-        /* Aktif kanal için sadece renk değişimi */
         .channel.active { border-color: var(--accent-color); background: var(--accent-color-darker); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 12px var(--accent-color); }
         .channel img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; border-radius: 8px; }
         .fav-btn { font-size: 22px; cursor: pointer; padding: 5px; color: var(--text-secondary); transition: 0.2s; flex-shrink: 0; }
@@ -120,13 +143,14 @@
         .player-text .title span { display: inline-block; padding-right: 50px; }
         @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
         
-        #effect-name-toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.6); color: var(--accent-color); padding: 8px 20px; border-radius: 20px; font-size: 14px; font-weight: bold; opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 200; border: 1px solid var(--accent-color); box-shadow: 0 0 15px var(--accent-color); text-transform: uppercase; letter-spacing: 1px; }
+        #effect-name-toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: var(--accent-color); padding: 10px 25px; border-radius: 20px; font-size: 14px; font-weight: bold; opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 200; border: 1px solid var(--accent-color); box-shadow: 0 0 15px var(--accent-color); text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 90%; }
 
         @media (max-width: 768px) {
             #channels { flex: 0 0 200px; }
-            #main-logo-display { width: 130px; height: 130px; }
+            #main-logo-display { width: 150px; height: 150px; }
+            #ai-style-btn { font-size: 12px; padding: 6px 16px; min-width: 130px; top: -55px; } /* Mobilde konumu ayarla */
             .mid-nav-btn { width: 50px; height: 50px; font-size: 20px; }
-            #main-play-btn { width: 60px; height: 60px; } /* Mobilde buton boyutu */
+            #main-play-btn { width: 60px; height: 60px; } 
             #side-controls-container { right: 5px; padding: 10px 5px; }
             .theme-swatch { width: 20px; height: 20px; }
         }
@@ -156,7 +180,14 @@
                         <button class="mid-nav-btn" id="prev-btn" onclick="changeChannel(-1)">&#9664;</button>
                         
                         <div id="center-display-container">
+                            
+                            <div id="ai-style-btn" onclick="identifySong()" title="Şarkıyı Bul (AI)">
+                                <svg viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9v7c0 1.1.9 2 2 2h4v-8H5v-1c0-3.87 3.13-7 7-7s7 3.13 7 7v1h-4v8h4c1.1 0 2-.9 2-2v-7c0-4.97-4.03-9-9-9z"/></svg>
+                                <span id="ai-btn-text">Şarkıyı Bul</span>
+                            </div>
+
                             <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
+                            
                             <button id="main-play-btn" onclick="togglePlayback()" title="Oynat / Durdur">
                                 <svg id="play-icon-svg" viewBox="0 0 24 24" style="display:block;"><path d="M8 5v14l11-7z"/></svg>
                                 <svg id="pause-icon-svg" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
@@ -177,38 +208,32 @@
     <audio id="audio-player"></audio>
 
     <script>
+        // --- API ANAHTARLARI HAVUZU ---
+        const API_KEYS = [
+            '1539e9fcdab98bb010fa7b6ad687885c',
+            '1539e9fcdab98bb010fa7b6ad687885c'
+        ];
+        
+        let currentKeyIndex = 0; 
+        function getNextApiKey() {
+            const key = API_KEYS[currentKeyIndex];
+            currentKeyIndex = (currentKeyIndex + 1) % API_KEYS.length;
+            return key;
+        }
+
         const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
         const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 Telegram: t.me/car_video_pro 📞 ";
-        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
+        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom"), }, player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), aiBtn: document.getElementById("ai-style-btn"), aiText: document.getElementById("ai-btn-text"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
 
-        // --- EFEKT SİSTEMİ ---
-        const EFFECTS = [
-            'equalizer', 'rain', 'cybermesh', 'neonrings', 'waves', 'nebula', 'digitalwave', 'confetti', 'gradient', 'bars3d',
-            'starwarp2', 'audioorbs', 'hexpulse', 'traffic', 'retrogrid', 'lasershow', 
-            'snow', 'classicbars', 'eqcircular', 'plasma', 'bokeh', 'hexagons', 'lightning', 'pulse', 
-            'fire', 'gridfloor', 'dna', 'matrix', 'particles', 'binaryrain', 'solarflare', 'rippleclick', 
-            'pixelglitch', 'aurora', 'vinyl', 'speedtunnel', 'floatingbars'
-        ];
-        const EFFECT_NAMES = {
-            'equalizer': 'Standart Barlar', 
-            'rain': 'Yağmur Efekti', 'cybermesh': 'Siber Ağ (Network)', 'neonrings': 'Neon Halkalar', 'waves': 'Sinus Dalgaları',
-            'nebula': 'Uzay Bulutu', 'digitalwave': 'Dijital Dalga', 'confetti': 'Konfeti', 'gradient': 'Renk Akışı', 'bars3d': '3D Bloklar',
-            'starwarp2': 'Hiper Uzay', 'audioorbs': 'Ses Küreleri', 'hexpulse': 'Altıgen Nabız', 'traffic': 'Gece Trafiği', 
-            'retrogrid': 'Retro Grid 80s', 'lasershow': 'Lazer Şovu', 'snow': 'Kış Sürüşü', 'classicbars': 'Klasik Ekolayzer', 
-            'eqcircular': 'Dairesel EQ', 'plasma': 'Plazma Akışı', 'bokeh': 'Şehir Işıkları', 'hexagons': 'Petek Dokusu', 'lightning': 'Fırtına Şimşek', 
-            'pulse': 'Bass Nabzı', 'fire': 'Ateş Efekti', 'gridfloor': 'Siber Zemin', 'dna': 'DNA Sarmalı', 'matrix': 'Matrix Kodu', 
-            'particles': 'Parçacıklar', 'binaryrain': 'Binary (01)', 'solarflare': 'Güneş Patlaması', 'rippleclick': 'Su Dalgası',
-            'pixelglitch': 'Piksel Glitch', 'aurora': 'Kuzey Işıkları', 'vinyl': 'Dönen Plak', 'speedtunnel': 'Hız Tüneli', 
-            'floatingbars': 'Uçan Çubuklar'
-        };
+        const EFFECTS = [ 'equalizer', 'rain', 'cybermesh', 'neonrings', 'waves', 'nebula', 'digitalwave', 'confetti', 'gradient', 'bars3d', 'starwarp2', 'audioorbs', 'hexpulse', 'traffic', 'retrogrid', 'lasershow', 'snow', 'classicbars', 'eqcircular', 'plasma', 'bokeh', 'hexagons', 'lightning', 'pulse', 'fire', 'gridfloor', 'dna', 'matrix', 'particles', 'binaryrain', 'solarflare', 'rippleclick', 'pixelglitch', 'aurora', 'vinyl', 'speedtunnel', 'floatingbars' ];
+        const EFFECT_NAMES = { 'equalizer': 'Standart Barlar', 'rain': 'Yağmur Efekti', 'cybermesh': 'Siber Ağ (Network)', 'neonrings': 'Neon Halkalar', 'waves': 'Sinus Dalgaları', 'nebula': 'Uzay Bulutu', 'digitalwave': 'Dijital Dalga', 'confetti': 'Konfeti', 'gradient': 'Renk Akışı', 'bars3d': '3D Bloklar', 'starwarp2': 'Hiper Uzay', 'audioorbs': 'Ses Küreleri', 'hexpulse': 'Altıgen Nabız', 'traffic': 'Gece Trafiği', 'retrogrid': 'Retro Grid 80s', 'lasershow': 'Lazer Şovu', 'snow': 'Kış Sürüşü', 'classicbars': 'Klasik Ekolayzer', 'eqcircular': 'Dairesel EQ', 'plasma': 'Plazma Akışı', 'bokeh': 'Şehir Işıkları', 'hexagons': 'Petek Dokusu', 'lightning': 'Fırtına Şimşek', 'pulse': 'Bass Nabzı', 'fire': 'Ateş Efekti', 'gridfloor': 'Siber Zemin', 'dna': 'DNA Sarmalı', 'matrix': 'Matrix Kodu', 'particles': 'Parçacıklar', 'binaryrain': 'Binary (01)', 'solarflare': 'Güneş Patlaması', 'rippleclick': 'Su Dalgası', 'pixelglitch': 'Piksel Glitch', 'aurora': 'Kuzey Işıkları', 'vinyl': 'Dönen Plak', 'speedtunnel': 'Hız Tüneli', 'floatingbars': 'Uçan Çubuklar' };
 
         let currentEffectIndex = 0;
         let animationFrameId;
         let activeEffectInstance = null;
         const SAVED_EFFECT_KEY = 'carRadioLastEffect_v2'; 
 
-        /* ================= EFEKT SINIFLARI ================= */
-        // MEVCUT EFEKTLER
+        // EFEKT SINIFLARI (Kısaltılmış)
         class RainEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.drops=[]; this.init(); } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } init() { for(let i=0; i<100; i++) this.drops.push({x:Math.random()*this.c.width, y:Math.random()*this.c.height, l:Math.random()*20+10, v:Math.random()*10+15}); } draw() { this.x.fillStyle='rgba(0,0,0,0.3)'; this.x.fillRect(0,0,this.c.width,this.c.height); this.x.strokeStyle='rgba(174,194,224,0.6)'; this.x.lineWidth=2; for(let d of this.drops) { this.x.beginPath(); this.x.moveTo(d.x, d.y); this.x.lineTo(d.x-2, d.y+d.l); this.x.stroke(); d.y += d.v; d.x -= 0.5; if(d.y > this.c.height) { d.y = -d.l; d.x = Math.random()*this.c.width; } } } }
         class SineWavesEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); this.t+=0.1; const cy = this.c.height/2; for(let i=0; i<3; i++) { this.x.beginPath(); this.x.lineWidth=3; this.x.strokeStyle = `hsl(${this.t*20 + i*50}, 70%, 60%)`; for(let x=0; x<this.c.width; x+=5) { let y = cy + Math.sin(x*0.01 + this.t + i)*50 * Math.sin(this.t*0.5); x===0 ? this.x.moveTo(x,y) : this.x.lineTo(x,y); } this.x.stroke(); } } }
         class NebulaEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.t += 0.01; this.x.fillStyle = 'rgba(0,0,0,0.05)'; this.x.fillRect(0,0,this.c.width,this.c.height); const cx=this.c.width/2, cy=this.c.height/2; for(let i=0; i<3; i++) { const x = cx + Math.sin(this.t + i)*100; const y = cy + Math.cos(this.t*1.3 + i)*50; const g = this.x.createRadialGradient(x,y,10,x,y,200); g.addColorStop(0, `hsla(${this.t*20 + i*120}, 80%, 60%, 0.1)`); g.addColorStop(1, 'transparent'); this.x.fillStyle = g; this.x.fillRect(0,0,this.c.width,this.c.height); } } }
@@ -226,8 +251,6 @@
         class FireEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.globalCompositeOperation='screen';if(this.p.length<100)this.p.push({x:Math.random()*this.c.width,y:this.c.height,s:Math.random()*20+10,vy:Math.random()*3+1,vx:(Math.random()-0.5)*2,l:1});for(let i=0;i<this.p.length;i++){let p=this.p[i];this.x.beginPath();let g=this.x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.s);g.addColorStop(0,`rgba(255,100,0,${p.l})`);g.addColorStop(1,'rgba(255,50,0,0)');this.x.fillStyle=g;this.x.arc(p.x,p.y,p.s,0,6.28);this.x.fill();p.y-=p.vy;p.x+=p.vx;p.l-=0.02;p.s*=0.95;if(p.l<=0)this.p.splice(i--,1);}this.x.globalCompositeOperation='source-over';}}
         class MatrixEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.d=[];this.resize();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.cols=Math.floor(this.c.width/14);this.d=[];for(let i=0;i<this.cols;i++)this.d[i]=Math.random()*-100;}draw(){this.x.fillStyle='rgba(0,0,0,0.05)';this.x.fillRect(0,0,this.c.width,this.c.height);this.x.fillStyle='#0F0';this.x.font='14px monospace';for(let i=0;i<this.d.length;i++){this.x.fillText(String.fromCharCode(0x30A0+Math.random()*96),i*14,this.d[i]*14);if(this.d[i]*14>this.c.height&&Math.random()>0.975)this.d[i]=0;this.d[i]++;}}}
         class ParticlesEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.p.length<60)this.p.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,c:`hsl(${Math.random()*360},70%,50%)`});for(let p of this.p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=this.c.width;if(p.x>this.c.width)p.x=0;if(p.y<0)p.y=this.c.height;if(p.y>this.c.height)p.y=0;this.x.fillStyle=p.c;this.x.beginPath();this.x.arc(p.x,p.y,2,0,6.28);this.x.fill();}}}
-
-        // YENİ EFEKTLER
         class CyberMeshEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];this.init();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.init();}init(){this.p=[];for(let i=0;i<60;i++)this.p.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2});}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.lineWidth=0.5;this.x.strokeStyle='cyan';this.x.fillStyle='cyan';for(let i=0;i<this.p.length;i++){let p=this.p[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>this.c.width)p.vx*=-1;if(p.y<0||p.y>this.c.height)p.vy*=-1;this.x.beginPath();this.x.arc(p.x,p.y,2,0,6.28);this.x.fill();for(let j=i+1;j<this.p.length;j++){let p2=this.p[j],d=Math.hypot(p.x-p2.x,p.y-p2.y);if(d<120){this.x.globalAlpha=1-d/120;this.x.beginPath();this.x.moveTo(p.x,p.y);this.x.lineTo(p2.x,p2.y);this.x.stroke();}}}this.x.globalAlpha=1;}}
         class NeonRingsEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);this.t+=0.05;const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<5;i++){const r=50+(i*30)+Math.sin(this.t+i)*20;this.x.beginPath();this.x.arc(cx,cy,r,0,6.28);this.x.strokeStyle=`hsl(${this.t*50+i*60},100%,50%)`;this.x.lineWidth=4;this.x.shadowBlur=10;this.x.shadowColor=this.x.strokeStyle;this.x.stroke();this.x.shadowBlur=0;}}}
         class DigitalWaveEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.t+=0.2;const cy=this.c.height/2;this.x.strokeStyle='#0f0';this.x.lineWidth=2;this.x.beginPath();for(let x=0;x<this.c.width;x+=10){let y=cy;if(Math.floor((x+this.t*10)/50)%2===0)y-=50;else y+=50;x===0?this.x.moveTo(x,y):this.x.lineTo(x,y);}this.x.stroke();}}
@@ -251,7 +274,6 @@
         function initEffects() {
             G_UI.preview.mainLogo.style.cursor = "pointer";
             G_UI.preview.mainLogo.addEventListener('click', switchEffect);
-
             const resizeObserver = new ResizeObserver(() => {
                 if (activeEffectInstance) {
                     G_UI.canvas.width = G_UI.canvas.clientWidth;
@@ -262,9 +284,9 @@
             resizeObserver.observe(G_UI.preview.area);
         }
 
-        function showEffectName(name) {
-            G_UI.toast.textContent = name; G_UI.toast.style.opacity = '1';
-            setTimeout(() => { G_UI.toast.style.opacity = '0'; }, 2000);
+        function showToast(msg) {
+            G_UI.toast.textContent = msg; G_UI.toast.style.opacity = '1';
+            setTimeout(() => { G_UI.toast.style.opacity = '0'; }, 3000);
         }
 
         function switchEffect() {
@@ -275,24 +297,18 @@
         }
 
         function applyEffect(effectName) {
-            showEffectName(EFFECT_NAMES[effectName]);
+            showToast(EFFECT_NAMES[effectName] || effectName);
             G_UI.preview.analyzerTop.classList.remove('visualizer-hidden');
             G_UI.preview.analyzerBottom.classList.remove('visualizer-hidden');
-            
-            if(activeEffectInstance && activeEffectInstance.x) {
-                activeEffectInstance.x.clearRect(0,0, G_UI.canvas.width, G_UI.canvas.height);
-            }
+            if(activeEffectInstance && activeEffectInstance.x) { activeEffectInstance.x.clearRect(0,0, G_UI.canvas.width, G_UI.canvas.height); }
             G_UI.canvas.style.display = 'none';
             if (activeEffectInstance) activeEffectInstance = null;
             if (effectName === 'equalizer') return;
-
             G_UI.preview.analyzerTop.classList.add('visualizer-hidden');
             G_UI.preview.analyzerBottom.classList.add('visualizer-hidden');
             G_UI.canvas.style.display = 'block';
-            
             G_UI.canvas.width = G_UI.preview.area.clientWidth;
             G_UI.canvas.height = G_UI.preview.area.clientHeight;
-
             switch(effectName) {
                 case 'rain': activeEffectInstance = new RainEffect(G_UI.canvas); break;
                 case 'waves': activeEffectInstance = new SineWavesEffect(G_UI.canvas); break;
@@ -311,7 +327,6 @@
                 case 'fire': activeEffectInstance = new FireEffect(G_UI.canvas); break;
                 case 'matrix': activeEffectInstance = new MatrixEffect(G_UI.canvas); break;
                 case 'particles': activeEffectInstance = new ParticlesEffect(G_UI.canvas); break;
-                // YENİ EFEKTLER
                 case 'cybermesh': activeEffectInstance = new CyberMeshEffect(G_UI.canvas); break;
                 case 'neonrings': activeEffectInstance = new NeonRingsEffect(G_UI.canvas); break;
                 case 'digitalwave': activeEffectInstance = new DigitalWaveEffect(G_UI.canvas); break;
@@ -336,9 +351,7 @@
         }
 
         function renderEffects() {
-            if (activeEffectInstance && !G_UI.audioPlayer.paused && G_UI.canvas.width > 0 && G_UI.canvas.height > 0) { 
-                activeEffectInstance.draw(); 
-            }
+            if (activeEffectInstance && !G_UI.audioPlayer.paused && G_UI.canvas.width > 0 && G_UI.canvas.height > 0) { activeEffectInstance.draw(); }
             animationFrameId = requestAnimationFrame(renderEffects);
         }
 
@@ -346,9 +359,7 @@
         function applyTheme(themeName) { document.body.dataset.theme = themeName; localStorage.setItem('iptvTheme', themeName); document.querySelectorAll('.theme-swatch').forEach(swatch => swatch.classList.toggle('active', swatch.dataset.theme === themeName)); }
         function createThemeSelector() { G_UI.themeList.innerHTML = ""; for (const [key, theme] of Object.entries(themes)) { const swatch = document.createElement('div'); swatch.className = 'theme-swatch'; swatch.dataset.theme = key; swatch.title = theme.name; swatch.style.backgroundColor = theme.color; swatch.onclick = () => applyTheme(key); G_UI.themeList.appendChild(swatch); } }
 
-        // --- DEĞİŞKENLER ---
         let hls, allChannelsMap = new Map(), currentChannelList = [], currentChannelIndex = -1, activeGroupName = '', activeStreamUrl = null;
-        
         const ZOOM_KEY = 'carRadioZoomLevel', ZOOM_STEP = 0.05, MIN_ZOOM = 0.7, MAX_ZOOM = 1.3; let currentZoom = 1.0;
         const applyZoom = (z) => { G_UI.htmlElement.style.zoom = z; };
         const updateZoom = (z) => { currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z)); applyZoom(currentZoom); localStorage.setItem(ZOOM_KEY, currentZoom); };
@@ -373,158 +384,124 @@
             if (activate) activate.click(); else if (G_UI.groups.firstChild) G_UI.groups.firstChild.click();
         }
 
-        // --- GÜNCELLENEN FONKSİYON: Listeleme (SADELEŞTİRİLDİ) ---
         function listChannels(g) {
             G_UI.channels.innerHTML = ""; 
             const f = getFavorites();
-            
             if (g === 'Favorilerim') currentChannelList = f.map(u => allChannelsMap.get(u)).filter(Boolean);
             else if (g === 'En Çok Dinlenenler') currentChannelList = Object.entries(getListenCounts()).sort(([, a], [, b]) => b - a).map(([u]) => allChannelsMap.get(u)).filter(Boolean).slice(0, 20);
             else { const id = CATEGORIES.indexOf(g); currentChannelList = Array.from(allChannelsMap.values()).filter(c => c.categoryId === id); }
-            
             currentChannelList.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
             
             currentChannelList.forEach((c, i) => {
                 const isF = f.includes(c.streamUrl);
-                
-                // Sadece hangi kanalın aktif olduğunu anlamak için renk veriyoruz
-                // Karmaşık Durdur butonları kaldırıldı
                 const isUrlMatch = (activeStreamUrl && c.streamUrl === activeStreamUrl);
-                
-                if (isUrlMatch) {
-                    currentChannelIndex = i;
-                }
-
+                if (isUrlMatch) { currentChannelIndex = i; }
                 const el = document.createElement("div"); 
                 el.className = "channel";
                 if(isUrlMatch) el.classList.add('active');
-
-                el.innerHTML = `
-                    <div class="channel-info">
-                        <img src="${c.logoUrl||''}" onerror="this.style.display='none'">
-                        <div>
-                            <div>${c.name}</div>
-                        </div>
-                    </div>
-                    <span class="fav-btn ${isF?'favorited':''}">★</span>
-                `;
-                
-                el.querySelector('.channel-info').onclick = () => { 
-                    // Kanal zaten çalıyorsa listeden tıklayınca hiçbir şey yapma (ortadaki butonu kullansınlar)
-                    // Veya sadece kanalı değiştirsin.
-                    if (c.streamUrl !== activeStreamUrl) {
-                        document.querySelectorAll(".channel.active").forEach(ch => ch.classList.remove("active")); 
-                        el.classList.add("active"); 
-                        playChannel(i);
-                    }
-                };
-
+                el.innerHTML = `<div class="channel-info"><img src="${c.logoUrl||''}" onerror="this.style.display='none'"><div><div>${c.name}</div></div></div><span class="fav-btn ${isF?'favorited':''}">★</span>`;
+                el.querySelector('.channel-info').onclick = () => { playChannel(i); };
                 el.querySelector('.fav-btn').onclick = (e) => { e.stopPropagation(); toggleFavorite(c.streamUrl, el.querySelector('.fav-btn')); };
                 G_UI.channels.appendChild(el);
             });
         }
 
-        // --- YENİ: Ortadaki Oynat/Durdur Buton Mantığı ---
         function togglePlayback() {
-            if (!activeStreamUrl) {
-                // Hiçbir şey çalmıyorsa listeden ilki veya rastgele birini başlatabiliriz
-                if(currentChannelList.length > 0) playChannel(0);
-                return;
-            }
-            
-            if (G_UI.audioPlayer.paused) {
-                G_UI.audioPlayer.play();
-                updatePlayerUI(true);
-            } else {
-                G_UI.audioPlayer.pause();
-                updatePlayerUI(false);
-            }
+            if (!activeStreamUrl) { if(currentChannelList.length > 0) playChannel(0); return; }
+            if (G_UI.audioPlayer.paused) { G_UI.audioPlayer.play(); updatePlayerUI(true); } else { G_UI.audioPlayer.pause(); updatePlayerUI(false); }
         }
 
-        function stopStream(a, h) { 
-            activeStreamUrl = null; 
-            a.pause(); 
-            a.removeAttribute("src"); 
-            try { a.load(); } catch (e) { } 
-            if (h) { h.destroy(); hls = null; } 
-            updatePlayerUI(false); 
-        }
-
+        function stopStream(a, h) { activeStreamUrl = null; a.pause(); a.removeAttribute("src"); try { a.load(); } catch (e) { } if (h) { h.destroy(); hls = null; } updatePlayerUI(false); }
         async function playStream(a, u) { 
-            // HLS kontrolü ve yükleme
             if (hls) { hls.destroy(); hls = null; }
-            
             const isHLS = u.includes('.m3u8'); 
             if (isHLS && Hls.isSupported()) { 
-                hls = new Hls(); 
-                hls.loadSource(u); 
-                hls.attachMedia(a); 
-                hls.on(Hls.Events.MANIFEST_PARSED, function() {
-                     a.play().catch(e => { console.error("Oynatma hatası:", e); updatePlayerUI(false); });
-                });
-            } else { 
-                a.src = u; 
-                a.play().catch(e => { console.error("Oynatma hatası:", e); updatePlayerUI(false); });
-            } 
-            a.muted = false; 
-            a.volume = 1.0; 
+                hls = new Hls(); hls.loadSource(u); hls.attachMedia(a); 
+                hls.on(Hls.Events.MANIFEST_PARSED, function() { a.play().catch(e => { console.error("Hata:", e); updatePlayerUI(false); }); });
+            } else { a.src = u; a.play().catch(e => { console.error("Hata:", e); updatePlayerUI(false); }); } 
+            a.muted = false; a.volume = 1.0; 
         }
-        
         function playChannel(i) { 
-            currentChannelIndex = i; 
-            const c = currentChannelList[i]; 
-            if (!c) return; 
-            
-            activeStreamUrl = c.streamUrl; 
-            incrementListenCount(c.streamUrl); 
-            
+            currentChannelIndex = i; const c = currentChannelList[i]; if (!c) return; 
+            activeStreamUrl = c.streamUrl; incrementListenCount(c.streamUrl); 
             const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; 
             G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; 
             G_UI.preview.mainLogo.src = c.logoUrl || ''; 
-            
-            playStream(G_UI.audioPlayer, c.streamUrl);
-            updatePlayerUI(true); // UI'yı hemen güncelle
+            playStream(G_UI.audioPlayer, c.streamUrl); updatePlayerUI(true);
         }
-        
-        // --- UI GÜNCELLEME ---
         function updatePlayerUI(p) { 
             G_UI.player.container.classList.toggle('playing', p); 
             G_UI.preview.area.classList.toggle('is-playing', p); 
             G_UI.mainPlayBtn.classList.toggle('playing', p);
-
-            // İkonları Değiştir
-            if(p) {
-                G_UI.playIcon.style.display = 'none';
-                G_UI.pauseIcon.style.display = 'block';
-            } else {
-                G_UI.playIcon.style.display = 'block';
-                G_UI.pauseIcon.style.display = 'none';
-            }
-            
-            // Kanal listesindeki aktiflik durumu
+            if(p) { G_UI.playIcon.style.display = 'none'; G_UI.pauseIcon.style.display = 'block'; } else { G_UI.playIcon.style.display = 'block'; G_UI.pauseIcon.style.display = 'none'; }
             const currentUrl = activeStreamUrl;
-            const channelElements = document.querySelectorAll('#channels .channel');
-            channelElements.forEach((el, index) => {
-                const itemData = currentChannelList[index];
-                // Sadece URL eşleşiyorsa active yap, playing-active falan yok artık
-                if (itemData && itemData.streamUrl === currentUrl) {
-                     el.classList.add('active'); 
-                } else {
-                     el.classList.remove('active'); 
-                }
-            });
-
-            if (p) {
-                setTimeout(() => {
-                    G_UI.canvas.width = G_UI.preview.area.clientWidth;
-                    G_UI.canvas.height = G_UI.preview.area.clientHeight;
-                    if (activeEffectInstance) activeEffectInstance.resize();
-                }, 50);
-                if (!animationFrameId) renderEffects(); 
-            }
+            document.querySelectorAll('#channels .channel').forEach((el, index) => { const itemData = currentChannelList[index]; if (itemData && itemData.streamUrl === currentUrl) el.classList.add('active'); else el.classList.remove('active'); });
+            if (p) { setTimeout(() => { G_UI.canvas.width = G_UI.preview.area.clientWidth; G_UI.canvas.height = G_UI.preview.area.clientHeight; if (activeEffectInstance) activeEffectInstance.resize(); }, 50); if (!animationFrameId) renderEffects(); }
         }
-
         function changeChannel(d) { if (currentChannelList.length === 0 || currentChannelIndex < 0) return; const n = (currentChannelIndex + d + currentChannelList.length) % currentChannelList.length; const el = G_UI.channels.querySelectorAll('.channel')[n]; if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.querySelector('.channel-info').click(); } }
+
+        let aiResetTimeout;
+        function updateAIButtonState(text, isListening = false) {
+            G_UI.aiText.textContent = text;
+            if (isListening) { G_UI.aiBtn.classList.add('listening'); } else { G_UI.aiBtn.classList.remove('listening'); }
+        }
+        function resetAIButton() { updateAIButtonState("Şarkıyı Bul"); if(aiResetTimeout) clearTimeout(aiResetTimeout); }
+
+        async function identifySong() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { updateAIButtonState("Mikrofon Yok"); aiResetTimeout = setTimeout(resetAIButton, 3000); return; }
+            
+            try {
+                if(aiResetTimeout) clearTimeout(aiResetTimeout);
+                
+                // Kayıt Başlıyor
+                updateAIButtonState("Dinleniyor...", true);
+                
+                // Havuzdan sıradaki anahtarı al
+                const activeKey = getNextApiKey();
+                
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                const mediaRecorder = new MediaRecorder(stream);
+                const audioChunks = [];
+                mediaRecorder.addEventListener("dataavailable", event => { audioChunks.push(event.data); });
+                mediaRecorder.addEventListener("stop", async () => {
+                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                    const formData = new FormData();
+                    formData.append("api_token", activeKey); // Dinamik anahtar kullanımı
+                    formData.append("file", audioBlob);
+                    formData.append("return", "timecode,apple_music,spotify");
+                    
+                    updateAIButtonState("Analiz Ediliyor...", true);
+                    
+                    try {
+                        const response = await fetch("https://api.audd.io/", { method: "POST", body: formData });
+                        const result = await response.json();
+                        stream.getTracks().forEach(track => track.stop()); // Mikrofonu kapat
+                        
+                        if (result.status === "success" && result.result) {
+                            const song = result.result;
+                            updateAIButtonState(`🎵 ${song.artist} - ${song.title}`, false);
+                            aiResetTimeout = setTimeout(resetAIButton, 20000);
+                            
+                            // Kayan yazıya da ekleyelim
+                            const msg = `${song.artist} - ${song.title}`;
+                            G_UI.player.channelName.innerHTML = `<span>${msg} - ${DEFAULT_SCROLL_TEXT}</span><span>${msg} - ${DEFAULT_SCROLL_TEXT}</span>`;
+                        } else { 
+                            updateAIButtonState("Bulunamadı ❌", false); 
+                            aiResetTimeout = setTimeout(resetAIButton, 3000); 
+                        }
+                    } catch (err) { 
+                        console.error(err); 
+                        updateAIButtonState("Hata Oluştu ⚠️", false); 
+                        stream.getTracks().forEach(track => track.stop()); 
+                        aiResetTimeout = setTimeout(resetAIButton, 3000); 
+                    }
+                });
+                
+                // Kayıt süresi 7 saniyeye çıkarıldı (Daha iyi sonuç için)
+                mediaRecorder.start();
+                setTimeout(() => { mediaRecorder.stop(); }, 7000); 
+            } catch (err) { console.error(err); updateAIButtonState("Mikrofon İzni Yok", false); aiResetTimeout = setTimeout(resetAIButton, 3000); }
+        }
 
         async function fetchAndDisplayChannels() {
             try {
@@ -542,18 +519,9 @@
             G_UI.zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + ZOOM_STEP)); G_UI.zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - ZOOM_STEP));
             await fetchAndDisplayChannels();
             const def = `Radyo Seçin - ${DEFAULT_SCROLL_TEXT}`; G_UI.player.channelName.innerHTML = `<span>${def}</span><span>${def}</span>`;
-            
             initEffects();
-            
             const savedEffect = localStorage.getItem(SAVED_EFFECT_KEY);
-            if (savedEffect && EFFECTS.includes(savedEffect)) {
-                currentEffectIndex = EFFECTS.indexOf(savedEffect);
-                applyEffect(savedEffect);
-            } else {
-                currentEffectIndex = EFFECTS.indexOf('snow');
-                applyEffect('snow');
-            }
-            
+            if (savedEffect && EFFECTS.includes(savedEffect)) { currentEffectIndex = EFFECTS.indexOf(savedEffect); applyEffect(savedEffect); } else { currentEffectIndex = EFFECTS.indexOf('snow'); applyEffect('snow'); }
             renderEffects();
         });
     </script>

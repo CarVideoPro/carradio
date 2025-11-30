@@ -42,7 +42,7 @@ Arabeskland FM,https://moondigitalmaster.radyotvonline.net/arabeskland/playlist.
 BABA Radyo,https://officialbabaradyo.radyotvonline.net/babaofficial?/;stream.mp3,https://www.hepsibest.com/wp-content/uploads/2025/01/a616b9f3-d499-4635-aa45-89a32ba5ee83-2-1.png,4
 Efsane 4'lü,https://moondigitaledge.radyotvonline.net/efsane4lu/playlist.m3u8,https://ik.fskit.net/radyohome/media/station/63/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=173542&tr=w-1000%3A%2Cbg-173542&v=060520030000,4
 Number One Damar,https://eustr75.mediatriple.net/Number1Media/20_Number1_Turk_Damar.stream/playlist.m3u8,https://www.numberone.com.tr/wp-content/uploads/2017/07/N1_TR_Damar.png,4
-
+Radyo Usta,https://yayin.turkhosted.com:6036/;stream.mp3,https://www.lokomotifradyolari.com/logolar/usta.png,4
 
 
 Diyanet Kuran Radyo,https://eustr76.mediatriple.net/videoonlylive/mtikoimxnztxlive/broadcast_5e3c14192aa92.smil/playlist.m3u8,https://diyanetkuranradyo.com/assets/095ba812-7390-4129-9c9f-74bfc5860254,7
