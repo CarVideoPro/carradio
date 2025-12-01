@@ -5,6 +5,7 @@ Power Türk Love,https://livetv.powerapp.com.tr/plove/love.smil/playlist.m3u8,ht
 Best FM,https://officialbestfm.radyotvonline.net/bestfmofficial?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/best-fm-dinle-100x100.png,3
 Power Türk Akustik,https://livetv.powerapp.com.tr/pturkakustik/akustik.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_42.png?v=4,3
 Joy Türk,https://playerservices.streamtheworld.com/api/livestream-redirect/JOY_TURK128AAC.aac?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/joy-turk-dinle.jpg,3
+Kalp FM,https://yayin.kalpfm.com:8080/,https://kalpfm.com/wp-content/uploads/2024/12/kalpfm_logo-dikey-1a.png,3
 Power Türk Slow,https://listen.powerapp.com.tr/powerturkslow/abr/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_2450.png?v=4,3
 Alem FM,https://turkmedya.radyotvonline.net/alemfmaac?,https://i.pinimg.com/736x/65/4c/33/654c33081225d08b693f0d41c120bc0b.jpg,3
 Power Türk Taptaze,https://livetv.powerapp.com.tr/pturktaptaze/taptaze.smil/playlist.m3u8,https://cdn.powergroup.com.tr/image/500x500/powerapp/channels/v3/logo_43.png?v=4,3
