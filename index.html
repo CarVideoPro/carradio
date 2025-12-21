@@ -325,7 +325,7 @@
         function createThemeSelector() { G_UI.themeList.innerHTML = ""; for (const [key, theme] of Object.entries(themes)) { const swatch = document.createElement('div'); swatch.className = 'theme-swatch'; swatch.dataset.theme = key; swatch.title = theme.name; swatch.style.backgroundColor = theme.color; swatch.onclick = () => applyTheme(key); G_UI.themeList.appendChild(swatch); } }
 
         let hls, allChannelsMap = new Map(), currentChannelList = [], currentChannelIndex = -1, activeGroupName = '', activeStreamUrl = null;
-        const ZOOM_KEY = 'carRadioZoomLevel', ZOOM_STEP = 0.05, MIN_ZOOM = 0.5, MAX_ZOOM = 1.3; let currentZoom = 0.8;
+        const ZOOM_KEY = 'carRadioZoomLevel', ZOOM_STEP = 0.05, MIN_ZOOM = 0.4, MAX_ZOOM = 1.3; let currentZoom = 0.7;
         const applyZoom = (z) => { G_UI.htmlElement.style.zoom = z; };
         const updateZoom = (z) => { currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z)); applyZoom(currentZoom); localStorage.setItem(ZOOM_KEY, currentZoom); };
         const loadSavedZoom = () => { const z = localStorage.getItem(ZOOM_KEY); if (z) { currentZoom = parseFloat(z); applyZoom(currentZoom); } };
@@ -439,4 +439,5 @@
         });
     </script>
 </body>
+
 </html>
