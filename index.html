@@ -1,443 +1,574 @@
 <!DOCTYPE html>
 <html lang="tr">
-
 <head>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Car Video Pro Radyo</title>
-    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Car Video Pro Interface</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700;900&display=swap" rel="stylesheet">
+    
     <style>
-        :root {
-            --player-height: 55px;
-            --category-bar-height: 40px;
+        /* --- SIFIRLAMA VE TEMEL AYARLAR --- */
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: radial-gradient(circle at center, #1e272e, #000000);
+            height: 100vh; width: 100vw; overflow: hidden;
+            display: flex; flex-direction: column; color: white;
         }
 
-        /* TEMA RENK DEĞİŞKENLERİ */
-        [data-theme='default'] { --bg-primary: linear-gradient(135deg, #232526 0%, #414345 100%); --bg-secondary: #232526; --bg-tertiary: #414345; --bg-hover: #5c5c5c; --border-color: #3366cc; --accent-color: #00c6ff; --accent-color-darker: #0072ff; --text-primary: #fff; --text-secondary: #b3c6ff; --favorite-color: #ffd700; }
-        [data-theme='forest'] { --bg-primary: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); --bg-secondary: #11998e; --bg-tertiary: #38ef7d; --bg-hover: #56c596; --border-color: #38ef7d; --accent-color: #43e97b; --accent-color-darker: #38ef7d; --text-primary: #fff; --text-secondary: #d0ffd6; --favorite-color: #ffeb3b; }
-        [data-theme='royal'] { --bg-primary: linear-gradient(135deg, #654ea3 0%, #eaafc8 100%); --bg-secondary: #654ea3; --bg-tertiary: #eaafc8; --bg-hover: #b983ff; --border-color: #eaafc8; --accent-color: #b983ff; --accent-color-darker: #654ea3; --text-primary: #fff; --text-secondary: #f3e5f5; --favorite-color: #fdd835; }
-        [data-theme='sunset'] { --bg-primary: linear-gradient(135deg, #ff9966 0%, #ff5e62 100%); --bg-secondary: #ff9966; --bg-tertiary: #ff5e62; --bg-hover: #ff7e5f; --border-color: #ff5e62; --accent-color: #ff7e5f; --accent-color-darker: #ff9966; --text-primary: #fff3e0; --text-secondary: #ffccbc; --favorite-color: #ffc107; }
-        [data-theme='steel'] { --bg-primary: linear-gradient(135deg, #485563 0%, #29323c 100%); --bg-secondary: #485563; --bg-tertiary: #29323c; --bg-hover: #6e7f80; --border-color: #757575; --accent-color: #a8c0ff; --accent-color-darker: #485563; --text-primary: #f5f5f5; --text-secondary: #bdbdbd; --favorite-color: #f5f5f5; }
-        [data-theme='yellow'] { --bg-primary: linear-gradient(135deg, #fffde7 0%, #fff176 100%); --bg-secondary: #fffde7; --bg-tertiary: #fff176; --bg-hover: #ffee58; --border-color: #fbc02d; --accent-color: #ffd600; --accent-color-darker: #ffb300; --text-primary: #795548; --text-secondary: #a1887f; --favorite-color: #ffeb3b; }
-
-        * { box-sizing: border-box; }
-        html, body { margin: 0; height: 100%; background: var(--bg-primary); font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif; overflow: hidden; color: var(--text-primary); font-size: 15px; font-weight: 500; }
-        #app { display: flex; flex-direction: column; height: 100%; padding-bottom: calc(var(--player-height) + var(--category-bar-height)); }
-        #main { display: flex; flex: 1; overflow: hidden; }
-        
-        /* GÜNCELLEME: Sol menü genişliği 320px yapıldı */
-        #channels { flex: 0 0 320px; background: var(--bg-secondary); border-right: 2px solid var(--border-color); overflow-y: auto; padding: 8px; display: flex; flex-direction: column; gap: 6px; }
-        
-        #previewArea { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; background: var(--bg-primary); overflow: hidden; position: relative; }
-        
-        /* KARŞILAMA EKRANI */
-        #previewPlaceholder { 
-            padding: 40px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 20px; height: auto; cursor: default; z-index: 10;
-            background: rgba(0, 0, 0, 0.3); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-width: 90%; width: 600px;
-            opacity: 1; visibility: visible; transition: opacity 0.5s ease, visibility 0.5s ease, transform 0.5s ease;
-            animation: fadeInUp 0.8s ease-out forwards;
+        /* --- 1. ANA MENÜ ALANI --- */
+        .main-container {
+            height: calc(100vh - 60px); width: 100%;
+            display: flex; justify-content: center; align-items: center; padding: 10px;
         }
-        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        #previewPlaceholder h1 { font-size: 2.2em; margin: 0; font-weight: 900; letter-spacing: 1px; background: linear-gradient(to right, #ffffff, var(--accent-color)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 5px 15px rgba(0,0,0,0.3); line-height: 1.2; }
-        #previewPlaceholder h2 { font-size: 1.1em; color: var(--text-secondary); margin: 0; font-weight: 500; background: rgba(0,0,0,0.2); padding: 8px 15px; border-radius: 50px; border: 1px solid rgba(255,255,255,0.05); }
-        #previewPlaceholder p { font-size: 1em; color: var(--text-primary); opacity: 0.8; margin: 0; }
-        #previewPlaceholder .welcome-icon { font-size: 3em; margin-bottom: 10px; filter: drop-shadow(0 0 10px var(--accent-color)); }
-        
-        #visualizer-wrapper { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 100%; height: 100%; position: absolute; top: 0; left: 0; padding: 10px 0; z-index: 2; opacity: 0; visibility: hidden; transition: opacity 0.8s ease, visibility 0.8s ease; }
-        
-        #previewArea.is-playing #previewPlaceholder { opacity: 0; visibility: hidden; transform: scale(0.9); position: absolute; }
-        #previewArea.is-playing #visualizer-wrapper { opacity: 1; visibility: visible; }
-
-        .analyzer-row { display: flex; justify-content: center; align-items: flex-end; height: 60px; width: 100%; gap: 5px; }
-        .analyzer-row.top { transform: rotate(180deg); margin-bottom: 10px; }
-        .analyzer-row.bottom { margin-top: 10px; }
-        .analyzer-bar { width: 12px; background-color: var(--accent-color); border-radius: 3px; animation: analyzer-wave 0.8s infinite ease-in-out alternate; }
-        
-        #effect-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; opacity: 0.9; }
-        .visualizer-hidden { visibility: hidden; opacity: 0; }
-
-        #middle-controls-row { display: flex; align-items: center; justify-content: center; gap: 20px; flex: 1; width: 100%; position: relative; z-index: 10; }
-        
-        /* ORTA ALAN ve ANİMASYONU */
-        #center-display-container { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; position: relative; transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        
-        /* Bu animasyon kalıyor (Logo/Player geçişi) */
-        @keyframes channelSwitchPulse {
-            0% { transform: scale(1); opacity: 1; filter: brightness(1); }
-            50% { transform: scale(0.92); opacity: 0.7; filter: brightness(1.5); }
-            100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+        .menu-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(2, 1fr);
+            gap: 15px; width: 98%; height: 95%;
         }
-        .switching-anim { animation: channelSwitchPulse 0.4s ease-in-out; }
 
-        #main-logo-display { width: 200px; height: 200px; border-radius: 50%; object-fit: contain; background-color: rgba(255, 255, 255, 0.05); border: 4px solid var(--bg-tertiary); box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3); transition: all 0.3s ease; margin-top: 10px; }
-        #main-logo-display:hover { transform: scale(1.02); box-shadow: 0 0 30px var(--accent-color); }
-        
-        .mid-nav-btn { width: 60px; height: 60px; border-radius: 50%; background: rgba(0, 0, 0, 0.3); border: 2px solid var(--accent-color); color: var(--text-primary); font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; backdrop-filter: blur(6px); box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); }
-        #next-btn { padding-left: 4px; } #prev-btn { padding-right: 2px; }
-        .mid-nav-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.15); box-shadow: 0 0 25px var(--accent-color); border-color: #fff; }
-
-        #main-play-btn { width: 70px; height: 70px; border-radius: 50%; background: rgba(0, 0, 0, 0.4); border: 3px solid var(--accent-color); color: var(--accent-color); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); backdrop-filter: blur(10px); box-shadow: 0 0 20px rgba(0, 0, 0, 0.5); margin-top: 15px; }
-        #main-play-btn svg { width: 35px; height: 35px; fill: currentColor; transition: 0.2s; }
-        #main-play-btn:hover { background: var(--accent-color); color: #000; transform: scale(1.1); box-shadow: 0 0 30px var(--accent-color); border-color: #fff; }
-        #main-play-btn.playing { background: var(--accent-color-darker); color: #fff; border-color: #fff; box-shadow: 0 0 40px var(--accent-color); animation: pulse-btn 2s infinite; }
-        @keyframes pulse-btn { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
-        
-        @keyframes analyzer-wave { 0% { height: 10%; opacity: 0.5; } 100% { height: 100%; opacity: 1; } }
-
-        #side-controls-container { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 15px; z-index: 100; background: rgba(0, 0, 0, 0.3); padding: 15px 8px; border-radius: 30px; backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.1); align-items: center; }
-        .zoom-btn { background-color: var(--bg-tertiary); color: var(--text-primary); border: 2px solid var(--border-color); width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; font-weight: bold; box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); }
-        .zoom-btn:hover { background-color: var(--accent-color); border-color: #fff; }
-        .zoom-btn svg { width: 20px; height: 20px; fill: currentColor; }
-        
-        #theme-list { display: flex; flex-direction: column; gap: 10px; }
-        .theme-swatch { width: 24px; height: 24px; border-radius: 50%; cursor: pointer; border: 2px solid var(--border-color); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3); transition: 0.2s; }
-        .theme-swatch:hover { transform: scale(1.3); }
-        .theme-swatch.active { border-color: #fff; box-shadow: 0 0 10px var(--accent-color); transform: scale(1.2); }
-        #audio-player { display: none; }
-
-        #groups { position: fixed; bottom: var(--player-height); left: 0; width: 100%; height: var(--category-bar-height); background: var(--bg-secondary); border-top: 1px solid var(--border-color); display: flex; overflow-x: auto; z-index: 1000; scrollbar-width: thin; scrollbar-color: var(--accent-color) var(--bg-secondary); }
-        #groups::-webkit-scrollbar { height: 6px; } #groups::-webkit-scrollbar-track { background: var(--bg-secondary); } #groups::-webkit-scrollbar-thumb { background-color: var(--accent-color); border-radius: 10px; }
-        .group { padding: 0 18px; cursor: pointer; background: transparent; border-right: 1px solid var(--border-color); line-height: var(--category-bar-height); white-space: nowrap; flex-shrink: 0; transition: background-color 0.2s; }
-        .group:hover, .group.active { background: var(--accent-color); }
-
-        /* KANAL LİSTESİ ANIMASYONU KALDIRILDI, SADECE DÜZ GÖRÜNÜM */
-        .channel { 
-            display: flex; align-items: center; gap: 8px; background: var(--bg-tertiary); border-radius: 12px; padding: 10px; border: 1px solid var(--border-color); box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18); transition: 0.25s; 
+        .menu-item {
+            background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; cursor: pointer;
+            transition: transform 0.2s, background 0.2s; min-height: 80px;
         }
-        .channel-info { flex-grow: 1; cursor: pointer; display: flex; align-items: center; gap: 8px; min-width: 0; }
-        .channel-info>div>div:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-weight: 900; }
-        .channel:hover { background: var(--bg-hover); transform: translateY(-2px); }
-        .channel.active { border-color: var(--accent-color); background: var(--accent-color-darker); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25), 0 0 12px var(--accent-color); }
-        .channel img { width: 38px; height: 38px; object-fit: contain; flex-shrink: 0; border-radius: 8px; }
-        .fav-btn { font-size: 22px; cursor: pointer; padding: 5px; color: var(--text-secondary); transition: 0.2s; flex-shrink: 0; }
-        .fav-btn:hover { transform: scale(1.2); } .fav-btn.favorited { color: var(--favorite-color); }
 
-        #playerContainer { position: fixed; bottom: 0; left: 0; width: 100%; height: var(--player-height); background: var(--bg-secondary); display: flex; z-index: 999; align-items: center; padding: 0 10px; border-top: 2px solid var(--border-color); box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18); }
-        .player-text { width: 100%; text-align: left; overflow: hidden; white-space: nowrap; background: linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.18) 100%); border-radius: 8px; border: 1.5px solid var(--accent-color); box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18) inset, 0 0 8px var(--accent-color) inset; height: 40px; display: flex; align-items: center; }
-        .player-text .title { display: inline-block; white-space: nowrap; animation: marquee-scroll 20s linear infinite; animation-play-state: paused; font-size: 1.22em; font-weight: 900; color: var(--text-primary); text-shadow: 0 2px 8px rgba(0,0,0,0.45), 0 0 16px var(--accent-color); padding-left: 10px; }
-        #playerContainer.playing .player-text .title { animation-play-state: running; }
-        .player-text .title span { display: inline-block; padding-right: 50px; }
-        @keyframes marquee-scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
-        
-        #effect-name-toast { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: var(--accent-color); padding: 10px 25px; border-radius: 20px; font-size: 14px; font-weight: bold; opacity: 0; transition: opacity 0.5s; pointer-events: none; z-index: 200; border: 1px solid var(--accent-color); box-shadow: 0 0 15px var(--accent-color); text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 90%; }
-
-        @media (max-width: 768px) {
-            /* GÜNCELLEME: Mobil genişliği 260px yapıldı */
-            #channels { flex: 0 0 260px; }
-            #main-logo-display { width: 150px; height: 150px; }
-            .mid-nav-btn { width: 50px; height: 50px; font-size: 20px; }
-            #main-play-btn { width: 60px; height: 60px; } 
-            #side-controls-container { right: 5px; padding: 10px 5px; }
-            .theme-swatch { width: 20px; height: 20px; }
-            #previewPlaceholder { padding: 20px; width: 95%; }
-            #previewPlaceholder h1 { font-size: 1.5em; }
+        .menu-item:active, .menu-item:hover {
+            background: rgba(52, 152, 219, 0.2); transform: scale(1.02);
+            border-color: #3498db; box-shadow: 0 0 15px rgba(52, 152, 219, 0.4);
         }
+
+        .menu-item i { font-size: 3rem; margin-bottom: 10px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5)); }
+        .menu-item span { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; text-shadow: 0 2px 2px black; }
+
+        /* RENKLER */
+        .color-map i { background: -webkit-linear-gradient(#3498db, #2980b9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-radio i { background: -webkit-linear-gradient(#f1c40f, #f39c12); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-music i { background: -webkit-linear-gradient(#2ecc71, #27ae60); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-video i { background: -webkit-linear-gradient(#e74c3c, #c0392b); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-tv i { background: -webkit-linear-gradient(#9b59b6, #8e44ad); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-book i { background: -webkit-linear-gradient(#e67e22, #d35400); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .color-game i { background: -webkit-linear-gradient(#1abc9c, #16a085); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* --- 2. İÇERİK ALANI --- */
+        #content-area {
+            display: none; height: calc(100vh - 60px); width: 100%;
+            background: #000; position: relative;
+        }
+        
+        .app-screen { width: 100%; height: 100%; border: none; display: none; }
+        
+        /* Video Player */
+        #video-player-container { display:none; width: 100%; height: 100%; background: #000; justify-content: center; align-items: center; }
+        video { width: 100%; height: 100%; }
+
+        /* --- 3. OYUN GALERİSİ ALANI --- */
+        #game-gallery-area {
+            display: none; 
+            height: calc(100vh - 60px); 
+            width: 100%;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .gallery-grid {
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+            padding-bottom: 40px;
+        }
+
+        .game-card {
+            background: rgba(255, 255, 255, 0.1); 
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .game-card:active { transform: scale(0.95); background: rgba(26, 188, 156, 0.3); }
+
+        .game-card img {
+            width: 100%;
+            height: 120px;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .game-title {
+            padding: 10px;
+            font-size: 0.9rem;
+            color: #ddd;
+            font-weight: bold;
+        }
+
+        /* --- 4. ALT BAR --- */
+        .footer-bar {
+            height: 60px; width: 100%; background: #111;
+            border-top: 2px solid #3498db; display: flex; align-items: center; z-index: 99;
+        }
+
+        #ticker-mode { width: 100%; overflow: hidden; }
+        .ticker-wrapper { white-space: nowrap; display: inline-block; padding-left: 100%; animation: ticker 25s linear infinite; }
+        .ticker-content { font-size: 1.1rem; color: #ddd; line-height: 60px; }
+        .brand { color: #f1c40f; font-weight: 900; margin-right: 10px; }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
+
+        #control-mode { display: none; width: 100%; justify-content: flex-end; padding: 0 15px; gap: 10px; }
+        
+        /* Buton Stilleri */
+        .btn-base { border: none; padding: 8px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; display: flex; align-items: center; gap: 8px; font-size: 14px; color: white; }
+        
+        .btn-menu { background: #c0392b; } /* Kırmızı Menü */
+        .btn-back-game { background: #e67e22; display: none; } /* Turuncu Geri */
+        .btn-full { background: #34495e; padding: 8px 15px; } /* Mavi Tam Ekran */
+
     </style>
 </head>
-<body data-theme="steel">
+<body>
 
-    <div id="app">
-        <div id="main">
-            <div id="channels"></div>
-            <div id="previewArea">
-                <div id="effect-name-toast">Efekt</div>
-                <div id="side-controls-container">
-                    <button class="zoom-btn" id="zoom-in-btn" title="Büyüt"><svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg></button>
-                    <div id="theme-list"></div>
-                    <button class="zoom-btn" id="zoom-out-btn" title="Küçült"><svg viewBox="0 0 24 24"><path d="M19 13H5v-2h14v2z"/></svg></button>
-                </div>
-                
-                <div id="previewPlaceholder">
-                    <div class="welcome-icon">📻</div>
-                    <h1>CAR VIDEO PRO RADYO</h1>
-                    <h2>📞 t.me/car_video_pro</h2>
-                    <p>Keyifli sürüşler için bir kanal seçin.</p>
-                </div>
-                
-                <div id="visualizer-wrapper">
-                    <canvas id="effect-canvas"></canvas>
-                    <div class="analyzer-row top" id="analyzer-top"></div>
-                    <div id="middle-controls-row">
-                        <button class="mid-nav-btn" id="prev-btn" onclick="changeChannel(-1)">&#9664;</button>
-                        
-                        <div id="center-display-container">
-                            <img id="main-logo-display" src="" alt="Logo" title="Efekti Değiştirmek İçin Tıkla">
-                            <button id="main-play-btn" onclick="togglePlayback()" title="Oynat / Durdur">
-                                <svg id="play-icon-svg" viewBox="0 0 24 24" style="display:block;"><path d="M8 5v14l11-7z"/></svg>
-                                <svg id="pause-icon-svg" viewBox="0 0 24 24" style="display:none;"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>
-                            </button>
-                        </div>
-                        
-                        <button class="mid-nav-btn" id="next-btn" onclick="changeChannel(1)">&#9654;</button>
-                    </div>
-                    <div class="analyzer-row bottom" id="analyzer-bottom"></div>
-                </div>
+    <div id="main-menu" class="main-container">
+        <div class="menu-grid">
+            <div class="menu-item color-map" onclick="openIframeApp('maps')">
+                <i class="fa-solid fa-location-dot"></i><span>Navigasyon</span>
+            </div>
+            
+            <div class="menu-item color-radio" onclick="openIframeApp('https://carvideopro.github.io/carradio/')">
+                <i class="fa-solid fa-radio"></i><span>Radyo</span>
+            </div>
+            
+            <div class="menu-item color-music" onclick="openIframeApp('https://com.com.tr/muzik/')">
+                <i class="fa-solid fa-music"></i><span>Müzik</span>
+            </div>
+            
+            <div class="menu-item color-video" onclick="openVideoApp()">
+                <i class="fa-solid fa-video"></i><span>Video</span>
+            </div>
+            
+            <div class="menu-item color-tv" onclick="openIframeApp('https://carvideopro.github.io/cartv/')">
+                <i class="fa-solid fa-tv"></i><span>TV Kanalları</span>
+            </div>
+            
+            <div class="menu-item color-video" onclick="openIframeApp('https://www.hdfilmizle.life/')">
+                <i class="fa-solid fa-clapperboard"></i><span>Film İzle</span>
+            </div>
+            
+            <div class="menu-item color-book" onclick="openIframeApp('https://365gunoyku.meb.gov.tr/')">
+                <i class="fa-solid fa-book-open"></i><span>Hikaye Oku</span>
+            </div>
+            
+            <div class="menu-item color-game" onclick="openGameGallery()">
+                <i class="fa-solid fa-gamepad"></i><span>Oyunlar</span>
             </div>
         </div>
     </div>
-    <div id="groups"></div>
-    <div id="playerContainer">
-        <div class="player-text"><div class="title" id="player-channel-name"></div></div>
+
+    <div id="game-gallery-area">
+        <div class="gallery-grid" id="gallery-container">
+            </div>
     </div>
-    <audio id="audio-player"></audio>
+
+    <div id="content-area">
+        <iframe id="app-frame" class="app-screen" src="" allow="autoplay; fullscreen; encrypted-media"></iframe>
+        
+        <div id="video-player-container" class="app-screen">
+            <video id="my-video" controls loop playsinline>
+                <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4" type="video/mp4">
+            </video>
+        </div>
+    </div>
+
+    <div class="footer-bar">
+        <div id="ticker-mode">
+            <div class="ticker-wrapper">
+                <div class="ticker-content">
+                    <span class="brand">CAR VIDEO PRO:</span> Oyun kütüphanesi hazır. (233 Oyun)
+                </div>
+            </div>
+        </div>
+        
+        <div id="control-mode">
+            <button id="btn-back-to-gallery" class="btn-base btn-back-game" onclick="backToGallery()">
+                <i class="fa-solid fa-arrow-left"></i> GERİ
+            </button>
+
+            <button class="btn-base btn-menu" onclick="closeAllApps()">
+                <i class="fa-solid fa-house"></i> MENÜ
+            </button>
+            <button class="btn-base btn-full" onclick="toggleFullScreen()">
+                <i class="fa-solid fa-expand"></i>
+            </button>
+        </div>
+    </div>
 
     <script>
-        const CATEGORIES = ["Favorilerim", "En Çok Dinlenenler", "Popüler Radyolar", "Türkçe POP", "Arabesk Damar", "Haber", "Spor", "Dini", "Diğer"];
-        const DEFAULT_SCROLL_TEXT = "Car Video Pro Eğlencenin Adresi 📞 Telegram: t.me/car_video_pro 📞 ";
-        const G_UI = { groups: document.getElementById("groups"), channels: document.getElementById("channels"), preview: { area: document.getElementById("previewArea"), placeholder: document.getElementById("previewPlaceholder"), mainLogo: document.getElementById("main-logo-display"), analyzerTop: document.getElementById("analyzer-top"), analyzerBottom: document.getElementById("analyzer-bottom") }, centerContainer: document.getElementById("center-display-container"), player: { container: document.getElementById("playerContainer"), channelName: document.getElementById("player-channel-name") }, themeList: document.getElementById("theme-list"), audioPlayer: document.getElementById("audio-player"), zoomInBtn: document.getElementById("zoom-in-btn"), zoomOutBtn: document.getElementById("zoom-out-btn"), htmlElement: document.documentElement, canvas: document.getElementById("effect-canvas"), toast: document.getElementById("effect-name-toast"), mainPlayBtn: document.getElementById("main-play-btn"), playIcon: document.getElementById("play-icon-svg"), pauseIcon: document.getElementById("pause-icon-svg") };
-
-        const EFFECTS = [ 'equalizer', 'rain', 'cybermesh', 'neonrings', 'waves', 'nebula', 'digitalwave', 'confetti', 'gradient', 'bars3d', 'starwarp2', 'audioorbs', 'hexpulse', 'traffic', 'retrogrid', 'lasershow', 'snow', 'classicbars', 'eqcircular', 'plasma', 'bokeh', 'hexagons', 'lightning', 'pulse', 'fire', 'gridfloor', 'dna', 'matrix', 'particles', 'binaryrain', 'solarflare', 'rippleclick', 'pixelglitch', 'aurora', 'vinyl', 'speedtunnel', 'floatingbars' ];
-        const EFFECT_NAMES = { 'equalizer': 'Standart Barlar', 'rain': 'Yağmur Efekti', 'cybermesh': 'Siber Ağ (Network)', 'neonrings': 'Neon Halkalar', 'waves': 'Sinus Dalgaları', 'nebula': 'Uzay Bulutu', 'digitalwave': 'Dijital Dalga', 'confetti': 'Konfeti', 'gradient': 'Renk Akışı', 'bars3d': '3D Bloklar', 'starwarp2': 'Hiper Uzay', 'audioorbs': 'Ses Küreleri', 'hexpulse': 'Altıgen Nabız', 'traffic': 'Gece Trafiği', 'retrogrid': 'Retro Grid 80s', 'lasershow': 'Lazer Şovu', 'snow': 'Kış Sürüşü', 'classicbars': 'Klasik Ekolayzer', 'eqcircular': 'Dairesel EQ', 'plasma': 'Plazma Akışı', 'bokeh': 'Şehir Işıkları', 'hexagons': 'Petek Dokusu', 'lightning': 'Fırtına Şimşek', 'pulse': 'Bass Nabzı', 'fire': 'Ateş Efekti', 'gridfloor': 'Siber Zemin', 'dna': 'DNA Sarmalı', 'matrix': 'Matrix Kodu', 'particles': 'Parçacıklar', 'binaryrain': 'Binary (01)', 'solarflare': 'Güneş Patlaması', 'rippleclick': 'Su Dalgası', 'pixelglitch': 'Piksel Glitch', 'aurora': 'Kuzey Işıkları', 'vinyl': 'Dönen Plak', 'speedtunnel': 'Hız Tüneli', 'floatingbars': 'Uçan Çubuklar' };
-
-        let currentEffectIndex = 0;
-        let animationFrameId;
-        let activeEffectInstance = null;
-        const SAVED_EFFECT_KEY = 'carRadioLastEffect_v2'; 
-
-        // EFEKT SINIFLARI
-        class RainEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.drops=[]; this.init(); } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } init() { for(let i=0; i<100; i++) this.drops.push({x:Math.random()*this.c.width, y:Math.random()*this.c.height, l:Math.random()*20+10, v:Math.random()*10+15}); } draw() { this.x.fillStyle='rgba(0,0,0,0.3)'; this.x.fillRect(0,0,this.c.width,this.c.height); this.x.strokeStyle='rgba(174,194,224,0.6)'; this.x.lineWidth=2; for(let d of this.drops) { this.x.beginPath(); this.x.moveTo(d.x, d.y); this.x.lineTo(d.x-2, d.y+d.l); this.x.stroke(); d.y += d.v; d.x -= 0.5; if(d.y > this.c.height) { d.y = -d.l; d.x = Math.random()*this.c.width; } } } }
-        class SineWavesEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); this.t+=0.1; const cy = this.c.height/2; for(let i=0; i<3; i++) { this.x.beginPath(); this.x.lineWidth=3; this.x.strokeStyle = `hsl(${this.t*20 + i*50}, 70%, 60%)`; for(let x=0; x<this.c.width; x+=5) { let y = cy + Math.sin(x*0.01 + this.t + i)*50 * Math.sin(this.t*0.5); x===0 ? this.x.moveTo(x,y) : this.x.lineTo(x,y); } this.x.stroke(); } } }
-        class NebulaEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.t=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.t += 0.01; this.x.fillStyle = 'rgba(0,0,0,0.05)'; this.x.fillRect(0,0,this.c.width,this.c.height); const cx=this.c.width/2, cy=this.c.height/2; for(let i=0; i<3; i++) { const x = cx + Math.sin(this.t + i)*100; const y = cy + Math.cos(this.t*1.3 + i)*50; const g = this.x.createRadialGradient(x,y,10,x,y,200); g.addColorStop(0, `hsla(${this.t*20 + i*120}, 80%, 60%, 0.1)`); g.addColorStop(1, 'transparent'); this.x.fillStyle = g; this.x.fillRect(0,0,this.c.width,this.c.height); } } }
-        class ConfettiEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.p=[]; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); if(this.p.length < 100) this.p.push({x:Math.random()*this.c.width, y:-10, vx:(Math.random()-0.5)*2, vy:Math.random()*3+2, c:`hsl(${Math.random()*360},100%,50%)`, r:Math.random()*5+2}); for(let i=0; i<this.p.length; i++) { let p = this.p[i]; this.x.fillStyle = p.c; this.x.fillRect(p.x, p.y, p.r, p.r); p.x += p.vx; p.y += p.vy; p.vx += Math.sin(p.y*0.1)*0.1; if(p.y > this.c.height) { this.p.splice(i,1); i--; } } } }
-        class GradientEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.hue=0; } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.hue += 0.5; let g = this.x.createLinearGradient(0,0,this.c.width,this.c.height); g.addColorStop(0, `hsl(${this.hue}, 60%, 40%)`); g.addColorStop(1, `hsl(${this.hue+60}, 60%, 40%)`); this.x.fillStyle = g; this.x.fillRect(0,0,this.c.width,this.c.height); } }
-        class Bars3DEffect { constructor(c) { this.c=c; this.x=c.getContext('2d'); this.vals=new Array(10).fill(0); } resize() { this.c.width = this.c.clientWidth; this.c.height = this.c.clientHeight; } draw() { this.x.clearRect(0,0,this.c.width,this.c.height); const w = this.c.width/10; for(let i=0; i<10; i++) { if(Math.random()>0.5) this.vals[i] = Math.max(this.vals[i]-2, Math.random()*100); else this.vals[i] = Math.max(0, this.vals[i]-2); let h = this.vals[i] * 2; let x = i*w; let y = this.c.height/2 + 50; this.x.fillStyle = '#444'; this.x.beginPath(); this.x.moveTo(x, y-h); this.x.lineTo(x+20, y-h-10); this.x.lineTo(x+w-10, y-h-10); this.x.lineTo(x+w-30, y-h); this.x.fill(); this.x.fillStyle = `hsl(${i*20}, 70%, 50%)`; this.x.fillRect(x, y-h, w-30, h); this.x.fillStyle = `hsl(${i*20}, 70%, 30%)`; this.x.beginPath(); this.x.moveTo(x+w-30, y-h); this.x.lineTo(x+w-10, y-h-10); this.x.lineTo(x+w-10, y-10); this.x.lineTo(x+w-30, y); this.x.fill(); } } }
-        class TrafficEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.l=[];for(let i=0;i<40;i++)this.l.push(this.cl());}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}cl(){return{x:Math.random()*this.c.width,y:Math.random()*this.c.height,z:Math.random()*this.c.width,s:5+Math.random()*5,c:Math.random()>0.5?'#f00':'#fff'};}draw(){this.x.fillStyle='rgba(0,0,0,0.3)';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;for(let l of this.l){l.z-=l.s;if(l.z<=0){l.z=this.c.width;l.x=(Math.random()-0.5)*this.c.width*3;l.y=(Math.random()-0.5)*this.c.height*1.5;}const sc=300/(l.z||1),x=cx+l.x*sc,y=cy+l.y*sc,s=sc*2;this.x.fillStyle=l.c;this.x.globalAlpha=Math.min(1,sc);this.x.fillRect(x,y,s*3,s);this.x.globalAlpha=1;}}}
-        class RetroGridEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.o=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='black';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;this.x.strokeStyle='magenta';this.x.lineWidth=2;this.o=(this.o+2)%40;for(let i=0;i<this.c.height/2;i+=40){let y=cy+i+(this.o*(i/100));if(y>this.c.height)y=cy;this.x.beginPath();this.x.moveTo(0,y);this.x.lineTo(this.c.width,y);this.x.stroke();}for(let i=-20;i<=20;i++){this.x.beginPath();this.x.moveTo(cx+i*40,cy);this.x.lineTo(cx+i*120,this.c.height);this.x.stroke();}let g=this.x.createLinearGradient(0,0,0,cy);g.addColorStop(0,'black');g.addColorStop(1,'transparent');this.x.fillStyle=g;this.x.fillRect(0,0,this.c.width,this.c.height);}}
-        class SnowEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.f=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.f.length<150)this.f.push({x:Math.random()*this.c.width,y:0,s:Math.random()*3+1,v:Math.random()*3+1});this.x.fillStyle='white';for(let i=0;i<this.f.length;i++){let f=this.f[i];this.x.beginPath();this.x.arc(f.x,f.y,f.s,0,6.28);this.x.fill();f.y+=f.v;f.x+=Math.sin(f.y/50)*0.5;if(f.y>this.c.height){this.f.splice(i,1);i--;}}}}
-        class ClassicBarsEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.v=new Array(32).fill(0);}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);const w=this.c.width/32;for(let i=0;i<32;i++){this.v[i]=Math.max(0,this.v[i]-2);if(Math.random()>0.5)this.v[i]=Math.max(this.v[i],Math.random()*(this.c.height/2));const h=this.v[i];this.x.fillStyle=`hsl(${i*10},100%,50%)`;this.x.fillRect(i*w,this.c.height-h-10,w-2,h);this.x.fillStyle=`hsla(${i*10},100%,50%,0.3)`;this.x.fillRect(i*w,this.c.height-10,w-2,h/2);}}}
-        class BokehEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.o=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.o.length<30)this.o.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,r:Math.random()*30+10,c:`hsla(${Math.random()*360},70%,50%,0.2)`,dx:(Math.random()-.5),dy:(Math.random()-.5)});for(let o of this.o){o.x+=o.dx;o.y+=o.dy;this.x.beginPath();this.x.fillStyle=o.c;this.x.arc(o.x,o.y,o.r,0,6.28);this.x.fill();if(o.x<0||o.x>this.c.width||o.y<0||o.y>this.c.height)o.x=Math.random()*this.c.width;}}}
-        class HexagonsEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.h=[];this.init();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.init();}init(){this.h=[];for(let x=0;x<this.c.width;x+=40)for(let y=0;y<this.c.height;y+=40)if(Math.random()>0.7)this.h.push({x,y,a:0});}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.strokeStyle='#333';for(let h of this.h){h.a+=0.05;const al=(Math.sin(h.a)+1)/2;this.x.fillStyle=`rgba(0,200,255,${al*0.5})`;this.x.beginPath();for(let i=0;i<6;i++)this.x.lineTo(h.x+18*Math.cos(i*1.047),h.y+18*Math.sin(i*1.047));this.x.closePath();this.x.fill();this.x.stroke();}}}
-        class LightningEffect { constructor(c){this.c=c;this.x=c.getContext('2d');}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.2)';this.x.fillRect(0,0,this.c.width,this.c.height);if(Math.random()>0.95){let x=Math.random()*this.c.width,y=0;this.x.beginPath();this.x.strokeStyle='#fff';this.x.lineWidth=2;this.x.moveTo(x,y);while(y<this.c.height){x+=(Math.random()-.5)*40;y+=Math.random()*20+5;this.x.lineTo(x,y);}this.x.stroke();this.x.fillStyle='rgba(255,255,255,0.3)';this.x.fillRect(0,0,this.c.width,this.c.height);}}}
-        class PulseEffect { constructor(c){this.c=c;this.x=c.getContext('2d');this.s=1;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;if(Math.random()>0.9)this.s=1.4;this.s+=(1-this.s)*0.1;this.x.beginPath();this.x.strokeStyle=`rgba(255,0,0,${this.s-1})`;this.x.lineWidth=10;this.x.arc(cx,cy,130*this.s,0,6.28);this.x.stroke();this.x.beginPath();this.x.strokeStyle='white';this.x.lineWidth=2;this.x.arc(cx,cy,140*this.s,0,6.28);this.x.stroke();}}
-        class FireEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.globalCompositeOperation='screen';if(this.p.length<100)this.p.push({x:Math.random()*this.c.width,y:this.c.height,s:Math.random()*20+10,vy:Math.random()*3+1,vx:(Math.random()-0.5)*2,l:1});for(let i=0;i<this.p.length;i++){let p=this.p[i];this.x.beginPath();let g=this.x.createRadialGradient(p.x,p.y,0,p.x,p.y,p.s);g.addColorStop(0,`rgba(255,100,0,${p.l})`);g.addColorStop(1,'rgba(255,50,0,0)');this.x.fillStyle=g;this.x.arc(p.x,p.y,p.s,0,6.28);this.x.fill();p.y-=p.vy;p.x+=p.vx;p.l-=0.02;p.s*=0.95;if(p.l<=0)this.p.splice(i--,1);}this.x.globalCompositeOperation='source-over';}}
-        class MatrixEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.d=[];this.resize();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.cols=Math.floor(this.c.width/14);this.d=[];for(let i=0;i<this.cols;i++)this.d[i]=Math.random()*-100;}draw(){this.x.fillStyle='rgba(0,0,0,0.05)';this.x.fillRect(0,0,this.c.width,this.c.height);this.x.fillStyle='#0F0';this.x.font='14px monospace';for(let i=0;i<this.d.length;i++){this.x.fillText(String.fromCharCode(0x30A0+Math.random()*96),i*14,this.d[i]*14);if(this.d[i]*14>this.c.height&&Math.random()>0.975)this.d[i]=0;this.d[i]++;}}}
-        class ParticlesEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.p.length<60)this.p.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2,c:`hsl(${Math.random()*360},70%,50%)`});for(let p of this.p){p.x+=p.vx;p.y+=p.vy;if(p.x<0)p.x=this.c.width;if(p.x>this.c.width)p.x=0;if(p.y<0)p.y=this.c.height;if(p.y>this.c.height)p.y=0;this.x.fillStyle=p.c;this.x.beginPath();this.x.arc(p.x,p.y,2,0,6.28);this.x.fill();}}}
-        class CyberMeshEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.p=[];this.init();}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.init();}init(){this.p=[];for(let i=0;i<60;i++)this.p.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,vx:(Math.random()-.5)*2,vy:(Math.random()-.5)*2});}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.x.lineWidth=0.5;this.x.strokeStyle='cyan';this.x.fillStyle='cyan';for(let i=0;i<this.p.length;i++){let p=this.p[i];p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>this.c.width)p.vx*=-1;if(p.y<0||p.y>this.c.height)p.vy*=-1;this.x.beginPath();this.x.arc(p.x,p.y,2,0,6.28);this.x.fill();for(let j=i+1;j<this.p.length;j++){let p2=this.p[j],d=Math.hypot(p.x-p2.x,p.y-p2.y);if(d<120){this.x.globalAlpha=1-d/120;this.x.beginPath();this.x.moveTo(p.x,p.y);this.x.lineTo(p2.x,p2.y);this.x.stroke();}}}this.x.globalAlpha=1;}}
-        class NeonRingsEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);this.t+=0.05;const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<5;i++){const r=50+(i*30)+Math.sin(this.t+i)*20;this.x.beginPath();this.x.arc(cx,cy,r,0,6.28);this.x.strokeStyle=`hsl(${this.t*50+i*60},100%,50%)`;this.x.lineWidth=4;this.x.shadowBlur=10;this.x.shadowColor=this.x.strokeStyle;this.x.stroke();this.x.shadowBlur=0;}}}
-        class DigitalWaveEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.t+=0.2;const cy=this.c.height/2;this.x.strokeStyle='#0f0';this.x.lineWidth=2;this.x.beginPath();for(let x=0;x<this.c.width;x+=10){let y=cy;if(Math.floor((x+this.t*10)/50)%2===0)y-=50;else y+=50;x===0?this.x.moveTo(x,y):this.x.lineTo(x,y);}this.x.stroke();}}
-        class StarWarp2Effect{constructor(c){this.c=c;this.x=c.getContext('2d');this.s=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.4)';this.x.fillRect(0,0,this.c.width,this.c.height);if(this.s.length<100)this.s.push({x:0,y:0,a:Math.random()*6.28,v:Math.random()*5+2,c:`hsl(${Math.random()*360},80%,60%)`,d:0});const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<this.s.length;i++){let s=this.s[i];s.d+=s.v;let x=cx+Math.cos(s.a)*s.d,y=cy+Math.sin(s.a)*s.d;this.x.fillStyle=s.c;this.x.beginPath();this.x.arc(x,y,s.v,0,6.28);this.x.fill();if(x<0||x>this.c.width||y<0||y>this.c.height){this.s.splice(i,1);i--;}}}}
-        class AudioOrbsEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.o=[];for(let i=0;i<10;i++)this.o.push({x:Math.random()*c.width,y:Math.random()*c.height,r:0});}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);for(let o of this.o){o.r+=(Math.random()-0.4)*5;if(o.r<10)o.r=10;if(o.r>60)o.r=60;o.x+=(Math.random()-0.5)*2;o.y+=(Math.random()-0.5)*2;let g=this.x.createRadialGradient(o.x,o.y,0,o.x,o.y,o.r);g.addColorStop(0,'rgba(255,255,255,0.8)');g.addColorStop(1,'rgba(0,100,255,0)');this.x.fillStyle=g;this.x.beginPath();this.x.arc(o.x,o.y,o.r,0,6.28);this.x.fill();}}}
-        class HexPulseEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);this.t+=0.05;const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<6;i++){let r=50+i*30+Math.sin(this.t*2)*10;this.x.strokeStyle=`hsl(${this.t*30+i*30},80%,50%)`;this.x.lineWidth=3;this.x.beginPath();for(let j=0;j<6;j++){let a=j*1.047+this.t*(i%2==0?1:-1);let x=cx+Math.cos(a)*r,y=cy+Math.sin(a)*r;j==0?this.x.moveTo(x,y):this.x.lineTo(x,y);}this.x.closePath();this.x.stroke();}}}
-        class LaserShowEffect{constructor(c){this.c=c;this.x=c.getContext('2d');}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<3;i++){this.x.strokeStyle=`hsl(${Math.random()*360},100%,50%)`;this.x.lineWidth=2;this.x.beginPath();this.x.moveTo(cx,cy);this.x.lineTo(Math.random()*this.c.width,Math.random()*this.c.height);this.x.stroke();}}}
-        class EQCircularEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.v=new Array(60).fill(0);}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<60;i++){this.v[i]=Math.max(0,this.v[i]-1);if(Math.random()>0.8)this.v[i]=Math.random()*50;let a=i*0.1047;let r=80+this.v[i];this.x.strokeStyle=`hsl(${i*6},100%,50%)`;this.x.lineWidth=4;this.x.beginPath();this.x.moveTo(cx+Math.cos(a)*80,cy+Math.sin(a)*80);this.x.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);this.x.stroke();}}}
-        class PlasmaEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.t+=0.02;for(let i=0;i<20;i++){const x=this.c.width/2+Math.sin(this.t*i*0.2)*100;const y=this.c.height/2+Math.cos(this.t*i*0.3)*100;const g=this.x.createRadialGradient(x,y,5,x,y,60);g.addColorStop(0,`hsla(${this.t*50+i*20},100%,50%,0.5)`);g.addColorStop(1,'transparent');this.x.fillStyle=g;this.x.fillRect(0,0,this.c.width,this.c.height);}}}
-        class GridFloorEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.off=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.off=(this.off+2)%50;const cy=this.c.height/2;this.x.strokeStyle='magenta';this.x.lineWidth=1;for(let i=0;i<this.c.width;i+=50){this.x.beginPath();this.x.moveTo(this.c.width/2,cy-50);this.x.lineTo(i-this.c.width/2*i/100,this.c.height);this.x.stroke();}for(let i=0;i<this.c.height/2;i+=20){let y=cy+i+(this.off*(i/100));if(y>this.c.height)continue;this.x.beginPath();this.x.moveTo(0,y);this.x.lineTo(this.c.width,y);this.x.stroke();}}}
-        class DNAEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.t+=0.05;const cy=this.c.height/2;for(let x=0;x<this.c.width;x+=20){const y1=cy+Math.sin(x*0.02+this.t)*50;const y2=cy+Math.sin(x*0.02+this.t+Math.PI)*50;this.x.fillStyle='cyan';this.x.fillRect(x,y1,4,4);this.x.fillStyle='magenta';this.x.fillRect(x,y2,4,4);this.x.strokeStyle='#555';this.x.beginPath();this.x.moveTo(x,y1);this.x.lineTo(x,y2);this.x.stroke();}}}
-        class BinaryRainEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.col=Math.floor(c.width/14);this.d=new Array(this.col).fill(0);}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;this.col=Math.floor(this.c.width/14);this.d=new Array(this.col).fill(0);}draw(){this.x.fillStyle='rgba(0,0,0,0.05)';this.x.fillRect(0,0,this.c.width,this.c.height);this.x.fillStyle='#0f0';this.x.font='14px monospace';for(let i=0;i<this.d.length;i++){const t=Math.random()>0.5?'1':'0';this.x.fillText(t,i*14,this.d[i]*14);if(this.d[i]*14>this.c.height&&Math.random()>0.975)this.d[i]=0;this.d[i]++;}}}
-        class SolarFlareEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.1)';this.x.fillRect(0,0,this.c.width,this.c.height);this.t+=0.1;const cx=this.c.width/2,cy=this.c.height/2;for(let i=0;i<12;i++){const a=i*0.52+this.t*0.2;this.x.beginPath();this.x.moveTo(cx,cy);this.x.lineTo(cx+Math.cos(a)*300,cy+Math.sin(a)*300);this.x.strokeStyle=`hsla(40,100%,50%,0.2)`;this.x.lineWidth=20;this.x.stroke();}this.x.beginPath();this.x.arc(cx,cy,40,0,6.28);this.x.fillStyle='orange';this.x.shadowBlur=20;this.x.shadowColor='red';this.x.fill();this.x.shadowBlur=0;}}
-        class RippleClickEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.r=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(Math.random()>0.9)this.r.push({x:Math.random()*this.c.width,y:Math.random()*this.c.height,s:0});for(let i=0;i<this.r.length;i++){let r=this.r[i];r.s+=2;this.x.beginPath();this.x.arc(r.x,r.y,r.s,0,6.28);this.x.strokeStyle=`rgba(0,255,255,${1-r.s/100})`;this.x.lineWidth=2;this.x.stroke();if(r.s>100){this.r.splice(i,1);i--;}}}}
-        class PixelGlitchEffect{constructor(c){this.c=c;this.x=c.getContext('2d');}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);for(let i=0;i<20;i++){const w=Math.random()*100;const h=Math.random()*20;const x=Math.random()*this.c.width;const y=Math.random()*this.c.height;this.x.fillStyle=`hsla(${Math.random()*360},100%,50%,0.7)`;this.x.fillRect(x,y,w,h);}}}
-        class AuroraEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.t=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);this.t+=0.01;for(let i=0;i<3;i++){this.x.beginPath();this.x.fillStyle=`hsla(${120+i*40},70%,60%,0.2)`;for(let x=0;x<=this.c.width;x+=10){this.x.lineTo(x,this.c.height/2+Math.sin(x*0.01+this.t+i)*100);}this.x.lineTo(this.c.width,this.c.height);this.x.lineTo(0,this.c.height);this.x.fill();}}}
-        class VinylEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.a=0;}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2,r=Math.min(cx,cy)-20;this.a+=0.05;this.x.save();this.x.translate(cx,cy);this.x.rotate(this.a);this.x.fillStyle='#111';this.x.beginPath();this.x.arc(0,0,r,0,6.28);this.x.fill();for(let i=1;i<5;i++){this.x.strokeStyle='#333';this.x.lineWidth=2;this.x.beginPath();this.x.arc(0,0,r-i*20,0,6.28);this.x.stroke();}this.x.fillStyle='red';this.x.beginPath();this.x.arc(0,0,40,0,6.28);this.x.fill();this.x.restore();}}
-        class SpeedTunnelEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.rects=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.fillStyle='rgba(0,0,0,0.2)';this.x.fillRect(0,0,this.c.width,this.c.height);const cx=this.c.width/2,cy=this.c.height/2;if(this.rects.length<20)this.rects.push({w:10,h:10,c:`hsl(${Math.random()*360},100%,50%)`});for(let i=0;i<this.rects.length;i++){let r=this.rects[i];r.w*=1.1;r.h*=1.1;this.x.strokeStyle=r.c;this.x.lineWidth=3;this.x.strokeRect(cx-r.w/2,cy-r.h/2,r.w,r.h);if(r.w>this.c.width){this.rects.splice(i,1);i--;}}}}
-        class FloatingBarsEffect{constructor(c){this.c=c;this.x=c.getContext('2d');this.b=[];}resize(){this.c.width=this.c.clientWidth;this.c.height=this.c.clientHeight;}draw(){this.x.clearRect(0,0,this.c.width,this.c.height);if(this.b.length<20)this.b.push({x:this.c.width,y:Math.random()*this.c.height,w:Math.random()*100+50,h:10,s:Math.random()*5+2,c:`hsl(${Math.random()*360},70%,60%)`});for(let i=0;i<this.b.length;i++){let b=this.b[i];b.x-=b.s;this.x.fillStyle=b.c;this.x.fillRect(b.x,b.y,b.w,b.h);if(b.x+b.w<0){this.b.splice(i,1);i--;}}}}
-
-        function initEffects() {
-            G_UI.preview.mainLogo.style.cursor = "pointer";
-            G_UI.preview.mainLogo.addEventListener('click', switchEffect);
-            const resizeObserver = new ResizeObserver(() => {
-                if (activeEffectInstance) {
-                    G_UI.canvas.width = G_UI.canvas.clientWidth;
-                    G_UI.canvas.height = G_UI.canvas.clientHeight;
-                    activeEffectInstance.resize();
-                }
-            });
-            resizeObserver.observe(G_UI.preview.area);
-        }
-
-        function showToast(msg) {
-            G_UI.toast.textContent = msg; G_UI.toast.style.opacity = '1';
-            setTimeout(() => { G_UI.toast.style.opacity = '0'; }, 3000);
-        }
-
-        function switchEffect() {
-            currentEffectIndex = (currentEffectIndex + 1) % EFFECTS.length;
-            const selectedEffect = EFFECTS[currentEffectIndex];
-            applyEffect(selectedEffect);
-            localStorage.setItem(SAVED_EFFECT_KEY, selectedEffect);
-        }
-
-        function applyEffect(effectName) {
-            showToast(EFFECT_NAMES[effectName] || effectName);
-            G_UI.preview.analyzerTop.classList.remove('visualizer-hidden');
-            G_UI.preview.analyzerBottom.classList.remove('visualizer-hidden');
-            if(activeEffectInstance && activeEffectInstance.x) { activeEffectInstance.x.clearRect(0,0, G_UI.canvas.width, G_UI.canvas.height); }
-            G_UI.canvas.style.display = 'none';
-            if (activeEffectInstance) activeEffectInstance = null;
-            if (effectName === 'equalizer') return;
-            G_UI.preview.analyzerTop.classList.add('visualizer-hidden');
-            G_UI.preview.analyzerBottom.classList.add('visualizer-hidden');
-            G_UI.canvas.style.display = 'block';
-            G_UI.canvas.width = G_UI.preview.area.clientWidth;
-            G_UI.canvas.height = G_UI.preview.area.clientHeight;
-            switch(effectName) {
-                case 'rain': activeEffectInstance = new RainEffect(G_UI.canvas); break;
-                case 'waves': activeEffectInstance = new SineWavesEffect(G_UI.canvas); break;
-                case 'nebula': activeEffectInstance = new NebulaEffect(G_UI.canvas); break;
-                case 'confetti': activeEffectInstance = new ConfettiEffect(G_UI.canvas); break;
-                case 'gradient': activeEffectInstance = new GradientEffect(G_UI.canvas); break;
-                case 'bars3d': activeEffectInstance = new Bars3DEffect(G_UI.canvas); break;
-                case 'traffic': activeEffectInstance = new TrafficEffect(G_UI.canvas); break;
-                case 'retrogrid': activeEffectInstance = new RetroGridEffect(G_UI.canvas); break;
-                case 'snow': activeEffectInstance = new SnowEffect(G_UI.canvas); break;
-                case 'classicbars': activeEffectInstance = new ClassicBarsEffect(G_UI.canvas); break;
-                case 'bokeh': activeEffectInstance = new BokehEffect(G_UI.canvas); break;
-                case 'hexagons': activeEffectInstance = new HexagonsEffect(G_UI.canvas); break;
-                case 'lightning': activeEffectInstance = new LightningEffect(G_UI.canvas); break;
-                case 'pulse': activeEffectInstance = new PulseEffect(G_UI.canvas); break;
-                case 'fire': activeEffectInstance = new FireEffect(G_UI.canvas); break;
-                case 'matrix': activeEffectInstance = new MatrixEffect(G_UI.canvas); break;
-                case 'particles': activeEffectInstance = new ParticlesEffect(G_UI.canvas); break;
-                case 'cybermesh': activeEffectInstance = new CyberMeshEffect(G_UI.canvas); break;
-                case 'neonrings': activeEffectInstance = new NeonRingsEffect(G_UI.canvas); break;
-                case 'digitalwave': activeEffectInstance = new DigitalWaveEffect(G_UI.canvas); break;
-                case 'starwarp2': activeEffectInstance = new StarWarp2Effect(G_UI.canvas); break;
-                case 'audioorbs': activeEffectInstance = new AudioOrbsEffect(G_UI.canvas); break;
-                case 'hexpulse': activeEffectInstance = new HexPulseEffect(G_UI.canvas); break;
-                case 'lasershow': activeEffectInstance = new LaserShowEffect(G_UI.canvas); break;
-                case 'eqcircular': activeEffectInstance = new EQCircularEffect(G_UI.canvas); break;
-                case 'plasma': activeEffectInstance = new PlasmaEffect(G_UI.canvas); break;
-                case 'gridfloor': activeEffectInstance = new GridFloorEffect(G_UI.canvas); break;
-                case 'dna': activeEffectInstance = new DNAEffect(G_UI.canvas); break;
-                case 'binaryrain': activeEffectInstance = new BinaryRainEffect(G_UI.canvas); break;
-                case 'solarflare': activeEffectInstance = new SolarFlareEffect(G_UI.canvas); break;
-                case 'rippleclick': activeEffectInstance = new RippleClickEffect(G_UI.canvas); break;
-                case 'pixelglitch': activeEffectInstance = new PixelGlitchEffect(G_UI.canvas); break;
-                case 'aurora': activeEffectInstance = new AuroraEffect(G_UI.canvas); break;
-                case 'vinyl': activeEffectInstance = new VinylEffect(G_UI.canvas); break;
-                case 'speedtunnel': activeEffectInstance = new SpeedTunnelEffect(G_UI.canvas); break;
-                case 'floatingbars': activeEffectInstance = new FloatingBarsEffect(G_UI.canvas); break;
-            }
-            if (activeEffectInstance) activeEffectInstance.resize();
-        }
-
-        function renderEffects() {
-            if (activeEffectInstance && !G_UI.audioPlayer.paused && G_UI.canvas.width > 0 && G_UI.canvas.height > 0) { activeEffectInstance.draw(); }
-            animationFrameId = requestAnimationFrame(renderEffects);
-        }
-
-        const themes = { 'default': { name: 'Varsayılan', color: '#3366cc' }, 'forest': { name: 'Orman', color: '#4CAF50' }, 'royal': { name: 'Kraliyet', color: '#9C27B0' }, 'sunset': { name: 'Gün Batımı', color: '#FF5722' }, 'steel': { name: 'Çelik', color: '#757575' }, 'yellow': { name: 'Sarı', color: '#FFD600' } };
-        function applyTheme(themeName) { document.body.dataset.theme = themeName; localStorage.setItem('iptvTheme', themeName); document.querySelectorAll('.theme-swatch').forEach(swatch => swatch.classList.toggle('active', swatch.dataset.theme === themeName)); }
-        function createThemeSelector() { G_UI.themeList.innerHTML = ""; for (const [key, theme] of Object.entries(themes)) { const swatch = document.createElement('div'); swatch.className = 'theme-swatch'; swatch.dataset.theme = key; swatch.title = theme.name; swatch.style.backgroundColor = theme.color; swatch.onclick = () => applyTheme(key); G_UI.themeList.appendChild(swatch); } }
-
-        let hls, allChannelsMap = new Map(), currentChannelList = [], currentChannelIndex = -1, activeGroupName = '', activeStreamUrl = null;
-        const ZOOM_KEY = 'carRadioZoomLevel', ZOOM_STEP = 0.05, MIN_ZOOM = 0.4, MAX_ZOOM = 1.3; let currentZoom = 0.7;
-        const applyZoom = (z) => { G_UI.htmlElement.style.zoom = z; };
-        const updateZoom = (z) => { currentZoom = Math.max(MIN_ZOOM, Math.min(MAX_ZOOM, z)); applyZoom(currentZoom); localStorage.setItem(ZOOM_KEY, currentZoom); };
-        const loadSavedZoom = () => { const z = localStorage.getItem(ZOOM_KEY); if (z) { currentZoom = parseFloat(z); applyZoom(currentZoom); } };
-
-        function getFavorites() { return JSON.parse(localStorage.getItem('favoriteRadios') || '[]'); }
-        function saveFavorites(favs) { localStorage.setItem('favoriteRadios', JSON.stringify(favs)); }
-        function getListenCounts() { return JSON.parse(localStorage.getItem('radioListenCounts') || '{}'); }
-        function incrementListenCount(url) { if (!url) return; const c = getListenCounts(); c[url] = (c[url] || 0) + 1; localStorage.setItem('radioListenCounts', JSON.stringify(c)); if (activeGroupName === 'En Çok Dinlenenler') listChannels(activeGroupName); }
-        function toggleFavorite(url, btn) { let f = getFavorites(); const i = f.indexOf(url); if (i > -1) { f.splice(i, 1); btn.classList.remove('favorited'); } else { f.push(url); btn.classList.add('favorited'); } saveFavorites(f); listGroups(); if (activeGroupName === 'Favorilerim') listChannels('Favorilerim'); }
-
-        function listGroups() {
-            const cur = document.querySelector('.group.active')?.textContent || CATEGORIES[0];
-            G_UI.groups.innerHTML = ""; let activate = null;
-            const favC = getFavorites().length, lisC = Object.keys(getListenCounts()).length;
-            CATEGORIES.forEach((g) => {
-                if (g === 'Favorilerim' && favC === 0) return; if (g === 'En Çok Dinlenenler' && lisC === 0) return;
-                const el = document.createElement("div"); el.className = "group"; el.textContent = g;
-                el.onclick = () => { document.querySelectorAll(".group.active").forEach(e => e.classList.remove("active")); el.classList.add("active"); activeGroupName = g; listChannels(g); };
-                G_UI.groups.appendChild(el); if (g === cur) activate = el;
-            });
-            if (activate) activate.click(); else if (G_UI.groups.firstChild) G_UI.groups.firstChild.click();
-        }
-
-        function listChannels(g) {
-            G_UI.channels.innerHTML = ""; 
-            const f = getFavorites();
-            if (g === 'Favorilerim') currentChannelList = f.map(u => allChannelsMap.get(u)).filter(Boolean);
-            else if (g === 'En Çok Dinlenenler') currentChannelList = Object.entries(getListenCounts()).sort(([, a], [, b]) => b - a).map(([u]) => allChannelsMap.get(u)).filter(Boolean).slice(0, 20);
-            else { const id = CATEGORIES.indexOf(g); currentChannelList = Array.from(allChannelsMap.values()).filter(c => c.categoryId === id); }
-            currentChannelList.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-            
-            currentChannelList.forEach((c, i) => {
-                const isF = f.includes(c.streamUrl);
-                const isUrlMatch = (activeStreamUrl && c.streamUrl === activeStreamUrl);
-                if (isUrlMatch) { currentChannelIndex = i; }
-                const el = document.createElement("div"); 
-                el.className = "channel";
-                if(isUrlMatch) el.classList.add('active');
-                
-                el.innerHTML = `<div class="channel-info"><img src="${c.logoUrl||''}" onerror="this.style.display='none'"><div><div>${c.name}</div></div></div><span class="fav-btn ${isF?'favorited':''}">★</span>`;
-                el.querySelector('.channel-info').onclick = () => { playChannel(i); };
-                el.querySelector('.fav-btn').onclick = (e) => { e.stopPropagation(); toggleFavorite(c.streamUrl, el.querySelector('.fav-btn')); };
-                G_UI.channels.appendChild(el);
-            });
-        }
-
-        function togglePlayback() {
-            if (!activeStreamUrl) { if(currentChannelList.length > 0) playChannel(0); return; }
-            if (G_UI.audioPlayer.paused) { G_UI.audioPlayer.play(); updatePlayerUI(true); } else { G_UI.audioPlayer.pause(); updatePlayerUI(false); }
-        }
-
-        function stopStream(a, h) { activeStreamUrl = null; a.pause(); a.removeAttribute("src"); try { a.load(); } catch (e) { } if (h) { h.destroy(); hls = null; } updatePlayerUI(false); }
-        async function playStream(a, u) { 
-            if (hls) { hls.destroy(); hls = null; }
-            const isHLS = u.includes('.m3u8'); 
-            if (isHLS && Hls.isSupported()) { 
-                hls = new Hls(); hls.loadSource(u); hls.attachMedia(a); 
-                hls.on(Hls.Events.MANIFEST_PARSED, function() { a.play().catch(e => { console.error("Hata:", e); updatePlayerUI(false); }); });
-            } else { a.src = u; a.play().catch(e => { console.error("Hata:", e); updatePlayerUI(false); }); } 
-            a.muted = false; a.volume = 1.0; 
-        }
-
-        function playChannel(i) { 
-            currentChannelIndex = i; const c = currentChannelList[i]; if (!c) return; 
-            
-            // --- LOGO / PLAYER ANIMASYONU (KORUNDU) ---
-            if(G_UI.centerContainer) {
-                G_UI.centerContainer.classList.remove('switching-anim');
-                void G_UI.centerContainer.offsetWidth; // Reflow
-                G_UI.centerContainer.classList.add('switching-anim');
-            }
-
-            activeStreamUrl = c.streamUrl; incrementListenCount(c.streamUrl); 
-            const t = ` 🎵 ${c.name} 🎵 - ${DEFAULT_SCROLL_TEXT}`; 
-            G_UI.player.channelName.innerHTML = `<span>${t}</span><span>${t}</span>`; 
-            G_UI.preview.mainLogo.src = c.logoUrl || ''; 
-            playStream(G_UI.audioPlayer, c.streamUrl); updatePlayerUI(true);
-        }
+        const mainMenu = document.getElementById('main-menu');
+        const contentArea = document.getElementById('content-area');
+        const gameGalleryArea = document.getElementById('game-gallery-area');
+        const appFrame = document.getElementById('app-frame');
+        const videoContainer = document.getElementById('video-player-container');
+        const videoElement = document.getElementById('my-video');
         
-        function updatePlayerUI(p) { 
-            G_UI.player.container.classList.toggle('playing', p); 
-            G_UI.preview.area.classList.toggle('is-playing', p); 
-            G_UI.mainPlayBtn.classList.toggle('playing', p);
-            if(p) { G_UI.playIcon.style.display = 'none'; G_UI.pauseIcon.style.display = 'block'; } else { G_UI.playIcon.style.display = 'block'; G_UI.pauseIcon.style.display = 'none'; }
-            const currentUrl = activeStreamUrl;
-            document.querySelectorAll('#channels .channel').forEach((el, index) => { const itemData = currentChannelList[index]; if (itemData && itemData.streamUrl === currentUrl) el.classList.add('active'); else el.classList.remove('active'); });
-            if (p) { setTimeout(() => { G_UI.canvas.width = G_UI.preview.area.clientWidth; G_UI.canvas.height = G_UI.preview.area.clientHeight; if (activeEffectInstance) activeEffectInstance.resize(); }, 50); if (!animationFrameId) renderEffects(); }
-        }
-        function changeChannel(d) { if (currentChannelList.length === 0 || currentChannelIndex < 0) return; const n = (currentChannelIndex + d + currentChannelList.length) % currentChannelList.length; const el = G_UI.channels.querySelectorAll('.channel')[n]; if (el) { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); el.querySelector('.channel-info').click(); } }
+        const tickerMode = document.getElementById('ticker-mode');
+        const controlMode = document.getElementById('control-mode');
+        const btnBackToGallery = document.getElementById('btn-back-to-gallery');
+        
+        let userLat = 0, userLon = 0;
 
-        async function fetchAndDisplayChannels() {
-            try {
-                const r = await fetch('./channels.txt?v=' + new Date().getTime()); if (!r.ok) throw new Error(r.status);
-                const d = await r.text();
-                const all = d.trim().split('\n').map(l => { const [n, s, lo, c] = l.split(',').map(i => i.trim()); return { name: n, streamUrl: s, logoUrl: lo, categoryId: parseInt(c) }; }).filter(c => c.name && c.streamUrl && !isNaN(c.categoryId));
-                allChannelsMap.clear(); all.forEach(c => allChannelsMap.set(c.streamUrl, c)); listGroups();
-            } catch (e) { console.error(e); if (!navigator.onLine) G_UI.channels.innerHTML = '<p style="padding:10px;color:white;">Bağlantı yok.</p>'; }
+        // SENİN EXCEL DOSYANDAN ÇEKİLEN TEMİZ VERİ
+        const csvData = `id;turkce;ingilizce;resim;link
+233;Dikkat Testi;Dikkat Testi;https://2slope.github.io/img/brain-test-tricky-puzzles.png;https://2slope.github.io/a2/brain-test-tricky-puzzles/
+232;Frozen Rush;Frozen Rush;https://i.hizliresim.com/6s8idzs.png;https://play.lol.disney.com/v1/files/a51313e0-e3dc-11e6-bf77-0609da000034/index.html
+231;Blumgi Castle;Blumgi Castle;https://2slope.github.io/img/blumgi-castle.png;https://2slope.github.io/a2/blumgi-castle
+230;Araba Birleştirme;Araba Birleştirme;https://23-azo.github.io/imgs/merge-round-racers.png;https://23-azo.github.io/a7/merge-round-racers
+229;Çöp Adam Koşusu;Çöp Adam Koşusu;https://htmlxm.github.io/thumb/stickman-school-run.png;https://htmlxm.github.io/h3/stickman-school-run
+217;Maymun Marketçi;Maymun Marketçi;https://23azostore.github.io/img/monkey-mart.png;https://23azostore.github.io/s8/monkey-mart
+218;Çöp Adam Bisiklet;Çöp Adam Bisiklet;https://23azostore.github.io/img/stickman-bike.png;https://23azostore.github.io/s6/stickman-bike
+219;3D Basketbol;3D Basketbol;https://i.ibb.co/jkQJj6qV/fpru4ep.jpg;https://play.famobi.com/3d-basketball/A-SPORX
+220;Futbol Dünya Kupası;Futbol Dünya Kupası;https://23azostore.github.io/img/soccer-skills-world-cup.png;https://23azostore.github.io/s6/soccer-skills-world-cup/#topvaz
+221;Halka Geçirme;Halka Geçirme;https://html-online-game.github.io/assets/images/hoop-royale.png;https://html-online-game.github.io/hoop-royale/
+222;SwinGo;SwinGo;https://html-online-game.github.io/assets/images/swingo.png;https://html-online-game.github.io/swingo/
+223;Ayı Dövüşü;Ayı Dövüşü;https://2slope.github.io/img/bearsus.png;https://2slope.github.io/a2/bearsus
+224;Balıkçı Amca;Balıkçı Amca;https://2slope.github.io/img/tiny-fishing.png;https://2slope.github.io/a/tiny-fishing
+225;Bomba Kimde;Bomba Kimde;https://lnahtml.github.io/img/tag-2.png;https://2slope.github.io/a77/tag-2
+226;Motorsiklet Yarışı;Motorsiklet Yarışı;https://2slope.github.io/img/moto-x3m.png;https://2slope.github.io/a8/moto-x3m
+227;Sausage Flip;Sausage Flip;https://23azostore.github.io/img/sausage-flip.png;https://23azostore.github.io/s6/sausage-flip
+228;Karıncalar;Karıncalar;https://23azostore.github.io/img/idle-ants.png;https://23azostore.github.io/s5/idle-ants
+1;Uçak Savaşı;Uçak Savaşı;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/87a6e7b4-486d-4272-d4c2-e37ccb4e7500/fit=cover,w=180,h=180;https://air-warfare.games.playgama.net/cm6f7ucal000cz60e5721spwc/index.html
+2;Tren Gezisi;Tren Gezisi;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/af611c97-a5e0-4b29-46b4-8e5314cad800/fit=cover,w=180,h=180;https://train-master.games.playgama.net/cm8fquwkb005ho20g49lbhxnu/index.html
+3;Sigma Boy;Sigma Boy;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/a8f3bbe1-3e14-4a85-5e59-fd791ee2d300/fit=cover,w=180,h=180;https://sigma-boy-musical-clicker.games.playgama.net/cm6pl7rsk005zzg0ev3232myh/index.html
+4;Para Ping Pong;Para Ping Pong;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/9ceb6543-f33b-43b1-3235-bf3a1574f000/fit=cover,w=180,h=180;https://money-ping-pong-fe04-1.games.playgama.net/cm7z3eil5005ul60he15xktle/index.html
+5;4 Renk;4 Renk;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/76e1b730-b931-41d6-da56-bdfe8de55a00/fit=cover,w=180,h=180;https://4-colors.games.playgama.net/cm6es8k620057010eer7z49cv/index.html
+6;Çağ Savaşları;Çağ Savaşları;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/f556cccc-8a47-4e10-5220-f4d9d931ca00/enlarged;https://apps.playgama.com/cm00qwb9y000u150e6bczdagm/index.html
+7;BS Simülatörü;BS Simülatörü;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/d34558b6-fff1-4877-a974-4fc795abcb00/enlarged;https://bs-simulator-559a-1.games.playgama.net/cm6sgenn10031vx0dp4he35ai/index.html
+8;Dart Ustası;Dart Ustası;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/a211470d-b8ca-4514-8fd1-fca5331bb400/fit=cover,w=180,h=180;https://darts-pro-3cf1-1.games.playgama.net/cm6t1tvw50065vx0dw15x5p2f/index.html
+9;Sosyal Medya Yılanı;Sosyal Medya Yılanı;https://avatars.mds.yandex.net/get-games/1881957/2a00000178fdfb2f45bbfd381a7fe71843ea/pjpg350x209;https://app-163000.games.s3.yandex.net/163000/v244i5htiwzkkae3cl5mqbky2zuqk5x7/index.html?
+10;Asker Koşucusu;Asker Koşucusu;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/af78bd7f-67dd-425c-854a-f07f37e3fa00/fit=cover,w=180,h=180;https://soldiers-runner.games.playgama.net/cm8z61d8v003zjx0hrr827vko/index.html
+11;Vahşi Batı Atıcılığı;Vahşi Batı Atıcılığı;https://avatars.mds.yandex.net/get-games/3006389/2a0000017869996bfdfaed46ecc7a47bcac6/pjpg350x209;https://app-158709.games.s3.yandex.net/158709/uval1ndouo803vt2tm2mergxjgm2v5mj/index.html?
+15;Hangisini Tercih Edersin;Hangisini Tercih Edersin;https://playgama.com/cdn-cgi/imagedelivery/LN2S-4p3-GgZvEx3IPaKUA/2118f77a-cdb6-4a9f-f8fa-5b7477835800/enlarged;https://would-you-rather--questions-for-couples.games.playgama.net/cm7vrqyq6000cis0h09am1cfp/index.html
+16;Matematik Araba Yarışı;Matematik Araba Yarışı;https://www.cokogames.com/wp-content/uploads/2022/06/arcademics-grand-prix-150x150.png;https://www.mathplayground.com/internal/arcademics_grand_prix.html
+24;Meyveleri Birleştir Matematik ;Meyveleri Birleştir Matematik ;https://cdn-t-3.bvkstatic.com/us/static/images/games/watermelon.png;https://www.tafeldiploma.nl/gf/fruit-merge/12/?l=0
+25;Birleştir Patlat;Birleştir Patlat;https://02rd6nna08dqg.h5games.usercontent.goog/v/4lgtf08m9f658/images/landscape480.png=w256?v=1;https://02rd6nna08dqg.h5games.usercontent.goog/v/4lgtf08m9f658/
+26;Dans Yarışması;Dans Yarışması;https://img.cdn.famobi.com/portal/html5games/images/tmp/DanceBattleTeaser.jpg?v=0.2-c60c58de;https://play.famobi.com/dance-battle/A-SPORX
+27;Speed Master;Speed Master;https://img.cdn.famobi.com/portal/html5games/images/tmp/SpeedMasterTeaser.jpg?v=0.2-c60c58de;https://play.famobi.com/speed-master/A-SPORX
+28;Neon Yarışçı;Neon Yarışçı;https://img.cdn.famobi.com/portal/html5games/images/tmp/NeonRiderTeaser.jpg?v=0.2-c60c58de;https://play.famobi.com/neon-rider/A-SPORX
+29;Serseri Yarışçı;Serseri Yarışçı;https://i.ibb.co/7VQM6x9/faateve.png;https://html-classic.itch.zone/html/10675770/index.html
+30;Cut the Rope Magic;Cut the Rope Magic;https://i.ibb.co/r6fSkm9/40cdm9o.png;https://emupedia.net/emupedia-game-cut-the-rope-magic/
+31;Temple Run 2;Temple Run 2;https://i.ibb.co/SwQWXS4/mudg2tu.jpg;https://emupedia.net/emupedia-game-temple-run2/
+32;Puding Birleştirme;Puding Birleştirme;https://i.ibb.co/ysS7F3P/ri9djqc.jpg;https://emupedia.net/emupedia-game-pudding-monsters/
+33;Solitaire;Solitaire;https://i.ibb.co/QpqF3jw/hgz9i6l.jpg;https://emupedia.net/emupedia-game-solitaire/
+34;Jetpack Joyride;Jetpack Joyride;https://i.ibb.co/bF6wbbK/2417awy.jpg;https://emupedia.net/emupedia-game-jetpack-joyride/
+42;Stickman Hook;Stickman Hook;https://i.ytimg.com/vi/UTDLsJY5LII/hqdefault.jpg;https://stickman.pro/iframe/index.html
+43;Rasgele Basket;Rasgele Basket;https://lh3.googleusercontent.com/2stSOfgeNOFbmf5riv4b6czd8g3zBqyDgPKBXo1WW_aYpFP5d_yNN6jYRlZKPeTHafOizujq8Ych-_F0_KlPsqvNzg=s1280-w1280-h800;https://www.twoplayergames.org/embed/basket-random
+44;Satranç Ustası;Satranç Ustası;https://chessmania.h5games.usercontent.goog/v/5c6baeab-0cb7-4d06-b733-eafadb522e04/med_res_banner.jpg=w256?v=1;https://chessmania.h5games.usercontent.goog/v/5c6baeab-0cb7-4d06-b733-eafadb522e04/
+45;Gym Stack;Gym Stack;https://gymstack.h5games.usercontent.goog/v/eee9d7c0-118d-4b2b-9d47-b3464d73f939/med_res_banner.jpg=w256;https://gymstack.h5games.usercontent.goog/v/eee9d7c0-118d-4b2b-9d47-b3464d73f939/
+46;Yıldız Birleştir;Yıldız Birleştir;https://starsaligned.h5games.usercontent.goog/v/8dd2f4cc-7085-4180-b895-0590a75bb621/med_res_banner.jpg=w256;https://starsaligned.h5games.usercontent.goog/v/8dd2f4cc-7085-4180-b895-0590a75bb621/
+47;Pro Basket;Pro Basket;https://06f80rna6d2sg.h5games.usercontent.goog/v/6ug3s5n1q08qg/images/hoophero-app-icon-256.png=w256;https://06f80rna6d2sg.h5games.usercontent.goog/v/6ug3s5n1q08qg/
+48;Çılgın Mağaralar;Çılgın Mağaralar;https://crazycaves.h5games.usercontent.goog/v/24bc2c61-c599-4c5a-9fde-fd3a14fd28a6/med_res_banner.jpg=w256?v=1;https://crazycaves.h5games.usercontent.goog/v/24bc2c61-c599-4c5a-9fde-fd3a14fd28a6/
+49;Tom and Jerry Taxi;Tom and Jerry Taxi;https://files.gamezhero.com/game/4a9/08e/4a908ea866ce4fe4/images/240/tomandjerryinnewyorktaxicabs.jpg;https://emea.iframed.cn.dmti.cloud/content/2297/tom--jerry-taxi-cabs/game/dk/tjcardcreatorcn-16032023-da.c2a68dcf/index.html
+50;Meyve Küpleri;Meyve Küpleri;https://5pj67mkaqugmo.h5games.usercontent.goog/v/0iiosri8tlc8o/image/FruitCubeBlast-med-res-banner.jpg=w256?v=1;https://5pj67mkaqugmo.h5games.usercontent.goog/v/0iiosri8tlc8o/
+51;Pizzacı Panda;Pizzacı Panda;https://pandapizzaparlor.h5games.usercontent.goog/v/696f7b56-a916-4c62-91c7-782b289a2277/high_res_icon.jpg;https://pandapizzaparlor.h5games.usercontent.goog/v/16ldgoh3to3f8/
+52;Yılan ve Merdivenler;Yılan ve Merdivenler;https://m.media-amazon.com/images/I/71CMXK5FXDL.png;https://snakesandladders.h5games.usercontent.goog/v/75mcopjgiis98/
+53;Ahmet Amca;Ahmet Amca;https://uncleahmed.h5games.usercontent.goog/v/31ca380f-5493-4371-b5ac-5c3c2da67626/high_res_icon.jpg;https://uncleahmed.h5games.usercontent.goog/v/31ca380f-5493-4371-b5ac-5c3c2da67626/
+54;Renk Patlaması 3D;Renk Patlaması 3D;https://colorburst3d.h5games.usercontent.goog/v/f9ac46fc-3e68-4395-ab17-fe9b056df979/high_res_banner.jpg;https://colorburst3d.h5games.usercontent.goog/v/3l27vlnq6dvto/
+55;Meyveleri Tamamla;Meyveleri Tamamla;https://0i1jh8boqif48.h5games.usercontent.goog/v/1643ot8on0v9g/html5games/assets/marketingAssets/banners/480x270.png=w256?v=1;https://0i1jh8boqif48.h5games.usercontent.goog/v/1643ot8on0v9g/
+56;Akıllı Balonlar;Akıllı Balonlar;https://smartybubbles.h5games.usercontent.goog/v/ffea9e87-19f8-46e9-94f7-f54a833b33f9/med_res_banner.jpg=w256?v=1;https://smartybubbles.h5games.usercontent.goog/v/ffea9e87-19f8-46e9-94f7-f54a833b33f9/
+57;Yalnız Yarışçı;Yalnız Yarışçı;https://trucktrials.h5games.usercontent.goog/v/01347635-6b10-4fe1-ae85-53c0fb6a95bb/med_res_banner.jpg=w256?v=1;https://trucktrials.h5games.usercontent.goog/v/01347635-6b10-4fe1-ae85-53c0fb6a95bb/
+58;Savaşcı;Savaşcı;https://hexadungeon.h5games.usercontent.goog/v/2b9ankkos3408/images/hexadungeon-horizontal-banner-2.png=w256?v=1;https://hexadungeon.h5games.usercontent.goog/v/2b9ankkos3408/
+59;Masa Futbolu;Masa Futbolu;https://pocketchampions.h5games.usercontent.goog/v/47dgni011hg0g/images/pocket-champions-horizontal-banner-2.png=w256?v=1;https://pocketchampions.h5games.usercontent.goog/v/47dgni011hg0g/
+60;Aynısını Bul 2;Aynısını Bul 2;https://onetconnectclassic.h5games.usercontent.goog/v/3548fcd4-da1a-47bd-ac18-01488239c660/med_res_banner.jpg=w256?v=1;https://onetconnectclassic.h5games.usercontent.goog/v/3548fcd4-da1a-47bd-ac18-01488239c660/
+61;Oduncu Amca;Oduncu Amca;https://timberguy.h5games.usercontent.goog/v/227aa761-6f5d-49c8-8291-9551bc7a2d8b/med_res_banner.jpg=w256?v=1;https://timberguy.h5games.usercontent.goog/v/227aa761-6f5d-49c8-8291-9551bc7a2d8b/
+62;Bubble Tower;Bubble Tower;https://bubbletower.h5games.usercontent.goog/v/5f770b77-7506-4f46-8662-3788d70bae7f/med_res_banner.jpg=w256?v=1;https://bubbletower.h5games.usercontent.goog/v/5f770b77-7506-4f46-8662-3788d70bae7f/
+63;Balık Oyunu;Balık Oyunu;https://pickergame.com/gamesource/Fish_Love/icons/icon-256.png;https://pickergame.com/gamesource/Fish_Love/index.html
+64;Bilardo;Bilardo;https://gamegfx.spielaffe.de/images/game/3189/3189855/39465_pool-mania-rcm120x120.png;https://html5.inlogic.sk/poolmania-stroer/game/?partner_id=poolmania_stroer
+65;Alien Attack;Alien Attack;https://img.gamemonetize.com/obxkm7l3340uetq3ys2xt1yheq4a7pdw/512x384.jpg;https://html5.inlogic.sk/aliensattack/
+66;Farm Block Puzzle;Farm Block Puzzle;https://www.roundgames.net/wp-content/uploads/2024/09/Farm-Block-Puzzle-Game-Online.jpg;https://html5.inlogic.sk/farmblockpuzzle/
+67;Meyve Puzzle;Meyve Puzzle;https://5u9qhnk84v07g.h5games.usercontent.goog/v/6oagub3k2dv6g/image/tilepuzzle-med-res-banner.jpg=w256?v=1;https://5u9qhnk84v07g.h5games.usercontent.goog/v/6oagub3k2dv6g/
+68;Sky Heroes;Sky Heroes;https://pickergame.com/gamesource/Sky_Heroes_Z/icons/icon-256.png;https://pickergame.com/gamesource/Sky_Heroes_Z/index.html
+69;Kafa Topu;Kafa Topu;https://pickergame.com/gamesource/Head_Soccer_2022/icons/icon-256.png;https://pickergame.com/gamesource/Head_Soccer_2022/index.html
+70;Sihirli Toplar;Sihirli Toplar;https://game-game.com/gamesimg/209932.jpg;https://www.yad.com/games/Magic-Balls/index.html
+71;Balık Tutma Oyunu;Balık Tutma Oyunu;https://images.crazygames.com/games/fishing-io/cover-1589904894408.png;https://html5.inlogic.sk/fishingio/
+72;Piksel Boyama;Piksel Boyama;https://img.cdn.famobi.com/portal/html5games/images/tmp/ColorPixelArtClassicTeaser.jpg?v=0.2-c5b5b387;https://play.famobi.com/color-pixel-art-classic/A-SPORX
+73;Zumba Mania;Zumba Mania;https://plays.org/wp-content/uploads/zumba-mania.png;https://html5.inlogic.sk/zumbamania/
+74;Uzay Savaşları;Uzay Savaşları;https://s3.envato.com/files/262258896/thumbs/1.jpg;https://showcase.codethislab.com/games/galactic_war/
+75;Aynısını Bul;Aynısını Bul;https://oddoneout.h5games.usercontent.goog/v/50nqosk9lm28o/image/oddoneout-med-res-banner.jpg=w256?v=1;https://oddoneout.h5games.usercontent.goog/v/50nqosk9lm28o/
+76;Piyano Oyunu;Piyano Oyunu;https://perfectpiano.h5games.usercontent.goog/v/48c3ch9soa7cg/html5games/assets/marketingAssets/banners/480x270.png=w256?v=1;https://perfectpiano.h5games.usercontent.goog/v/48c3ch9soa7cg/
+77;Fırlat Vur;Fırlat Vur;https://5699ri02mr840.h5games.usercontent.goog/v/0dov2qbpnafb0/html5games/assets/marketingAssets/banners/480x270.png=w256?v=1;https://5699ri02mr840.h5games.usercontent.goog/v/0dov2qbpnafb0/
+78;Masa Tenisi Oyunu;Masa Tenisi Oyunu;https://tabletennis.h5games.usercontent.goog/v/24f1dad4-8ec6-4a10-8700-168324e23c86/med_res_banner.jpg=w400?v=1;https://tabletennis.h5games.usercontent.goog/v/24f1dad4-8ec6-4a10-8700-168324e23c86/
+79;Jellystone Eşleştirme;Jellystone Eşleştirme;https://files.kidsearch.games/game/e62/929/e6292916057ba689/images/240/jellystonematchup.jpg;http://files.kidsearch.games/game/e62/929/e6292916057ba689/data/index.html
+80;Meyveleri Birleştir;Meyveleri Birleştir;https://mergemelons.h5games.usercontent.goog/v/7ipepd5h6vca0/images/horizontalBanners_19201080.png=w256?v=1;https://mergemelons.h5games.usercontent.goog/v/7ipepd5h6vca0/
+81;Justin ile Zıpla;Justin ile Zıpla;https://jumpwithjustin2.h5games.usercontent.goog/v/d9ce17aa-866a-4dd4-a338-b0069f66591d/med_res_banner.jpg=w256?v=1;https://jumpwithjustin2.h5games.usercontent.goog/v/d9ce17aa-866a-4dd4-a338-b0069f66591d/
+82;Kriket Kahramanı;Kriket Kahramanı;https://crickethero.h5games.usercontent.goog/v/3pju0ifgimfro/promo/1920x1080.jpg=w256?v=1;https://crickethero.h5games.usercontent.goog/v/3pju0ifgimfro/
+83;Dama Oyunu;Dama Oyunu;https://img.cdn.famobi.com/portal/html5games/images/tmp/CheckersClassicTeaser.jpg;play.famobi.com/checkers-classic/A-SPORX
+84;Satranç Oyunu;Satranç Oyunu;https://chessclassic.h5games.usercontent.goog/v/d94ef861-2fc9-4c60-b983-962237f8f981/med_res_banner.jpg=w256?v=1;https://chessclassic.h5games.usercontent.goog/v/d94ef861-2fc9-4c60-b983-962237f8f981/
+85;Mısır Patlatma Ustası;Mısır Patlatma Ustası;https://img.gamepix.com/games/popcorn-master/cover/popcorn-master.png;https://archive777.com/Game-Files/Popcorn%20Master%20Game/
+86;Harika Dilimler;Harika Dilimler;https://www4.minijuegosgratis.com/v3/games/thumbnails/229932_1.jpg;https://iclouds.space/HTML5GAMES/perfect-slice/
+88;Formula Yarışı;Formula Yarışı;https://www.primarygames.com/arcade/racing/formularush/logo200.png;https://www.puzzleplayground.com/games/formula-rush/
+89;Renk Toplama Oyunu;Renk Toplama Oyunu;https://s3.envato.com/files/425159721/image1.png;https://www.pogames.in/games/codecannyon/colorhoop/
+90;Online Football;Online Football;https://images.sftcdn.net/images/t_app-icon-l/p/babbf7ee-e9ed-4bbd-bbbe-2487b7872162/1384940051/soccer-online-987e7aae71b949c2b8eb9184636efe4f-512x512.jpeg;https://archive777.com/2563225775147/Soccer%20Online/
+91;Basketbol Oyunu;Basketbol Oyunu;https://img.cdn.famobi.com/portal/html5games/images/tmp/DunkBrushTeaser.jpg?v=0.2-67d50161;https://ubg77.github.io/fix/dunkbrush/
+92;Parkur Yarışı;Parkur Yarışı;https://imgs2.dab3games.com/parkour-race-3d-1615.png;https://ubg77.github.io/fix/parkour-race/
+93;Çılgın Yarışçı;Çılgın Yarışçı;https://dinosaur-game.io/data/image/drive-mad-3.jpg;https://ubg77.github.io/game131022/drive-mad/
+94;Zıpla ve Patlat;Zıpla ve Patlat;https://img.gamedistribution.com/51761a50c12a41f5a12819c29c43dcc5-512x512.jpeg;https://archive777.com/Game-Files/Jump%20and%20Splat/
+95;Çizgi Yarışı;Çizgi Yarışı;https://www5.minijuegosgratis.com/v3/games/thumbnails/233608_7_sq.jpg;https://ext.minijuegosgratis.com/draw-climber/gameCode/index.html
+96;Drift Oyunu Online;Drift Oyunu Online;https://img.cdn.famobi.com/portal/html5games/images/tmp/DriftDudesTeaser.jpg;https://play.famobi.com/drift-dudes/A-SPORX
+97;Golf Oyunu;Golf Oyunu;https://golfadventures.h5games.usercontent.goog/v/2er1vod6k6p0o/images/horizontal480.png=w256?v=1;https://golfadventures.h5games.usercontent.goog/v/2er1vod6k6p0o/
+98;Topun Yolunu Bul;Topun Yolunu Bul;https://rollthisball3.h5games.usercontent.goog/v/698f5df1-191f-4793-b12f-0940bacfc1f3/med_res_banner.jpg=w256?v=1;https://rollthisball3.h5games.usercontent.goog/v/698f5df1-191f-4793-b12f-0940bacfc1f3/
+99;Zar Puzzle;Zar Puzzle;https://0vfcifju4i900.h5games.usercontent.goog/v/4ko889nhn3c1o/image/dicepuzzle-med-res-banner.jpg=w256?v=1;https://0vfcifju4i900.h5games.usercontent.goog/v/4ko889nhn3c1o/
+100;Neon Kule Yarışı;Neon Kule Yarışı;https://2mk3ok3s7jl88.h5games.usercontent.goog/v/39vfhh0oku1j8/html5games/assets/marketingAssets/banners/480x270.png=w256?v=1;https://2mk3ok3s7jl88.h5games.usercontent.goog/v/39vfhh0oku1j8/
+101;Emoji Eşleştirme;Emoji Eşleştirme;https://0aijth0is3tko.h5games.usercontent.goog/v/1c1277hq9kr98/html5games/assets/marketingAssets/banners/480x270.png=w256?v=1;https://0aijth0is3tko.h5games.usercontent.goog/v/1c1277hq9kr98/
+102;The Tom and Jerry;The Tom and Jerry;https://files.kidsearch.games/game/b0a/7fb/b0a7fbb757893493/images/240/thetomandjerryshowbackyardhoops.jpg;http://files.kidsearch.games/game/b0a/7fb/b0a7fbb757893493/data/index.html
+103;Penalty Power ;Penalty Power ;https://files.gamezhero.com/game/a20/3b5/a203b5a03f0caec1/images/240/penaltypower3.jpg;http://files.gamezhero.com/game/a20/3b5/a203b5a03f0caec1/data/index.html
+104;Toon Cup 2022 ;Toon Cup 2022 ;https://files.gamezhero.com/game/aaf/0e1/aaf0e1bc9c23b87d/images/240/cntooncup2022.jpg;https://emea.iframed.cn.dmti.cloud/content/1317/toon-cup/game/ae/tooncup-16112022-uae.3ea9d131/index.html
+105;Color Sort Mania;Color Sort Mania;https://www.inlogic.sk/html5/248/assets/favicon/icon-152x152.png;https://html5.inlogic.sk/colorsortmania/
+106;Jump into Wow ;Jump into Wow ;https://files.kidsearch.games/game/032/4f2/0324f2c20a4023ad/images/240/jumpintowow.jpg;https://assets.games.corusent.com/wp-content/uploads/2021/10/game/1964/index.html
+107;Stack Ball 3D;Stack Ball 3D;https://stackbounce.h5games.usercontent.goog/v/1aqsvv0aegbjg/images/mid_res_banner.jpeg=w256?v=1;https://stackbounce.h5games.usercontent.goog/v/1aqsvv0aegbjg/
+108;Futbol Süperstar;Futbol Süperstar;https://www.inlogic.sk/html5/242/assets/favicon/icon-152x152.png;https://html5.inlogic.sk/footballsuperstars2024/
+109;Ring to Ring;Ring to Ring;https://files.kidsearch.games/game/68c/1df/68c1df7cc868c686/images/240/ringtoring.jpg;http://files.kidsearch.games/game/68c/1df/68c1df7cc868c686/data/index.html
+110;Basketbol Kralı;Basketbol Kralı;https://www.inlogic.sk/html5/235/assets/favicon/icon-152x152.png;https://html5.inlogic.sk/basketballkings2024/
+111;Free Kick Football;Free Kick Football;https://freekickfootball.h5games.usercontent.goog/v/0lqeu7698mvk0/images/horizontal480.png=w256?v=1;https://freekickfootball.h5games.usercontent.goog/v/0lqeu7698mvk0/
+112;3D Basketball;3D Basketball;https://i.ibb.co/jkQJj6qV/fpru4ep.jpg;https://play.famobi.com/3d-basketball/A-SPORX
+113;Sea Mahjong;Sea Mahjong;https://files.kidsearch.games/game/602/a0b/602a0b7b91859177/images/240/seamahjong.jpg;http://files.kidsearch.games/game/602/a0b/602a0b7b91859177/data/index.html
+114;8 Ball Billiards;8 Ball Billiards;https://billiardsclassic.h5games.usercontent.goog/v/dd1f188f-cef2-4a0f-bfb0-a58e0bb3c16e/med_res_banner.jpg=w256?v=1;https://billiardsclassic.h5games.usercontent.goog/v/dd1f188f-cef2-4a0f-bfb0-a58e0bb3c16e/
+115;Basketball Master;Basketball Master;https://basketballmaster2.h5games.usercontent.goog/v/d77686d1-b7f2-43ab-8a85-00ab1d8b065f/med_res_banner.jpg=w256?v=1;https://basketballmaster2.h5games.usercontent.goog/v/d77686d1-b7f2-43ab-8a85-00ab1d8b065f/
+116;Süper Tetris;Süper Tetris;https://62dfg8ps4f7lg.h5games.usercontent.goog/v/4cv3ubvtn4170/images/landscape480.png=w256?v=1;https://62dfg8ps4f7lg.h5games.usercontent.goog/v/4cv3ubvtn4170/
+117;Golf Fling;Golf Fling;https://golffling.h5games.usercontent.goog/v/0aa707a3-71a5-4ad8-be9b-32ce55e28d64/med_res_banner.jpg=w256?v=1;https://golffling.h5games.usercontent.goog/v/0aa707a3-71a5-4ad8-be9b-32ce55e28d64/
+118;Totemia Cursed Marbles;Totemia Cursed Marbles;https://totemiacursed.h5games.usercontent.goog/v/0df02b02-be39-4ad7-ba7f-4a3c08e71c68/med_res_banner.jpg=w256?v=1;https://totemiacursed.h5games.usercontent.goog/v/0df02b02-be39-4ad7-ba7f-4a3c08e71c68/
+119;Jigsaw Puzzle;Jigsaw Puzzle;https://jigsawpuzzledeluxe.h5games.usercontent.goog/v/f796c04d-5370-4c4f-93ea-de69d4cbdbe7/med_res_banner.jpg=w256?v=1;https://jigsawpuzzledeluxe.h5games.usercontent.goog/v/f796c04d-5370-4c4f-93ea-de69d4cbdbe7/
+120;Tiger Run;Tiger Run;https://tigerrun.h5games.usercontent.goog/v/1cl0c4rtsjsqo/images/mid_res_banner.jpeg=w256?v=1;https://tigerrun.h5games.usercontent.goog/v/1cl0c4rtsjsqo/
+121;Guns and Bottles;Guns and Bottles;https://aktestgunsandbottles.h5games.usercontent.goog/v/51pcsm84fc4ag/creatives/Horizontal_banners/480x270.png=w256?v=1;https://aktestgunsandbottles.h5games.usercontent.goog/v/51pcsm84fc4ag/
+122;Ok Fırlatma;Ok Fırlatma;https://archery.h5games.usercontent.goog/v/f12fb2aa-d64b-4074-8974-31705698e2e6/med_res_banner.jpg=w256?v=1;https://archery.h5games.usercontent.goog/v/f12fb2aa-d64b-4074-8974-31705698e2e6/
+123;Oh Nom Run;Oh Nom Run;https://omnomrun.h5games.usercontent.goog/v/5e921868-7442-48b7-8d4e-1433f4a900b5/med_res_banner.jpg=w256?v=1;https://omnomrun.h5games.usercontent.goog/v/5e921868-7442-48b7-8d4e-1433f4a900b5/
+124;Arctic Pong;Arctic Pong;https://arcticpong.h5games.usercontent.goog/v/49d5ba10-6308-4c30-872c-e7161297d6eb/med_res_banner.jpg=w256?v=1;https://arcticpong.h5games.usercontent.goog/v/49d5ba10-6308-4c30-872c-e7161297d6eb/
+125;Top Atışı 3D;Top Atışı 3D;https://cannonballs3d.h5games.usercontent.goog/v/004m7ejm69rs0/html5games/assets/marketingAssets/banners/480x270.png=w256?v=1;https://cannonballs3d.h5games.usercontent.goog/v/004m7ejm69rs0/
+126;Neon Line;Neon Line;https://diwalilights.h5games.usercontent.goog/v/0abe774c-6154-4dd3-a416-a02e80b390d4/med_res_banner.jpg=w256?v=1;https://diwalilights.h5games.usercontent.goog/v/0abe774c-6154-4dd3-a416-a02e80b390d4/
+127;Cake Slice Ninja;Cake Slice Ninja;https://cakesliceninja.h5games.usercontent.goog/v/0p06tu4g041i0/images/mid_res_banner.jpeg=w256?v=1;https://cakesliceninja.h5games.usercontent.goog/v/0p06tu4g041i0/
+128;Carrom Clash;Carrom Clash;https://carromclash.h5games.usercontent.goog/v/4pmfd00515bbg/images/carromclash-horizontal-banner-2.png=w256?v=1;https://carromclash.h5games.usercontent.goog/v/4pmfd00515bbg/
+129;Kızma Birader;Kızma Birader;https://35q41h2gp6dd8.h5games.usercontent.goog/v/6q7tggnmscsj8/images/ludo-horizontal-banner-2.png=w256?v=1;https://35q41h2gp6dd8.h5games.usercontent.goog/v/6q7tggnmscsj8/
+130;Pin the Ufo;Pin the Ufo;https://pintheufo.h5games.usercontent.goog/v/08ukqv01ac45o/images/mid_res_banner.jpeg=w256?v=1;https://pintheufo.h5games.usercontent.goog/v/08ukqv01ac45o/
+131;Park Uzmanı;Park Uzmanı;https://7nq79vktk8fho.h5games.usercontent.goog/v/4u3a6m3hm9lj8/html5games/assets/marketingAssets/banners/480x270.png=w400?v=1;https://7nq79vktk8fho.h5games.usercontent.goog/v/4u3a6m3hm9lj8/
+132;Connect 4 Board;Connect 4 Board;https://i.ibb.co/ymxW9rj5/8avvk0t.png;https://kenrick95.github.io/c4/
+133;Cut for Cat;Cut for Cat;https://i.ibb.co/Ld9JXyWx/gkugze0.png;https://plays.org/game/cut-for-cat-2/
+134;Pond Game;Pond Game;https://i.ibb.co/bZydq92/svbwzbu.png;https://thepond.zolmeister.com/
+135;Coil Game;Coil Game;https://i.ibb.co/2Y3DKhqr/qap4zaz.png;https://lab.hakim.se/coil/
+136;Pop Pop Win!;Pop Pop Win!;https://i.ibb.co/XkMSStvX/eet23mv.jpg;https://dart-lang.github.io/sample-pop_pop_win/
+137;Hextris;Hextris;https://i.ibb.co/JWDPVjT0/dknqu6s.png;https://hextris.io/
+138;Tower Game;Tower Game;https://i.ibb.co/230HfJzw/12kdiw1.png;https://iamkun.github.io/tower_game/
+139;Duck Hunt Game;Duck Hunt Game;https://i.ibb.co/vxZRFVT6/fdlknmh.png;https://duckhuntjs.com/
+140;Zop Game;Zop Game;https://i.ibb.co/CpVFc5BX/furxqhg.png;https://zop.zolmeister.com/
+141;Endless Siege;Endless Siege;https://i.ibb.co/zhCd1qcC/h90goep.png;https://plays.org/game/endless-siege/
+142;Pac Circle Game;Pac Circle Game;https://i.ibb.co/SDgXm1BH/rz60tco.png;https://previews.customer.envatousercontent.com/files/373255281/index.html
+143;Soldier Legend;Soldier Legend;https://i.ibb.co/Rk51jptC/ijqd9gc.png;https://plays.org/game/soldier-legend/
+144;Colour Tunnel;Colour Tunnel;https://i.ibb.co/NnpMDMmG/fn05nsk.png;https://play.famobi.com/color-tunnel/A-SPORX
+145;Ramp Game;Ramp Game;https://i.ibb.co/Tq4sxtcb/g4qiqrs.jpg;https://play.famobi.com/ramp/A-SPORX
+146;Tower Crash 3D;Tower Crash 3D;https://i.ibb.co/LzBKFPCR/ckkmuaj.jpg;https://play.famobi.com/tower-crash-3d/A-SPORX
+147;Bubble Spinner;Bubble Spinner;https://i.ibb.co/Fq6Nwkdb/iwxoemc.png;https://cdn2.addictinggames.com/addictinggames-content/ag-assets/content-items/html5-games/bubblespinner/index.html
+148;Bubble Woods;Bubble Woods;https://i.ibb.co/DPnqdhHm/s36pgsn.png;https://play.famobi.com/bubble-woods/A-SPORX
+149;Alien Bridge;Alien Bridge;https://i.ibb.co/RxrLM0r/6ylaawi.png;https://plays.org/game/alien-bridge/
+150;Pop it;Pop it;https://plays.org/wp-content/uploads/pop-it.png;https://plays.org/game/pop-it/
+151;Protect Emojis;Protect Emojis;https://i.ibb.co/q3TYPbVL/a6ch85p.png;https://plays.org/game/protect-emojis/
+152;Knife Hit;Knife Hit;https://i.ibb.co/bjwnJX0k/r6muyta.png;https://plays.org/game/knife-hit/
+153;Fireman Jet;Fireman Jet;https://i.ibb.co/7tkDj1vN/5jkxzqh.png;https://plays.org/game/fireman-jet/
+154;Popcorn Time;Popcorn Time;https://i.ibb.co/Hp4bcKTD/5329ibi.png;https://plays.org/game/popcorn-time/
+155;Şehir Planlayıcı;Şehir Planlayıcı;https://6nilllqpgkm6o.h5games.usercontent.goog/v/7d3689i7s5gfo/MarketingAssets/tiletopia-thumb-wide-480x270.png=w256?v=1;https://6nilllqpgkm6o.h5games.usercontent.goog/v/7d3689i7s5gfo/
+156;Meyve Birleştir;Meyve Birleştir;https://plays.org/images/merge-fruit.png;https://plays.org/game/merge-fruit/
+157;Scooby Doo;Scooby Doo;https://plays.org/game/scooby-doo-scoob-mystery-match/assets/images/levels/score.png;https://plays.org/game/scooby-doo-scoob-mystery-match/
+158;Yuvarlanan Top;Yuvarlanan Top;https://freegames.org/images/rolling-ball-1200.png;https://freegames.org/games/rolling-ball/v1/
+159;3D Satranç;3D Satranç;https://www.calculators.org/games/titles/master-chess.png;https://freegames.org/games/classic-chess/v1/
+160;Neon Drift;Neon Drift;https://freegames.org/images/neon-drift-big.png;https://freegames.org/games/neon-drift/v2/
+161;Simon Diyorki;Simon Diyorki;https://freegames.org/images/simon-says-big.png;https://freegames.org/games/simon-says/v1/
+162;Hexagon Fall;Hexagon Fall;https://www.cbc.ca/kids/images/hexagonfall_thumb.jpg;https://freegames.org/games/hexagon-fall/v1/
+163;Zombileri Parçala;Zombileri Parçala;https://freegames.org/images/zombubz500.png;https://freegames.org/games/zombubz/v1/
+164;Meyve Kesme;Meyve Kesme;https://a.silvergames.com/screenshots/fruit-slice/cutting-game.jpg;https://freegames.org/games/slice-fruit/v1/
+165;Pop Pop Candy;Pop Pop Candy;https://cdn2.spiele-umsonst.de/flash_thumb/poppopcandies.jpg;https://freegames.org/games/pop-pop-candies/v1/
+166;Katlama Sanatı;Katlama Sanatı;https://freegames.org/images/unfold-3.png;https://freegames.org/games/unfold-3/v1/
+167;Hex Pipes;Hex Pipes;https://i.ibb.co/GQd68fDK/8bc168i.png;https://freegames.org/games/hex-pipes/v1/
+168;Fruit Matching;Fruit Matching;https://i.ibb.co/V09pw4V2/437rdzo.png;https://freegames.org/games/fruit-matching/v1/
+169;Bubble Blaster;Bubble Blaster;https://i.ibb.co/LXG9mY4V/dnqqhbm.jpg;https://freegames.org/games/bubble-blaster/v1
+170;The Sea Rush;The Sea Rush;https://thesearush.h5games.usercontent.goog/v/28d09aff-9050-4da5-8e10-051ca084cdde/med_res_banner.jpg=w256?v=1;https://thesearush.h5games.usercontent.goog/v/28d09aff-9050-4da5-8e10-051ca084cdde/
+171;Tower Block;Tower Block;https://i.ibb.co/230HfJzw/12kdiw1.png;https://iamkun.github.io/tower_game/
+172;Unpark Me;Unpark Me;https://unparkme.h5games.usercontent.goog/v/bd1f1f83-f349-40a3-a153-297b0722bc10/med_res_banner.jpg=w256?v=1;https://unparkme.h5games.usercontent.goog/v/bd1f1f83-f349-40a3-a153-297b0722bc10/
+173;Nature Strikes;Nature Strikes;https://79gloe1v4okkg.h5games.usercontent.goog/v/0hmi0u8r883do/NatureStrikesBack-Landscape-1080x1920-medium.png=w256?v=1;https://79gloe1v4okkg.h5games.usercontent.goog/v/0hmi0u8r883do/
+174;Lake Jump;Lake Jump;https://lakejump.h5games.usercontent.goog/v/33bg3iluek1fg/images/horizontal480.png=w256?v=1;https://lakejump.h5games.usercontent.goog/v/33bg3iluek1fg/
+175;Road Fury;Road Fury;https://roadfury.h5games.usercontent.goog/v/a2a8cf2b-40b8-4c60-8bbd-5537053e72c6/med_res_banner.jpg=w256?v=1;https://roadfury.h5games.usercontent.goog/v/a2a8cf2b-40b8-4c60-8bbd-5537053e72c6/
+176;Scooter Xtreme 3D;Scooter Xtreme 3D;https://scooterxtreme.h5games.usercontent.goog/v/c842db43-7823-45bc-b575-acbd9bda5de4/med_res_banner.jpg=w256?v=1;https://scooterxtreme.h5games.usercontent.goog/v/c842db43-7823-45bc-b575-acbd9bda5de4/
+177;Truck Trials;Truck Trials;https://trucktrials.h5games.usercontent.goog/v/01347635-6b10-4fe1-ae85-53c0fb6a95bb/med_res_banner.jpg=w256?v=1;https://trucktrials.h5games.usercontent.goog/v/01347635-6b10-4fe1-ae85-53c0fb6a95bb/
+178;Traffic Tom;Traffic Tom;https://traffictom.h5games.usercontent.goog/v/7c1a9fb2-2097-4c14-b7b1-052d80d41adb/med_res_banner.jpg=w256?v=1;https://traffictom.h5games.usercontent.goog/v/7c1a9fb2-2097-4c14-b7b1-052d80d41adb/
+179;Sudoku Plus;Sudoku Plus;https://sudokuplus.h5games.usercontent.goog/v/3q827iuj6msno/image/sudokuplus-med-res-banner.jpg=w256?v=1;https://sudokuplus.h5games.usercontent.goog/v/3q827iuj6msno/
+180;Pics Word Game;Pics Word Game;https://picswordgame.h5games.usercontent.goog/v/57j20d78tccio/image/picswordgame-med-res-banner.jpg=w256?v=1;https://picswordgame.h5games.usercontent.goog/v/57j20d78tccio/
+181;Araba Yarışı 3D;Araba Yarışı 3D;https://tcf.admeen.org/game/17000/16952/400x246/stock-car-hero.jpg;https://freegames.org/games/stock-car-hero/v1/
+182;Kalp Animasyonu 1;Kalp Animasyonu 1;https://www.edevreler.com/lotani/animasyon1.png;https://www.edevreler.com/lotani/animasyon1.html
+183;Kalp Animasyonu 2;Kalp Animasyonu 2;https://www.edevreler.com/lotani/animasyon2.png;https://www.edevreler.com/lotani/animasyon2.html
+184;Kalp Animasyonu 3;Kalp Animasyonu 3;https://www.edevreler.com/lotani/animasyon3.png;https://www.edevreler.com/lotani/animasyon3.html
+185;Kalp Animasyonu 4;Kalp Animasyonu 4;https://www.edevreler.com/lotani/animasyon4.png;https://www.edevreler.com/lotani/animasyon4.html
+186;Kalp Animasyonu 5;Kalp Animasyonu 5;https://www.edevreler.com/lotani/animasyon5.png;https://www.edevreler.com/lotani/animasyon5.html
+187;Kalp Animasyonu 6;Kalp Animasyonu 6;https://www.edevreler.com/lotani/animasyon6.png;https://www.edevreler.com/lotani/animasyon6.html
+188;Kalp Animasyonu 7;Kalp Animasyonu 7;https://www.edevreler.com/lotani/animasyon7.png;https://www.edevreler.com/lotani/animasyon7.html
+189;Kalp Animasyonu 8;Kalp Animasyonu 8;https://www.edevreler.com/lotani/8.png;https://www.edevreler.com/lotani/8.html
+190;Kalp Animasyonu 9;Kalp Animasyonu 9;https://www.edevreler.com/lotani/9.png;https://www.edevreler.com/lotani/9.html
+191;Kalp Animasyonu 10;Kalp Animasyonu 10;https://www.edevreler.com/lotani/10.png;https://www.edevreler.com/lotani/10.html
+192;Kalp Animasyonu 11;Kalp Animasyonu 11;https://www.edevreler.com/lotani/11.png;https://www.edevreler.com/lotani/11.html
+193;Kalp Animasyonu 12;Kalp Animasyonu 12;https://www.edevreler.com/lotani/12.png;https://www.edevreler.com/lotani/12.html
+194;Kalp Animasyonu 13;Kalp Animasyonu 13;https://www.edevreler.com/lotani/13.png;https://www.edevreler.com/lotani/13.html
+195;Kalp Animasyonu 14;Kalp Animasyonu 14;https://www.edevreler.com/lotani/14.png;https://www.edevreler.com/lotani/14.html
+196;Kalp Animasyonu 15;Kalp Animasyonu 15;https://www.edevreler.com/lotani/15.png;https://www.edevreler.com/lotani/15.html
+197;Kalp Animasyonu 16;Kalp Animasyonu 16;https://www.edevreler.com/lotani/16.png;https://www.edevreler.com/lotani/16.html
+198;Kalp Animasyonu 17;Kalp Animasyonu 17;https://www.edevreler.com/lotani/17.png;https://www.edevreler.com/lotani/17.html
+199;Kalp Animasyonu 18;Kalp Animasyonu 18;https://www.edevreler.com/lotani/18.png;https://www.edevreler.com/lotani/18.html
+200;Kalp Animasyonu 19;Kalp Animasyonu 19;https://www.edevreler.com/lotani/19.png;https://www.edevreler.com/lotani/19.html
+201;Kalp Animasyonu 20;Kalp Animasyonu 20;https://www.edevreler.com/lotani/20.png;https://www.edevreler.com/lotani/20.html
+202;Ateş Animasyonu 1;Ateş Animasyonu 1;https://www.edevreler.com/lotani/ates1.png;https://www.edevreler.com/lotani/ates1.html
+203;Ateş Animasyonu 2;Ateş Animasyonu 2;https://www.edevreler.com/lotani/ates2.png;https://www.edevreler.com/lotani/ates2.html
+204;Ateş Animasyonu 3;Ateş Animasyonu 3;https://www.edevreler.com/lotani/ates3.png;https://www.edevreler.com/lotani/ates3.html
+205;Ateş Animasyonu 4;Ateş Animasyonu 4;https://www.edevreler.com/lotani/ates4.png;https://www.edevreler.com/lotani/ates4.html
+206;Ateş Animasyonu 5;Ateş Animasyonu 5;https://www.edevreler.com/lotani/ates5.png;https://www.edevreler.com/lotani/ates5.html
+207;Ateş Animasyonu 6;Ateş Animasyonu 6;https://www.edevreler.com/lotani/ates6.png;https://www.edevreler.com/lotani/ates6.html
+208;Ateş Animasyonu 7;Ateş Animasyonu 7;https://www.edevreler.com/lotani/ates7.png;https://www.edevreler.com/lotani/ates7.html
+209;Ateş Animasyonu 8;Ateş Animasyonu 8;https://www.edevreler.com/lotani/ates8.png;https://www.edevreler.com/lotani/ates8.html
+210;Ateş Animasyonu 9;Ateş Animasyonu 9;https://www.edevreler.com/lotani/ates9.png;https://www.edevreler.com/lotani/ates9.html
+211;Ateş Animasyonu 10;Ateş Animasyonu 10;https://www.edevreler.com/lotani/ates10.png;https://www.edevreler.com/lotani/ates10.html
+212;Yıldız Animasyonu 1;Yıldız Animasyonu 1;https://www.edevreler.com/lotani/yildiz1.png;https://www.edevreler.com/lotani/yildiz1.html
+213;Yıldız Animasyonu 2;Yıldız Animasyonu 2;https://www.edevreler.com/lotani/yildiz2.png;https://www.edevreler.com/lotani/yildiz2.html
+214;Yıldız Animasyonu 3;Yıldız Animasyonu 3;https://www.edevreler.com/lotani/yildiz3.png;https://www.edevreler.com/lotani/yildiz3.html
+215;Yıldız Animasyonu 4;Yıldız Animasyonu 4;https://www.edevreler.com/lotani/yildiz4.png;https://www.edevreler.com/lotani/yildiz4.html
+216;Yıldız Animasyonu 5;Yıldız Animasyonu 5;https://www.edevreler.com/lotani/yildiz5.png;https://www.edevreler.com/gemini/
+
+`;
+
+        window.onload = function() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(pos => {
+                    userLat = pos.coords.latitude;
+                    userLon = pos.coords.longitude;
+                });
+            }
+            loadGamesFromCSV();
+        };
+
+        function resetDisplays() {
+            appFrame.style.display = 'none';
+            videoContainer.style.display = 'none';
+            btnBackToGallery.style.display = 'none';
         }
 
-        window.addEventListener("load", async () => {
-            createThemeSelector(); applyTheme(localStorage.getItem('iptvTheme') || 'steel'); loadSavedZoom();
-            [G_UI.preview.analyzerTop, G_UI.preview.analyzerBottom].forEach(a => { for (let i = 0; i < 30; i++) { const b = document.createElement('div'); b.className = 'analyzer-bar'; b.style.animationDelay = Math.random() * -1.5 + 's'; b.style.animationDuration = Math.random() * 1 + 0.5 + 's'; a.appendChild(b); } });
-            G_UI.audioPlayer.addEventListener('play', () => updatePlayerUI(true)); G_UI.audioPlayer.addEventListener('pause', () => updatePlayerUI(false)); G_UI.audioPlayer.addEventListener('ended', () => updatePlayerUI(false));
-            G_UI.zoomInBtn.addEventListener('click', () => updateZoom(currentZoom + ZOOM_STEP)); G_UI.zoomOutBtn.addEventListener('click', () => updateZoom(currentZoom - ZOOM_STEP));
-            await fetchAndDisplayChannels();
-            const def = `Radyo Seçin - ${DEFAULT_SCROLL_TEXT}`; G_UI.player.channelName.innerHTML = `<span>${def}</span><span>${def}</span>`;
-            initEffects();
-            const savedEffect = localStorage.getItem(SAVED_EFFECT_KEY);
-            if (savedEffect && EFFECTS.includes(savedEffect)) { currentEffectIndex = EFFECTS.indexOf(savedEffect); applyEffect(savedEffect); } else { currentEffectIndex = EFFECTS.indexOf('snow'); applyEffect('snow'); }
-            renderEffects();
-        });
+        function openIframeApp(url) {
+            resetDisplays();
+            gameGalleryArea.style.display = 'none';
+            let finalUrl = url;
+            if (url === 'maps') {
+                finalUrl = userLat ? `https://maps.google.com/maps?q=$${userLat},${userLon}&z=15&output=embed` : "https://maps.google.com/maps?q=Istanbul&z=10&output=embed";
+            }
+            appFrame.src = finalUrl;
+            appFrame.style.display = 'block';
+            switchToApp();
+        }
+
+        function openVideoApp() {
+            resetDisplays();
+            gameGalleryArea.style.display = 'none';
+            videoContainer.style.display = 'flex';
+            videoElement.play();
+            switchToApp();
+        }
+
+        /* --- OYUN ÖZEL FONKSİYONLARI --- */
+        function loadGamesFromCSV() {
+            const lines = csvData.split('\n');
+            const container = document.getElementById('gallery-container');
+            container.innerHTML = '';
+            
+            for(let i=1; i<lines.length; i++) {
+                const line = lines[i].trim();
+                if(!line) continue;
+                const cols = line.split(';');
+                if(cols.length >= 5) {
+                    const gameDiv = document.createElement('div');
+                    gameDiv.className = 'game-card';
+                    gameDiv.onclick = function() { playGame(cols[4]); }; 
+                    
+                    const img = document.createElement('img');
+                    img.src = cols[3];
+                    img.onerror = function(){ this.src='https://via.placeholder.com/150?text=GAME'; };
+                    
+                    const title = document.createElement('div');
+                    title.className = 'game-title';
+                    title.innerText = cols[1];
+                    
+                    gameDiv.appendChild(img);
+                    gameDiv.appendChild(title);
+                    container.appendChild(gameDiv);
+                }
+            }
+        }
+
+        function openGameGallery() {
+            mainMenu.style.display = 'none';
+            contentArea.style.display = 'none';
+            gameGalleryArea.style.display = 'block';
+            tickerMode.style.display = 'none';
+            controlMode.style.display = 'flex';
+            btnBackToGallery.style.display = 'none'; 
+        }
+
+        function playGame(url) {
+            resetDisplays();
+            gameGalleryArea.style.display = 'none';
+            appFrame.src = url;
+            appFrame.style.display = 'block';
+            switchToApp();
+            
+            // OYUN MODU: Geri butonu aktif
+            btnBackToGallery.style.display = 'flex';
+
+            // OTOMATİK TAM EKRAN (Mevcut yapı korundu)
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari & Opera */
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
+                document.documentElement.msRequestFullscreen();
+            }
+        }
+
+        function backToGallery() {
+            appFrame.src = ""; // Oyunu durdur
+            openGameGallery();
+        }
+        /* -------------------------------- */
+
+        function switchToApp() {
+            mainMenu.style.display = 'none';
+            contentArea.style.display = 'block';
+            tickerMode.style.display = 'none';
+            controlMode.style.display = 'flex';
+        }
+
+        function closeAllApps() {
+            if (document.fullscreenElement) document.exitFullscreen();
+            videoElement.pause();
+            appFrame.src = "";
+            
+            contentArea.style.display = 'none';
+            gameGalleryArea.style.display = 'none'; 
+            
+            mainMenu.style.display = 'flex';
+            tickerMode.style.display = 'block';
+            controlMode.style.display = 'none';
+            
+            btnBackToGallery.style.display = 'none';
+        }
+
+        function toggleFullScreen() {
+            if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+            else if (document.exitFullscreen) document.exitFullscreen();
+        }
     </script>
 </body>
-
 </html>
