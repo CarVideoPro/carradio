@@ -99,8 +99,12 @@ Lig Radyo,https://ligradyo.radyotvonline.net/ligradyo,https://upload.wikimedia.o
 Radyo Spor,https://moondigitaledge.radyotvonline.net/radyospor/playlist.m3u8,https://ik.fskit.net/radyohome/media/station/64/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=21409a&tr=w-1000%3A%2Cbg-21409a&v=081024024134,6
 
 
-
-
+Radyo Viva Türkü,https://listen.radyotvonline.net/hls/play/viva_turku.m3u8,https://i.hizliresim.com/jfuodm1.jpg,9
+Radyo 7 Türkü,https://moondigitaledge2.radyotvonline.net/radyo7turku/playlist.m3u8,https://static.mytuner.mobi/media/tvos_radios/69ScfgqyEg.png,9
+Türkülerle Türkiye,https://moondigitaledge.radyotvonline.net/turkulerleturkiye/playlist.m3u8,https://ik.fskit.net/radyohome/media/station/13/logo_square.png?w=300%3A&format=auto&fit=crop&bg=662351&tr=w-1000%3A%2Cbg-662351&v=060520030000,9
+Radyo Türkü,https://yayin.radyomadyo.com:8008/stream,https://play-lh.googleusercontent.com/KZjH6wuCsEmrnGdp0nLL5sD1Jcy1lh0wxn7PCe7LxVmoPc2gSIbxlWY5JCdLH2PWA43a,9
+Radyo Tezene,https://moondigitaledge.radyotvonline.net/tezene/playlist.m3u8,https://i.hizliresim.com/6vo1s2l.jpg,9
+Ulusal Türkü,https://radio.guventechnology.com/9308/stream?/;stream.mp3,https://static.mytuner.mobi/media/tvos_radios/tn3hrjcdr4cf.png,9
 
 
 
