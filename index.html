@@ -479,6 +479,17 @@
         // Sayfa ilk açıldığında kontrol et
         updateOnlineStatus();
     });
+    /* --- SERVICE WORKER (OFFLINE KAYIT) BAŞLATICI --- */
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(registration => {
+                    console.log('Offline modu aktif: ', registration.scope);
+                }, err => {
+                    console.log('Offline modu hatası: ', err);
+                });
+        });
+    }
     </script>
     <div id="offline-overlay">
         <div class="offline-icon">📡</div>
