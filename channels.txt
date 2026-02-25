@@ -15,7 +15,7 @@ Radyo Trio,https://radyotrio.radyotvonline.net/radyotrio?/;stream.mp3,https://pl
 Radyo Turkuvaz,https://trkvz-radyolar.ercdn.net/radyoturkuvaz/playlist.m3u8,https://yt3.googleusercontent.com/I1TUPTdixUHEx_Lt0LOqZIGJcVLsmzVMQJ_KE_fHbXoX-4LO9Dte4uJwGV02KUGZ9Ft4sMt6_w=s900-c-k-c0x00ffffff-no-rj,3
 Radyo Viva,https://listen.radyotvonline.net/hls/play/adsonline_radyoviva.m3u8,https://play-lh.googleusercontent.com/BYbWUPuUdFpWoh8AQBMxjLV4psmBUo7J6azOOPzbHYNJSgeIv9gG84taDx4QzsaUxiI,3
 Süper FM,https://25633.live.streamtheworld.com/SUPER_FM128AAC.aac?/;stream.mp3,https://mediacdns.karnaval.com/stationsites/superfm/assets/styles/images/logo_superfm.svg,3
-Number One FM,https://n10101m.mediatriple.net/videoonlylive/mtkgeuihrlfwlive/u_stream_5c9e2f95dcb16_1/playlist.m3u8,https://www.numberone.com.tr/wp-content/uploads/2015/12/N1_FM-1.png,3
+Number One FM,https://eustr75.mediatriple.net//Number1Media/01_Number1Fm.stream/chunklist.m3u8,https://www.numberone.com.tr/wp-content/uploads/2015/12/N1_FM-1.png,3
 Pal FM,https://moondigitaledge.radyotvonline.net/palfm/playlist.m3u8,https://i1.sndcdn.com/avatars-000301621165-9u7gx6-t1080x1080.jpg,3
 
 TRT Antalya Radyo,https://radio-trtantalya.medya.trt.com.tr/master.m3u8,https://upload.wikimedia.org/wikipedia/commons/thumb/2/20/TRT_Antalya_Radyosu_logo.svg/1280px-TRT_Antalya_Radyosu_logo.svg.png,2
@@ -71,7 +71,6 @@ Elazığ Ezgi Radyo,https://sslyayin.netyayin.net/elazigezgiradyo/stream/;stream
 Radyo Hazar,https://radyo.yayin.com.tr:8286/stream?,https://www.canliradyodinle.fm/wp-content/uploads/radyo-hazar-100x100.jpg,8
 Pazar Genç Radyo,https://dl.gen.tr/gencradyo/canli?,https://www.canliradyodinle.fm/wp-content/uploads/pazar-genc-radyo.jpg,8
 Ankara Havaları,https://moondigitaledge2.radyotvonline.net/radyo7ankara/playlist.m3u8,https://ik.fskit.net/radyohome/media/station/19/logo_square.png?w=1000%3A&format=auto&fit=crop&bg=6b727a&tr=w-1000%3A%2Cbg-6b727a&v=060520030000,8
-Radyo Ankara,https://radyoankara.ozelip.net:8152/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-ankara.jpg,8
 Radyo Banko,https://stream.netradyom.com/listen/radyobanko/radio.mp3/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/radyo-banko.jpg,8
 Avrasya Türk,https://sslyayin.netyayin.net:10909/;/;stream.mp3,https://static.mytuner.mobi/media/tvos_radios/zSXYEYzWq2.jpg,8
 Kiss FM,https://kiss.radyotvonline.net/kissfm?/;stream.mp3,https://www.canliradyodinle.fm/wp-content/uploads/kiss-fm.jpg,8
